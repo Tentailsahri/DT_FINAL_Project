@@ -55,7 +55,9 @@ int main()
 		WAISER->SetModel(model);
 		WAISER->Run(GLOBAL_VAR->time);
 		WAISER->Destroy();
-		//GLOBAL_VAR->Deletepgconn();
+		if (GLOBAL_VAR->SQLConnect == true) {
+			GLOBAL_VAR->Deletepgconn();
+		}
 		GLOBAL_VAR->CsvFileClose();
 
 	}
@@ -64,7 +66,9 @@ int main()
 		WAISER->WaitSimulationEnd();
 		WAISER->Destroy();
 		GLOBAL_VAR->CsvFileClose();
-		GLOBAL_VAR->Deletepgconn();
+		if (GLOBAL_VAR->SQLConnect == true) {
+			GLOBAL_VAR->Deletepgconn();
+		}
 		CLOG->critical("Exception: {}", e.what());
 
 	}
@@ -73,7 +77,9 @@ int main()
 		WAISER->WaitSimulationEnd();
 		WAISER->Destroy();
 		GLOBAL_VAR->CsvFileClose();
-		GLOBAL_VAR->Deletepgconn();
+		if (GLOBAL_VAR->SQLConnect == true) {
+			GLOBAL_VAR->Deletepgconn();
+		}
 		CLOG->critical("Unknown exception");
 	}
 
