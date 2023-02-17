@@ -64,10 +64,11 @@ public:
 
 	// 현재 상태를 문자열로 변환
 	static const char* getState2Str(Atomic_State::STATE type);
+	static const char* getModel2Str(int model_type);
 
 	// STATE 시작 시간 저장용
 	double m_current_time;
-
+	double m_endtime;
 	double timeStore[4]={0, 0, 0, 0};
 	void m_dataUpdate();
 	

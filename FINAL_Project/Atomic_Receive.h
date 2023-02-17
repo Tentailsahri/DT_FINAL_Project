@@ -11,6 +11,7 @@ class Atomic_Receive : public WAtomModel	// DEVS 원자모델
 {
 public:
 	Atomic_Receive(int type, int idx, int pk);
+	
 	// 입력포트 정의
 	enum class IN_PORT : unsigned int {
 		PAUSE = 100,
