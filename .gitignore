@@ -36,5 +36,9 @@
 *.db-wal
 *.opendb
 *.db
+<<<<<<< HEAD
 >>>>>>> master
 *.bin
+=======
+*.ipch
+>>>>>>> master
