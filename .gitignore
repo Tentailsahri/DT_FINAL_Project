@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 .vs/FINAL_Project/FileContentIndex/0c8c9f3c-5d8f-42f6-8e6d-f50f638a4490.vsidx
 .vs/FINAL_Project/FileContentIndex/6ac2ea45-23b6-4571-82fa-6e8b242e446e.vsidx
 .vs/FINAL_Project/FileContentIndex/79cec5cd-3f2d-4237-9081-af5dbf785951.vsidx
@@ -29,3 +30,10 @@
 *.obj
 *.tlog
 *.lastbuildstate
+=======
+*.vsidx
+*.db-shm
+*.db-wal
+*.opendb
+*.db
+>>>>>>> master
