@@ -17,7 +17,7 @@ CGlobalVar* CGlobalVar::GetInstance() {
 	return pInstance_;
 }
 
-void CGlobalVar::pushmap(int key, CProduct* product, std::map<int, std::queue<CProduct*>> *_buffer)
+void CGlobalVar::pushmap(int key, CProduct* product, std::map<int, std::queue<CProduct*>>* _buffer)
 {
 	std::map<int, std::queue<CProduct*>>::iterator map_find_result = _buffer->find(key);
 	if (map_find_result != _buffer->end()) {
@@ -31,7 +31,7 @@ void CGlobalVar::pushmap(int key, CProduct* product, std::map<int, std::queue<CP
 	}
 }
 
-CProduct* CGlobalVar::popmap(int key, std::map<int, std::queue<CProduct*>> *_buffer)
+CProduct* CGlobalVar::popmap(int key, std::map<int, std::queue<CProduct*>>* _buffer)
 {
 	CProduct* product;
 	std::map<int, std::queue<CProduct*>>::iterator map_find_result = _buffer->find(key);
@@ -41,7 +41,7 @@ CProduct* CGlobalVar::popmap(int key, std::map<int, std::queue<CProduct*>> *_buf
 		return product;
 	}
 	else return nullptr;
-	
+
 }
 
 CProduct* CGlobalVar::frontmap(int key, std::map<int, std::queue<CProduct*>>* _buffer)
@@ -55,7 +55,7 @@ CProduct* CGlobalVar::frontmap(int key, std::map<int, std::queue<CProduct*>>* _b
 	else return nullptr;
 }
 
-CProduct* CGlobalVar::stockback(int key, std::map<int, std::queue<CProduct*>> *_stock)
+CProduct* CGlobalVar::stockback(int key, std::map<int, std::queue<CProduct*>>* _stock)
 {
 	CProduct* product;
 	std::map<int, std::queue<CProduct*>>::iterator map_find_result = _stock->find(key);
@@ -64,10 +64,10 @@ CProduct* CGlobalVar::stockback(int key, std::map<int, std::queue<CProduct*>> *_
 		return product;
 	}
 	else return nullptr;
-	
+
 }
 
-int CGlobalVar::buffer_size(int key, std::map<int, std::queue<CProduct*>> *_buffer)
+int CGlobalVar::buffer_size(int key, std::map<int, std::queue<CProduct*>>* _buffer)
 {
 	std::map<int, std::queue<CProduct*>>::iterator map_find_result = _buffer->find(key);
 	if (map_find_result != _buffer->end()) {
@@ -86,13 +86,15 @@ void CGlobalVar::CsvMake() {
 	std::string file_name2;
 	if (GLOBAL_VAR->scenario_num == 1) {
 		file_name = "../../object_state_list1.csv";
-		file_name1= "../../state_time_list1.csv";
-		file_name2= "../../state_rate_list1.csv";
-	} else if (GLOBAL_VAR->scenario_num == 2) {
+		file_name1 = "../../state_time_list1.csv";
+		file_name2 = "../../state_rate_list1.csv";
+	}
+	else if (GLOBAL_VAR->scenario_num == 2) {
 		file_name = "../../object_state_list2.csv";
 		file_name1 = "../../state_time_list2.csv";
 		file_name2 = "../../state_rate_list2.csv";
-	} else if (GLOBAL_VAR->scenario_num == 3) {
+	}
+	else if (GLOBAL_VAR->scenario_num == 3) {
 		file_name = "../../object_state_list3.csv";
 		file_name1 = "../../state_time_list3.csv";
 		file_name2 = "../../state_rate_list3.csv";
@@ -111,12 +113,12 @@ void CGlobalVar::CsvStateInsert(int pk, std::string state, double state_start_ti
 }
 
 void CGlobalVar::CsvStateTimeInsert(int pk, double current_time, double init_time, double active_time, double error_time, double pause_time) {
-	m_file1 << scenario_num << "," << pk << "," << current_time << "," << init_time << "," << active_time << ","<< error_time << "," << pause_time << "\n";
+	m_file1 << scenario_num << "," << pk << "," << current_time << "," << init_time << "," << active_time << "," << error_time << "," << pause_time << "\n";
 }
 
 void CGlobalVar::CsvStateRateInsert(int pk, double current_time, double init_time, double active_time, double error_time, double pause_time)
 {
-	m_file2 << scenario_num << "," << pk << "," << current_time << "," << (double)init_time/time << "," << (double)active_time/time << "," << (double)error_time/time << "," << (double)pause_time/time << "\n";
+	m_file2 << scenario_num << "," << pk << "," << current_time << "," << (double)init_time / time << "," << (double)active_time / time << "," << (double)error_time / time << "," << (double)pause_time / time << "\n";
 }
 
 void CGlobalVar::CsvFileClose() {
@@ -130,7 +132,7 @@ void CGlobalVar::Deletepgconn()
 
 void CGlobalVar::ResetTable()
 {
-	pgconn->SendQuery("CREATE TABLE IF NOT EXISTS public.object_state_list" + std::to_string(scenario_num)	+	\
+	pgconn->SendQuery("CREATE TABLE IF NOT EXISTS public.object_state_list" + std::to_string(scenario_num) + \
 		"(project_id integer,	object_id integer, object_state character varying(50) COLLATE pg_catalog.\"default\",	\
 		state_start_time double precision, \
 		state_end_time double precision, \
@@ -144,6 +146,56 @@ void CGlobalVar::ResetTable()
 		ON DELETE NO ACTION	\
 	)");
 	pgconn->SendQuery("TRUNCATE TABLE \"object_state_list" + std::to_string(scenario_num) + "\"");
+
+	pgconn->SendQuery("CREATE TABLE IF NOT EXISTS public.buf_count_list" + std::to_string(scenario_num) + \
+		"(project_id integer, object_id integer, object_type character varying(50) COLLATE pg_catalog.\"default\", \
+		\"current_time\" double precision, \
+		buffer_count integer, \
+		stock_count integer, \
+		CONSTRAINT buf_count_list1_object_id_fk FOREIGN KEY(object_id) \
+		REFERENCES public.object_list1(object_id) MATCH SIMPLE \
+		ON UPDATE NO ACTION \
+		ON DELETE NO ACTION, \
+		CONSTRAINT buf_count_list1_project_id_fk FOREIGN KEY(project_id) \
+		REFERENCES public.project_list1(project_id) MATCH SIMPLE \
+		ON UPDATE NO ACTION \
+		ON DELETE NO ACTION \
+	)");
+	pgconn->SendQuery("TRUNCATE TABLE \"buf_count_list" + std::to_string(scenario_num) + "\"");
+
+	pgconn->SendQuery("CREATE TABLE IF NOT EXISTS public.state_time_list" + std::to_string(scenario_num) + \
+		"(project_id integer, object_id integer, \"current_time\" double precision, \
+		init_time double precision, \
+		active_time double precision, \
+		error_time double precision, \
+		wait_time double precision, \
+		CONSTRAINT state_time_list1_object_id_fk FOREIGN KEY(object_id) \
+		REFERENCES public.object_list1(object_id) MATCH SIMPLE \
+		ON UPDATE NO ACTION \
+		ON DELETE NO ACTION, \
+		CONSTRAINT state_time_list1_project_id_fk FOREIGN KEY(project_id) \
+		REFERENCES public.project_list1(project_id) MATCH SIMPLE \
+		ON UPDATE NO ACTION \
+		ON DELETE NO ACTION \
+	)");
+	pgconn->SendQuery("TRUNCATE TABLE \"state_time_list" + std::to_string(scenario_num) + "\"");
+
+	pgconn->SendQuery("CREATE TABLE IF NOT EXISTS public.state_rate_list" + std::to_string(scenario_num) + \
+		"(project_id integer, object_id integer, \"current_time\" double precision, \
+		init_rate double precision, \
+		active_rate double precision, \
+		error_rate double precision, \
+		wait_rate double precision, \
+		CONSTRAINT state_rate_list1_object_id_fk FOREIGN KEY(object_id) \
+		REFERENCES public.object_list1(object_id) MATCH SIMPLE \
+		ON UPDATE NO ACTION \
+		ON DELETE NO ACTION, \
+		CONSTRAINT state_rate_list1_project_id_fk FOREIGN KEY(project_id) \
+		REFERENCES public.project_list1(project_id) MATCH SIMPLE \
+		ON UPDATE NO ACTION \
+		ON DELETE NO ACTION \
+	)");
+	pgconn->SendQuery("TRUNCATE TABLE \"state_rate_list" + std::to_string(scenario_num) + "\"");
 }
 
 void CGlobalVar::Makepgconn()
