@@ -128,10 +128,27 @@ void CGlobalVar::Deletepgconn()
 	delete pgconn;
 }
 
+void CGlobalVar::ResetTable()
+{
+	pgconn->SendQuery("CREATE TABLE IF NOT EXISTS public.object_state_list" + std::to_string(scenario_num)	+	\
+		"(project_id integer,	object_id integer, object_state character varying(50) COLLATE pg_catalog.\"default\",	\
+		state_start_time double precision, \
+		state_end_time double precision, \
+		CONSTRAINT object_state_list_object_id_fk FOREIGN KEY(object_id)	\
+		REFERENCES public.object_list1(object_id) MATCH SIMPLE	\
+		ON UPDATE NO ACTION	\
+		ON DELETE NO ACTION, \
+		CONSTRAINT object_state_list_project_id_fk FOREIGN KEY(project_id)	\
+		REFERENCES public.project_list1(project_id) MATCH SIMPLE	\
+		ON UPDATE NO ACTION	\
+		ON DELETE NO ACTION	\
+	)");
+	pgconn->SendQuery("TRUNCATE TABLE \"object_state_list" + std::to_string(scenario_num) + "\"");
+}
+
 void CGlobalVar::Makepgconn()
 {
 	PostgreSQLConnector* pg_conn = new PostgreSQLConnector();
 	pg_conn->ConnectDB();
-	pg_conn->SendQuery("TRUNCATE TABLE \"object_state_list" + std::to_string(scenario_num) + "\"");
 	pgconn = pg_conn;
 }

@@ -48,6 +48,7 @@ int main()
 		// SQL 연결
 		if (GLOBAL_VAR->SQLConnect == true) {
 			GLOBAL_VAR->Makepgconn();
+			GLOBAL_VAR->ResetTable();
 		}
 		// 시나리오 번호
 		Cpd_Main* model = new Cpd_Main(GLOBAL_VAR->scenario_num);
