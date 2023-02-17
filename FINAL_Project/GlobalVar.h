@@ -30,6 +30,7 @@ public:
 	void CsvStateInsert(int pk, std::string state, double state_start_time, double state_end_time);
 	void CsvStateTimeInsert(int pk, double current_time, double init_time, double active_time, double error_time, double pause_time);
 	void CsvStateRateInsert(int pk, double current_time, double init_time, double active_time, double error_time, double pause_time);
+	void CsvBufferSize(int pk, std::string state, double current_time, double buffersize, double srocksize);
 	void CsvFileClose();
 	
 	// SQL ¿¬°á °ü·Ã
@@ -40,6 +41,7 @@ public:
 	std::ofstream m_file;
 	std::ofstream m_file1;
 	std::ofstream m_file2;
+	std::ofstream m_file3;
 
 	int m_maxbuffer_Generator = 10;
 	int m_maxbuffer_Receive = 10;
@@ -54,8 +56,13 @@ public:
 	int error_stock = 5;
 	int time = 100;
 
+<<<<<<< HEAD
 	bool SQLConnect = true;
 
+=======
+	bool SQLConnect = false;
+	
+>>>>>>> ë°•ë¯¼ì¤€
 	double TA_STATE_INIT[4] = { 5,5,5,5 };
 	double TA_STATE_ACTIVE[4] = { 5,WTime::infinity_,5,5 };
 	double TA_STATE_ERROR[4] = { 5,0,5,5 };
