@@ -90,27 +90,15 @@ void CGlobalVar::CsvMake() {
 
 	if (GLOBAL_VAR->scenario_num == 1) {
 		file_name = "../../object_state_list1.csv";
-<<<<<<< HEAD
 		file_name1 = "../../state_time_list1.csv";
 		file_name2 = "../../state_rate_list1.csv";
-	}
-	else if (GLOBAL_VAR->scenario_num == 2) {
-		file_name = "../../object_state_list2.csv";
-		file_name1 = "../../state_time_list2.csv";
-		file_name2 = "../../state_rate_list2.csv";
-	}
-	else if (GLOBAL_VAR->scenario_num == 3) {
-=======
-		file_name1= "../../state_time_list1.csv";
-		file_name2= "../../state_rate_list1.csv";
-		file_name3= "../../buf_count_list1.csv";
+		file_name3 = "../../buf_count_list1.csv";
 	} else if (GLOBAL_VAR->scenario_num == 2) {
 		file_name = "../../object_state_list2.csv";
 		file_name1 = "../../state_time_list2.csv";
 		file_name2 = "../../state_rate_list2.csv";
 		file_name3 = "../../buf_count_list2.csv";
 	} else if (GLOBAL_VAR->scenario_num == 3) {
->>>>>>> 박민준
 		file_name = "../../object_state_list3.csv";
 		file_name1 = "../../state_time_list3.csv";
 		file_name2 = "../../state_rate_list3.csv";
@@ -137,11 +125,7 @@ void CGlobalVar::CsvStateTimeInsert(int pk, double current_time, double init_tim
 
 void CGlobalVar::CsvStateRateInsert(int pk, double current_time, double init_time, double active_time, double error_time, double pause_time)
 {
-<<<<<<< HEAD
-	m_file2 << scenario_num << "," << pk << "," << current_time << "," << (double)init_time / time << "," << (double)active_time / time << "," << (double)error_time / time << "," << (double)pause_time / time << "\n";
-=======
 	m_file2 << scenario_num << "," << pk << "," << current_time << "," << (double)init_time/current_time*100 << "," << (double)active_time/current_time*100 << "," << (double)error_time/current_time*100 << "," << (double)pause_time/current_time*100 << "\n";
->>>>>>> 박민준
 }
 void CGlobalVar::CsvBufferSize(int pk, std::string type, double current_time, double buffersize, double stocksize)
 {

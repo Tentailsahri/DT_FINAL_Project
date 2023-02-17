@@ -312,17 +312,6 @@ const char* Atomic_State::getModel2Str(int m_type)
 }
 
 void Atomic_State::m_dataUpdate() {
-<<<<<<< HEAD
-	if (GLOBAL_VAR->SQLConnect == true) {
-		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"object_state_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, object_state, state_start_time, state_end_time) VALUES(1, " + std::to_string(m_pk) + ", '" + getState2Str(m_modelState) + "', " + std::to_string(m_current_time) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
-	}
-	
-	timeStore[(int)m_modelState] = timeStore[(int)m_modelState]+ (WAISER->CurentSimulationTime().GetValue() - m_current_time);
-	
-	GLOBAL_VAR->CsvStateInsert(m_pk, getState2Str(m_modelState), m_current_time, WAISER->CurentSimulationTime().GetValue());
-	GLOBAL_VAR->CsvStateTimeInsert(m_pk, WAISER->CurentSimulationTime().GetValue(), timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
-	GLOBAL_VAR->CsvStateRateInsert(m_pk, WAISER->CurentSimulationTime().GetValue(), timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
-=======
 	if (WAISER->CurentSimulationTime().GetValue() < m_current_time) {
 		m_endtime = GLOBAL_VAR->time;
 	}
@@ -337,6 +326,5 @@ void Atomic_State::m_dataUpdate() {
 	GLOBAL_VAR->CsvStateTimeInsert(m_pk, m_endtime, timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
 	GLOBAL_VAR->CsvStateRateInsert(m_pk, m_endtime, timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
 	GLOBAL_VAR->CsvBufferSize(m_pk, getModel2Str(m_type), m_current_time, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer), GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->stock));
->>>>>>> 박민준
 	m_current_time = WAISER->CurentSimulationTime().GetValue();
 }
