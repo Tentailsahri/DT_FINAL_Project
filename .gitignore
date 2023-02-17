@@ -49,4 +49,9 @@ FINAL_Project/x64/Debug/Atomic_State.obj
 *.opendb
 *.db
 *.ipch
+<<<<<<< HEAD
+>>>>>>> master
+=======
+*.bin
+.vs/FINAL_Project/v17/.suo
 >>>>>>> master
