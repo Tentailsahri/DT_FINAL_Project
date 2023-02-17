@@ -52,7 +52,9 @@ public:
 	bool SQLConnect = false;
 
 	double TA_STATE_INIT[4] = { 5,5,5,5 };
-
+	double TA_STATE_ACTIVE[4] = { 5,WTime::infinity_,5,5 };
+	double TA_STATE_ERROR[4] = { 5,0,5,5 };
+	double TA_SEND_SEND_TIME[4] = { TA_STATE_ACTIVE[0] / 5, 2, TA_STATE_ACTIVE[2] / 5, 0 };
 };
 
 #define GLOBAL_VAR	(CGlobalVar::GetInstance())

@@ -43,10 +43,10 @@ public:
 	};
 
 	// 모델 TA 정의
-	double TA_STATE_GEN[4] = { 5, 5, 5, WTime::infinity_ };
-	double TA_STATE_TRACK[4] = { 5, WTime::infinity_, 0, WTime::infinity_ };
-	double TA_STATE_PROC[4] = { 5, 5, 5, WTime::infinity_ };
-	double TA_STATE_STOCK[4] = { 5, 5, 5, 0 };
+	double TA_STATE_GEN[4] = { GLOBAL_VAR->TA_STATE_INIT[0], GLOBAL_VAR->TA_STATE_ACTIVE[0], GLOBAL_VAR->TA_STATE_ERROR[0], WTime::infinity_};
+	double TA_STATE_TRACK[4] = { GLOBAL_VAR->TA_STATE_INIT[1], WTime::infinity_, 0, WTime::infinity_ };
+	double TA_STATE_PROC[4] = { GLOBAL_VAR->TA_STATE_INIT[2], GLOBAL_VAR->TA_STATE_ACTIVE[2], GLOBAL_VAR->TA_STATE_ERROR[2], WTime::infinity_ };
+	double TA_STATE_STOCK[4] = { GLOBAL_VAR->TA_STATE_INIT[3], GLOBAL_VAR->TA_STATE_ACTIVE[3], GLOBAL_VAR->TA_STATE_ERROR[3], 0 };
 
 	// 현재 모델 상태 변수
 	STATE m_modelState;

@@ -1,11 +1,17 @@
 
 <<<<<<< HEAD
 .vs/FINAL_Project/FileContentIndex/0c8c9f3c-5d8f-42f6-8e6d-f50f638a4490.vsidx
+<<<<<<< HEAD
 .vs/FINAL_Project/FileContentIndex/f7a09fe7-9824-4aa5-ae96-a723e1cb4976.vsidx
+=======
+.vs/FINAL_Project/FileContentIndex/6ac2ea45-23b6-4571-82fa-6e8b242e446e.vsidx
+.vs/FINAL_Project/FileContentIndex/79cec5cd-3f2d-4237-9081-af5dbf785951.vsidx
+>>>>>>> 안형석
 .vs/FINAL_Project/v17/Browse.VC.db
 .vs/FINAL_Project/v17/Browse.VC.db-shm
 .vs/FINAL_Project/v17/Browse.VC.db-wal
 .vs/FINAL_Project/v17/Browse.VC.opendb
+<<<<<<< HEAD
 .vs/FINAL_Project/v17/ipch/AutoPCH/6aea53ca3ac51308/ATOMIC_RECEIVE.ipch
 .vs/FINAL_Project/v17/ipch/AutoPCH/cce121e570a5f68a/GLOBALVAR.ipch
 .vs/FINAL_Project/FileContentIndex/0c8c9f3c-5d8f-42f6-8e6d-f50f638a4490.vsidx
@@ -26,10 +32,27 @@
 FINAL_Project/x64/Debug/Atomic_Receive.obj
 FINAL_Project/x64/Debug/Atomic_Send.obj
 FINAL_Project/x64/Debug/Atomic_State.obj
+=======
+.vs/FINAL_Project/v17/ipch/AutoPCH/aa78855b84084dce/ATOMIC_RECEIVE.ipch
+*.vsidx
+*.db
+*.ipch
+*.db
+.vs/FINAL_Project/v17/Browse.VC.db
+.vs/FINAL_Project/v17/.suo
+.vs/FINAL_Project/v17/Browse.VC.db
+*.db
+*.db
+*.obj
+*.ilk
+*.recipe
+*.log
+>>>>>>> 안형석
 *.tlog
 *.lastbuildstate
 *.exe
 *.exp
+<<<<<<< HEAD
 *.lib
 *.pdb
 *.idb
@@ -43,15 +66,30 @@ FINAL_Project/x64/Debug/Atomic_State.obj
 .vs/FINAL_Project/v17/fileList.bin
 *.bin
 =======
+*.pdb
+*.idb
+*.obj
+*.tlog
+*.lastbuildstate
+>>>>>>> 안형석
+=======
 *.vsidx
 *.db-shm
 *.db-wal
 *.opendb
 *.db
+<<<<<<< HEAD
+>>>>>>> master
+*.bin
+=======
 *.ipch
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> master
 =======
 *.bin
 .vs/FINAL_Project/v17/.suo
+=======
+>>>>>>> 안형석
 >>>>>>> master
+*.lib
