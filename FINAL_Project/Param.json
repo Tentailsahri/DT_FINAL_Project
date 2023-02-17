@@ -1,0 +1,27 @@
+
+{
+  "GEN_TIME": 7,
+  "SEQ_1": 25,
+  "SEQ_2": 22,
+  "SEQ_3": 24,
+  "YELLOW": 3,
+  "PLAN": 1,
+  "SEQ_TYPE": 1,
+  "RANDOM": 0,
+  "MAX_GEN_CAR": 1000
+}
+
+
+/*
+{
+  "GEN_TIME": 7,
+  "SEQ_1": 15,
+  "SEQ_2": 31,
+  "SEQ_3": 25,
+  "YELLOW": 3,
+  "PLAN": 2,
+  "SEQ_TYPE": 1,
+  "RANDOM": 0,
+  "MAX_GEN_CAR": 1000
+}
+  */
