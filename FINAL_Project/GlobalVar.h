@@ -28,6 +28,7 @@ public:
 	// CSV 출력 관련
 	void CsvMake();
 	void CsvStateInsert(int pk, std::string state, double state_start_time, double state_end_time);
+	void CsvStateTimeInsert(int pk, double current_time, double init_time, double active_time, double error_time, double pause_time);
 	void CsvFileClose();
 	
 	// SQL 연결 관련
@@ -35,6 +36,7 @@ public:
 	void Deletepgconn();
 
 	std::ofstream m_file;
+	std::ofstream m_file1;
 
 	int m_maxbuffer_Generator = 10;
 	int m_maxbuffer_Receive = 10;

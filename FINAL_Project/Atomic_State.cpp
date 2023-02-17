@@ -47,7 +47,7 @@ Atomic_State::~Atomic_State()
 // 외부 상태 천이 함수
 bool Atomic_State::ExtTransFn(const WMessage& msg) {
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
-	//m_dataUpdate();
+	m_dataUpdate();
 	switch (m_type) {
 	case 0:
 		if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
@@ -110,7 +110,7 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 // 내부 상태 천이 함수
 bool Atomic_State::IntTransFn() {
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
-	//m_dataUpdate();
+	m_dataUpdate();
 	switch (m_type) {
 	//case 0:
 	//	if (m_modelState == STATE::INIT) {
@@ -180,7 +180,7 @@ bool Atomic_State::IntTransFn() {
 // 출력 함수
 bool Atomic_State::OutputFn(WMessage& msg) {
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
-	//m_dataUpdate();
+	m_dataUpdate();
 	switch (m_type) {
 	case 0:
 		if (m_modelState == STATE::INIT) {
@@ -282,7 +282,11 @@ const char* Atomic_State::getState2Str(Atomic_State::STATE type) {
 }
 
 void Atomic_State::m_dataUpdate() {
-	GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"object_state_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, object_state, state_start_time, state_end_time) VALUES(1, " + std::to_string(m_pk) + ", '" + getState2Str(m_modelState) + "', " + std::to_string(m_current_time) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+	
+	timeStore[(int)m_modelState] = timeStore[(int)m_modelState]+ (WAISER->CurentSimulationTime().GetValue() - m_current_time);
+	
+	//GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"object_state_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, object_state, state_start_time, state_end_time) VALUES(1, " + std::to_string(m_pk) + ", '" + getState2Str(m_modelState) + "', " + std::to_string(m_current_time) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
 	GLOBAL_VAR->CsvStateInsert(m_pk, getState2Str(m_modelState), m_current_time, WAISER->CurentSimulationTime().GetValue());
+	GLOBAL_VAR->CsvStateTimeInsert(m_pk, WAISER->CurentSimulationTime().GetValue(), timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
 	m_current_time = WAISER->CurentSimulationTime().GetValue();
 }

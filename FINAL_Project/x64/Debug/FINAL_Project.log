@@ -1,4 +1,4 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(520,5): warning MSB8004: Output 디렉터리가 슬래시로 끝나지 않습니다. Output 디렉터리의 적절한 평가를 허용하는 데 필요하므로 이 빌드 인스턴스에서 슬래시를 추가합니다.
   Atomic_State.cpp
-C:\Users\KOSA\Desktop\1_ (13)\FINAL_Project\Atomic_State.cpp(282): warning C4715: 'Atomic_State::getState2Str': 모든 제어 경로에서 값을 반환하지는 않습니다.
-  FINAL_Project.vcxproj -> C:\Users\KOSA\Desktop\1_ (13)\x64\FINAL_Project.exe
+C:\Users\KOSA\Documents\GitHub\DT_FINAL_Project\FINAL_Project\Atomic_State.cpp(282): warning C4715: 'Atomic_State::getState2Str': 모든 제어 경로에서 값을 반환하지는 않습니다.
+  FINAL_Project.vcxproj -> C:\Users\KOSA\Documents\GitHub\DT_FINAL_Project\x64\FINAL_Project.exe
