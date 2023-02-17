@@ -288,5 +288,6 @@ void Atomic_State::m_dataUpdate() {
 	//GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"object_state_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, object_state, state_start_time, state_end_time) VALUES(1, " + std::to_string(m_pk) + ", '" + getState2Str(m_modelState) + "', " + std::to_string(m_current_time) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
 	GLOBAL_VAR->CsvStateInsert(m_pk, getState2Str(m_modelState), m_current_time, WAISER->CurentSimulationTime().GetValue());
 	GLOBAL_VAR->CsvStateTimeInsert(m_pk, WAISER->CurentSimulationTime().GetValue(), timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
+	GLOBAL_VAR->CsvStateRateInsert(m_pk, WAISER->CurentSimulationTime().GetValue(), timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
 	m_current_time = WAISER->CurentSimulationTime().GetValue();
 }

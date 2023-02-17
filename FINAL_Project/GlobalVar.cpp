@@ -80,23 +80,30 @@ int CGlobalVar::buffer_size(int key, std::map<int, std::queue<CProduct*>> *_buff
 void CGlobalVar::CsvMake() {
 	std::ofstream file;
 	std::ofstream file1;
+	std::ofstream file2;
 	std::string file_name;
 	std::string file_name1;
+	std::string file_name2;
 	if (GLOBAL_VAR->scenario_num == 1) {
 		file_name = "../../object_state_list1.csv";
 		file_name1= "../../state_time_list1.csv";
+		file_name2= "../../state_rate_list1.csv";
 	} else if (GLOBAL_VAR->scenario_num == 2) {
 		file_name = "../../object_state_list2.csv";
 		file_name1 = "../../state_time_list2.csv";
+		file_name2 = "../../state_rate_list2.csv";
 	} else if (GLOBAL_VAR->scenario_num == 3) {
 		file_name = "../../object_state_list3.csv";
 		file_name1 = "../../state_time_list3.csv";
+		file_name2 = "../../state_rate_list3.csv";
 	}
 	m_file.open(file_name);
 	m_file1.open(file_name1);
+	m_file2.open(file_name2);
 
 	m_file << "project_id" << "," << "object_id" << "," << "object_state" << "," << "state_start_time" << "," << "state_end_time" << "\n";
 	m_file1 << "project_id" << "," << "object_id" << "," << "current_time" << "," << "init_time" << "," << "active_time" << "," << "error_time" << "," << "pause_time" << "\n";
+	m_file2 << "project_id" << "," << "object_id" << "," << "current_time" << "," << "init_rate" << "," << "active_rate" << "," << "error_rate" << "," << "pause_rate" << "\n";
 }
 
 void CGlobalVar::CsvStateInsert(int pk, std::string state, double state_start_time, double state_end_time) {
@@ -105,6 +112,11 @@ void CGlobalVar::CsvStateInsert(int pk, std::string state, double state_start_ti
 
 void CGlobalVar::CsvStateTimeInsert(int pk, double current_time, double init_time, double active_time, double error_time, double pause_time) {
 	m_file1 << scenario_num << "," << pk << "," << current_time << "," << init_time << "," << active_time << ","<< error_time << "," << pause_time << "\n";
+}
+
+void CGlobalVar::CsvStateRateInsert(int pk, double current_time, double init_time, double active_time, double error_time, double pause_time)
+{
+	m_file2 << scenario_num << "," << pk << "," << current_time << "," << (double)init_time/time << "," << (double)active_time/time << "," << (double)error_time/time << "," << (double)pause_time/time << "\n";
 }
 
 void CGlobalVar::CsvFileClose() {
