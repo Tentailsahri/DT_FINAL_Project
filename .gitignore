@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 .vs/FINAL_Project/FileContentIndex/0c8c9f3c-5d8f-42f6-8e6d-f50f638a4490.vsidx
@@ -93,3 +94,22 @@ FINAL_Project/x64/Debug/Atomic_State.obj
 >>>>>>> 안형석
 >>>>>>> master
 *.lib
+=======
+.vs
+*.db
+.vs/FINAL_Project/v17/.suo
+>>>>>>> 박민준
+*.lock
+*.obj
+*.tlog
+*.lastbuildstate
+*.idb
+*.pdb
+*.exe
+*.exp
+*.obj
+*.recipe
+*.ilk
+*.log
+*.tlog
+*.lock
