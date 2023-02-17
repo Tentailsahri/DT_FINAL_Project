@@ -46,7 +46,10 @@ int main()
 		WAISER->Randomize();
 		// CSV파일 생성
 		GLOBAL_VAR->CsvMake();
-		//GLOBAL_VAR->Makepgconn();
+		// SQL 연결
+		if (GLOBAL_VAR->SQLConnect == true) {
+			GLOBAL_VAR->Makepgconn();
+		}
 		// 시나리오 번호
 		Cpd_Main* model = new Cpd_Main(GLOBAL_VAR->scenario_num);
 		WAISER->SetModel(model);
