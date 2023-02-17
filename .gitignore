@@ -9,3 +9,9 @@
 .vs/FINAL_Project/v17/ipch/AutoPCH/aa78855b84084dce/ATOMIC_RECEIVE.ipch
 *.vsidx
 *.db
+*.ipch
+*.db
+.vs/FINAL_Project/v17/Browse.VC.db
+.vs/FINAL_Project/v17/.suo
+.vs/FINAL_Project/v17/Browse.VC.db
+*.db

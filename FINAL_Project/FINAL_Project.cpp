@@ -41,7 +41,6 @@ int main()
 		//START_ENGINELOG;
 		//START_DEFAULT_MODELLOG;
 		
-		
 		WAISER->Reset();
 		WAISER->Randomize();
 		// CSV파일 생성
