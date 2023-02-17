@@ -5,6 +5,7 @@ CGlobalVar* CGlobalVar::pInstance_ = NULL;
 
 CGlobalVar::CGlobalVar() {
 	pgconn = nullptr;
+	
 }
 
 CGlobalVar::~CGlobalVar(void) {

@@ -323,8 +323,8 @@ void Atomic_State::m_dataUpdate() {
 	}
 	timeStore[(int)m_modelState] = timeStore[(int)m_modelState]+ (m_endtime - m_current_time);
     GLOBAL_VAR->CsvStateInsert(m_pk, getState2Str(m_modelState), m_current_time, m_endtime);
-	GLOBAL_VAR->CsvStateTimeInsert(m_pk, WAISER->CurentSimulationTime().GetValue(), timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
-	GLOBAL_VAR->CsvStateRateInsert(m_pk, WAISER->CurentSimulationTime().GetValue(), timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
+	GLOBAL_VAR->CsvStateTimeInsert(m_pk, m_endtime, timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
+	GLOBAL_VAR->CsvStateRateInsert(m_pk, m_endtime, timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
 	GLOBAL_VAR->CsvBufferSize(m_pk, getModel2Str(m_type), m_current_time, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer), GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->stock));
 	m_current_time = WAISER->CurentSimulationTime().GetValue();
 }
