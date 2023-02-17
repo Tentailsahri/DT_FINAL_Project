@@ -11,6 +11,9 @@
 .vs/FINAL_Project/v17/Browse.VC.db
 *.vsidx
 .vs/FINAL_Project/v17/Browse.VC.db
+<<<<<<< HEAD
+*.ipch
+=======
 *.pdb
 *.ipch
 *.obj
@@ -29,3 +32,10 @@ FINAL_Project/x64/Debug/Atomic_State.obj
 *.lib
 *.pdb
 *.idb
+>>>>>>> 4985c24ec456bcb56962906c54b8b6758b0a826a
+.vs/FINAL_Project/v17/.suo
+*.obj
+*.recipe
+*.ilk
+*.log
+*.tlog
