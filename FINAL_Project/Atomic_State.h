@@ -14,14 +14,14 @@ public:
 	~Atomic_State();
 	// 입력포트 정의
 	enum class IN_PORT : unsigned int {
-		PAUSE = 200,
+		WAIT = 200,
 		READY
 	};
 
 	// 출력포트 정의
 	enum class OUT_PORT : unsigned int {
 		READY = 210,
-		PAUSE,
+		WAIT,
 		ERROR_ON,
 		ERROR_OFF,
 		MAKE,
@@ -39,7 +39,7 @@ public:
 		INIT = 0,
 		ACTIVE,
 		SERROR,
-		PAUSE
+		WAIT
 	};
 
 	// 모델 TA 정의

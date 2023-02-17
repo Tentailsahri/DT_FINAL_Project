@@ -9,18 +9,18 @@ Atomic_State::Atomic_State(int type, int idx, int pk) {
 	// ≈∏¿‘ : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	switch (type) {
 	case 0:
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
+		AddInPort((unsigned int)IN_PORT::WAIT, "WAIT");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::MAKE, "MAKE");
 		break;
 	case 1:
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
+		AddInPort((unsigned int)IN_PORT::WAIT, "WAIT");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
 		break;
 	case 2:
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
+		AddInPort((unsigned int)IN_PORT::WAIT, "WAIT");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
@@ -50,8 +50,9 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 	//m_dataUpdate();
 	switch (m_type) {
 	case 0:
-		if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
+		if (msg.GetPort() == (unsigned int)IN_PORT::WAIT) {
 			if (m_modelState == STATE::ACTIVE) {
+<<<<<<< HEAD
 				m_modelState = STATE::PAUSE;
 				CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -61,6 +62,15 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
 			if (m_modelState == STATE::PAUSE) {
+=======
+				m_modelState = STATE::WAIT;
+				CLOG->info("PK: {}, idx : {} GEN WAIT, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+			} else {
+				Continue();
+			}
+		} else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
+			if (m_modelState == STATE::WAIT) {
+>>>>>>> ÏïàÌòïÏÑù
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} GEN ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -70,8 +80,9 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 		}
 		break;
 	case 1:
-		if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
+		if (msg.GetPort() == (unsigned int)IN_PORT::WAIT) {
 			if (m_modelState == STATE::ACTIVE) {
+<<<<<<< HEAD
 				m_modelState = STATE::PAUSE;
 				CLOG->info("PK: {}, idx : {} TRACK PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -81,6 +92,15 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
 			if (m_modelState == STATE::PAUSE) {
+=======
+				m_modelState = STATE::WAIT;
+				CLOG->info("PK: {}, idx : {} TRACK WAIT, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+			} else {
+				Continue();
+			}
+		} else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
+			if (m_modelState == STATE::WAIT) {
+>>>>>>> ÏïàÌòïÏÑù
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} TRACK ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -90,8 +110,9 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 		}
 		break;
 	case 2:
-		if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
+		if (msg.GetPort() == (unsigned int)IN_PORT::WAIT) {
 			if (m_modelState == STATE::ACTIVE) {
+<<<<<<< HEAD
 				m_modelState = STATE::PAUSE;
 				CLOG->info("PK: {}, idx : {} PROC PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -101,6 +122,15 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
 			if (m_modelState == STATE::PAUSE) {
+=======
+				m_modelState = STATE::WAIT;
+				CLOG->info("PK: {}, idx : {} PROC WAIT, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+			} else {
+				Continue();
+			}
+		} else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
+			if (m_modelState == STATE::WAIT) {
+>>>>>>> ÏïàÌòïÏÑù
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} PROC ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -122,6 +152,7 @@ bool Atomic_State::IntTransFn() {
 	// ≈∏¿‘ : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	//m_dataUpdate();
 	switch (m_type) {
+<<<<<<< HEAD
 		//case 0:
 		//	if (m_modelState == STATE::INIT) {
 		//		m_modelState = STATE::ACTIVE;
@@ -148,6 +179,34 @@ bool Atomic_State::IntTransFn() {
 		//		m_count = 0;
 		//	}
 		//	break;
+=======
+	//case 0:
+	//	if (m_modelState == STATE::INIT) {
+	//		m_modelState = STATE::ACTIVE;
+	//		CLOG->info("PK: {}, idx : {} GEN ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+	//	} else if (m_modelState == STATE::ACTIVE) {
+	//		m_count++;
+	//		m_genCount++;
+	//		auto genID = m_idx * 1000 + m_genCount;
+	//		CProduct* cproduct = new CProduct(genID, WAISER->CurentSimulationTime().GetValue());
+	//		CProduct* product = new CProduct(*cproduct);
+	//		CLOG->info("PK: {}, idx : {} GEN {}π¯ ¡¶«∞ ª˝ªÍ, at t = {}", m_pk, m_idx, genID,WAISER->CurentSimulationTime().GetValue());
+	//		GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
+	//		if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
+	//			m_modelState = STATE::WAIT;
+	//			CLOG->info("PK: {}, idx : {} GEN WAIT, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+	//		} else if (m_count >= GLOBAL_VAR->error_gen) {
+	//			m_modelState = STATE::SERROR;
+	//			CLOG->info("PK: {}, idx : {} GEN ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+	//			
+	//		}
+	//	} else if (m_modelState == STATE::SERROR) {
+	//		m_modelState = STATE::ACTIVE;
+	//		CLOG->info("PK: {}, idx : {} GEN ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+	//		m_count = 0;
+	//	}
+	//	break;
+>>>>>>> ÏïàÌòïÏÑù
 	case 1:
 		if (m_modelState == STATE::INIT) {
 			m_modelState = STATE::ACTIVE;
@@ -210,10 +269,16 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 			CLOG->info("PK: {}, idx : {} GEN MAKE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			msg.SetPortValue((unsigned int)(unsigned int)OUT_PORT::MAKE, nullptr);
 			if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
+<<<<<<< HEAD
 				m_modelState = STATE::PAUSE;
 				CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
 			else if (m_count >= GLOBAL_VAR->error_gen) {
+=======
+				m_modelState = STATE::WAIT;
+				CLOG->info("PK: {}, idx : {} GEN WAIT, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+			} else if (m_count >= GLOBAL_VAR->error_gen) {
+>>>>>>> ÏïàÌòïÏÑù
 				m_modelState = STATE::SERROR;
 				CLOG->info("PK: {}, idx : {} GEN ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 				msg.SetPortValue((unsigned int)(unsigned int)OUT_PORT::ERROR_ON, nullptr);
@@ -291,7 +356,7 @@ const char* Atomic_State::getState2Str(Atomic_State::STATE type) {
 		return "ACTIVE";
 	case Atomic_State::STATE::SERROR:
 		return "ERROR";
-	case Atomic_State::STATE::PAUSE:
+	case Atomic_State::STATE::WAIT:
 		return "WAIT";
 	}
 }
