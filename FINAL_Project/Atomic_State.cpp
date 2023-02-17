@@ -70,7 +70,7 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 			}
 		} else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
 			if (m_modelState == STATE::WAIT) {
->>>>>>> 안형석
+>>>>>>> ?�형??
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} GEN ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -100,7 +100,7 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 			}
 		} else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
 			if (m_modelState == STATE::WAIT) {
->>>>>>> 안형석
+>>>>>>> ?�형??
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} TRACK ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -130,7 +130,7 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 			}
 		} else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
 			if (m_modelState == STATE::WAIT) {
->>>>>>> 안형석
+>>>>>>> ?�형??
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} PROC ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -206,7 +206,7 @@ bool Atomic_State::IntTransFn() {
 	//		m_count = 0;
 	//	}
 	//	break;
->>>>>>> 안형석
+>>>>>>> ?�형??
 	case 1:
 		if (m_modelState == STATE::INIT) {
 			m_modelState = STATE::ACTIVE;
@@ -278,7 +278,7 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 				m_modelState = STATE::WAIT;
 				CLOG->info("PK: {}, idx : {} GEN WAIT, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			} else if (m_count >= GLOBAL_VAR->error_gen) {
->>>>>>> 안형석
+>>>>>>> ?�형??
 				m_modelState = STATE::SERROR;
 				CLOG->info("PK: {}, idx : {} GEN ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 				msg.SetPortValue((unsigned int)(unsigned int)OUT_PORT::ERROR_ON, nullptr);
