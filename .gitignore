@@ -16,3 +16,16 @@
 .vs/FINAL_Project/v17/Browse.VC.db
 *.db
 *.db
+*.obj
+*.ilk
+*.recipe
+*.log
+*.tlog
+*.lastbuildstate
+*.exe
+*.exp
+*.pdb
+*.idb
+*.obj
+*.tlog
+*.lastbuildstate
