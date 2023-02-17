@@ -9,18 +9,18 @@ Atomic_State::Atomic_State(int type, int idx, int pk) {
 	// Ÿ�� : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	switch (type) {
 	case 0:
-		AddInPort((unsigned int)IN_PORT::WAIT, "WAIT");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::MAKE, "MAKE");
 		break;
 	case 1:
-		AddInPort((unsigned int)IN_PORT::WAIT, "WAIT");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
 		break;
 	case 2:
-		AddInPort((unsigned int)IN_PORT::WAIT, "WAIT");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
@@ -50,8 +50,9 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 	//m_dataUpdate();
 	switch (m_type) {
 	case 0:
-		if (msg.GetPort() == (unsigned int)IN_PORT::WAIT) {
+		if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 			if (m_modelState == STATE::ACTIVE) {
+<<<<<<< HEAD
 <<<<<<< HEAD
 				m_modelState = STATE::PAUSE;
 				CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
@@ -65,12 +66,20 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 =======
 				m_modelState = STATE::WAIT;
 				CLOG->info("PK: {}, idx : {} GEN WAIT, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+=======
+				m_modelState = STATE::PAUSE;
+				CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+>>>>>>> parent of e24e3a4 (PAUSE를 WAIT로 고침)
 			} else {
 				Continue();
 			}
 		} else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
+<<<<<<< HEAD
 			if (m_modelState == STATE::WAIT) {
 >>>>>>> ?�형??
+=======
+			if (m_modelState == STATE::PAUSE) {
+>>>>>>> parent of e24e3a4 (PAUSE를 WAIT로 고침)
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} GEN ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -80,8 +89,9 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 		}
 		break;
 	case 1:
-		if (msg.GetPort() == (unsigned int)IN_PORT::WAIT) {
+		if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 			if (m_modelState == STATE::ACTIVE) {
+<<<<<<< HEAD
 <<<<<<< HEAD
 				m_modelState = STATE::PAUSE;
 				CLOG->info("PK: {}, idx : {} TRACK PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
@@ -95,12 +105,20 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 =======
 				m_modelState = STATE::WAIT;
 				CLOG->info("PK: {}, idx : {} TRACK WAIT, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+=======
+				m_modelState = STATE::PAUSE;
+				CLOG->info("PK: {}, idx : {} TRACK PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+>>>>>>> parent of e24e3a4 (PAUSE를 WAIT로 고침)
 			} else {
 				Continue();
 			}
 		} else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
+<<<<<<< HEAD
 			if (m_modelState == STATE::WAIT) {
 >>>>>>> ?�형??
+=======
+			if (m_modelState == STATE::PAUSE) {
+>>>>>>> parent of e24e3a4 (PAUSE를 WAIT로 고침)
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} TRACK ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -110,8 +128,9 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 		}
 		break;
 	case 2:
-		if (msg.GetPort() == (unsigned int)IN_PORT::WAIT) {
+		if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 			if (m_modelState == STATE::ACTIVE) {
+<<<<<<< HEAD
 <<<<<<< HEAD
 				m_modelState = STATE::PAUSE;
 				CLOG->info("PK: {}, idx : {} PROC PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
@@ -125,12 +144,20 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 =======
 				m_modelState = STATE::WAIT;
 				CLOG->info("PK: {}, idx : {} PROC WAIT, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+=======
+				m_modelState = STATE::PAUSE;
+				CLOG->info("PK: {}, idx : {} PROC PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+>>>>>>> parent of e24e3a4 (PAUSE를 WAIT로 고침)
 			} else {
 				Continue();
 			}
 		} else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
+<<<<<<< HEAD
 			if (m_modelState == STATE::WAIT) {
 >>>>>>> ?�형??
+=======
+			if (m_modelState == STATE::PAUSE) {
+>>>>>>> parent of e24e3a4 (PAUSE를 WAIT로 고침)
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} PROC ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -193,8 +220,8 @@ bool Atomic_State::IntTransFn() {
 	//		CLOG->info("PK: {}, idx : {} GEN {}�� ��ǰ ����, at t = {}", m_pk, m_idx, genID,WAISER->CurentSimulationTime().GetValue());
 	//		GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
 	//		if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
-	//			m_modelState = STATE::WAIT;
-	//			CLOG->info("PK: {}, idx : {} GEN WAIT, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+	//			m_modelState = STATE::PAUSE;
+	//			CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 	//		} else if (m_count >= GLOBAL_VAR->error_gen) {
 	//			m_modelState = STATE::SERROR;
 	//			CLOG->info("PK: {}, idx : {} GEN ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
@@ -270,6 +297,7 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 			msg.SetPortValue((unsigned int)(unsigned int)OUT_PORT::MAKE, nullptr);
 			if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 				m_modelState = STATE::PAUSE;
 				CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -277,6 +305,10 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 =======
 				m_modelState = STATE::WAIT;
 				CLOG->info("PK: {}, idx : {} GEN WAIT, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+=======
+				m_modelState = STATE::PAUSE;
+				CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+>>>>>>> parent of e24e3a4 (PAUSE를 WAIT로 고침)
 			} else if (m_count >= GLOBAL_VAR->error_gen) {
 >>>>>>> ?�형??
 				m_modelState = STATE::SERROR;
@@ -356,7 +388,7 @@ const char* Atomic_State::getState2Str(Atomic_State::STATE type) {
 		return "ACTIVE";
 	case Atomic_State::STATE::SERROR:
 		return "ERROR";
-	case Atomic_State::STATE::WAIT:
+	case Atomic_State::STATE::PAUSE:
 		return "WAIT";
 	}
 }
