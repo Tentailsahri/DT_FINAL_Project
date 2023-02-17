@@ -39,3 +39,5 @@ FINAL_Project/x64/Debug/Atomic_State.obj
 *.ilk
 *.log
 *.tlog
+.vs/FINAL_Project/v17/fileList.bin
+*.bin
