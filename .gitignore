@@ -5,3 +5,5 @@
 *.opendb
 *.db
 *.ipch
+*.bin
+.vs/FINAL_Project/v17/.suo
