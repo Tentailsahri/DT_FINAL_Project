@@ -39,7 +39,7 @@ public:
 		INIT = 0,
 		ACTIVE,
 		SERROR,
-		PAUSE
+		WAIT
 	};
 
 	// ¸ðµ¨ TA Á¤ÀÇ

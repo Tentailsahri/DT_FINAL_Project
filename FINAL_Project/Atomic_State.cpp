@@ -55,7 +55,7 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 	case 0:
 		if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 			if (m_modelState == STATE::ACTIVE) {
-				m_modelState = STATE::PAUSE;
+				m_modelState = STATE::WAIT;
 				CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
 			else {
@@ -63,7 +63,7 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 			}
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
-			if (m_modelState == STATE::PAUSE) {
+			if (m_modelState == STATE::WAIT) {
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} GEN ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -75,7 +75,7 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 	case 1:
 		if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 			if (m_modelState == STATE::ACTIVE) {
-				m_modelState = STATE::PAUSE;
+				m_modelState = STATE::WAIT;
 				CLOG->info("PK: {}, idx : {} TRACK PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
 			else {
@@ -83,7 +83,7 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 			}
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
-			if (m_modelState == STATE::PAUSE) {
+			if (m_modelState == STATE::WAIT) {
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} TRACK ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -95,7 +95,7 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 	case 2:
 		if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 			if (m_modelState == STATE::ACTIVE) {
-				m_modelState = STATE::PAUSE;
+				m_modelState = STATE::WAIT;
 				CLOG->info("PK: {}, idx : {} PROC PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
 			else {
@@ -103,7 +103,7 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 			}
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
-			if (m_modelState == STATE::PAUSE) {
+			if (m_modelState == STATE::WAIT) {
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} PROC ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -211,7 +211,7 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 			CLOG->info("PK: {}, idx : {} GEN MAKE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			msg.SetPortValue((unsigned int)(unsigned int)OUT_PORT::MAKE, nullptr);
 			if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
-				m_modelState = STATE::PAUSE;
+				m_modelState = STATE::WAIT;
 				CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
 			else if (m_count >= GLOBAL_VAR->error_gen) {
@@ -292,7 +292,7 @@ const char* Atomic_State::getState2Str(Atomic_State::STATE type) {
 		return "ACTIVE";
 	case Atomic_State::STATE::SERROR:
 		return "ERROR";
-	case Atomic_State::STATE::PAUSE:
+	case Atomic_State::STATE::WAIT:
 		return "WAIT";
 	}
 }
