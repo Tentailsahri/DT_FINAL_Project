@@ -206,10 +206,10 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 			auto genID = m_idx * 1000 + m_genCount;
 			CProduct* cproduct = new CProduct(genID, WAISER->CurentSimulationTime().GetValue());
 			CProduct* product = new CProduct(*cproduct);
-			product->m_curpk = m_pk;
+			product->m_curPk = m_pk;
 			product->m_curType = "GEN";
 			CLOG->info("PK: {}, idx : {} GEN {}번 제품 생산, at t = {}", m_pk, m_idx, genID, WAISER->CurentSimulationTime().GetValue());
-			CLOG->info("curpk={} curtype={}", product->m_curpk, product->m_curType);
+			CLOG->info("curPk={} curtype={}", product->m_curPk, product->m_curType);
 			GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
 			CLOG->info("PK: {}, idx : {} GEN MAKE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			msg.SetPortValue((unsigned int)(unsigned int)OUT_PORT::MAKE, nullptr);
