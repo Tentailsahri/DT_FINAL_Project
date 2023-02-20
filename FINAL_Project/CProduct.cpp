@@ -2,9 +2,9 @@
 
 CProduct::CProduct(int genID, double genTime)
 {
-	m_pastIdx = -1;
+	m_pastpk = -1;
 	m_pastType = "NONE";
-	m_curIdx = -2;;
+	m_curpk = -2;;
 	m_curType = "NONE";
 	m_genID = genID;
 	m_genIdx = -1;
@@ -19,9 +19,9 @@ CProduct::CProduct(int genID, double genTime)
 */
 CProduct::CProduct(CProduct& copy)
 {
-	m_pastIdx = copy.m_pastIdx;
+	m_pastpk = copy.m_pastpk;
 	m_pastType = copy.m_pastType;
-	m_curIdx = copy.m_curIdx;
+	m_curpk = copy.m_curpk;
 	m_curType = copy.m_curType;
 	m_genID = copy.m_genID;
 	m_genIdx = copy.m_genIdx;

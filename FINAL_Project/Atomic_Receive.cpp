@@ -45,7 +45,12 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 				CProduct* cproduct = (CProduct*)msg.GetValue();
 				CProduct* product = new CProduct(*cproduct);
 				product->m_passTime = WAISER->CurentSimulationTime().GetValue();
+				product->m_pastpk = product->m_curpk;
+				product->m_pastType = product->m_curType;
+				product->m_curpk = m_pk;
+				product->m_curType = "TRACK";
 				CLOG->info("PK: {}, idx : {} TRACK {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+				CLOG->info("pastpk={} pastType={} curpk={} curtype={}", product->m_pastpk, product->m_pastType, product->m_curpk, product->m_curType);
 				GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
 				
 				m_modelState = STATE::DECISION;
@@ -61,6 +66,11 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 			if (m_modelState == STATE::RECEIVE) {
 				CProduct* cproduct = (CProduct*)msg.GetValue();
 				CProduct* product = new CProduct(*cproduct);
+				product->m_pastpk = product->m_curpk;
+				product->m_pastType = product->m_curType;
+				product->m_curpk = m_pk;
+				product->m_curType = "PROC";
+				CLOG->info("pastpk={} pastType={} curpk={} curtype={}", product->m_pastpk, product->m_pastType, product->m_curpk, product->m_curType);
 				GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
 				CLOG->info("PK: {}, idx : {} PROC {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 
@@ -78,6 +88,11 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 			if (m_modelState == STATE::RECEIVE) {
 				CProduct* cproduct = (CProduct*)msg.GetValue();
 				CProduct* product = new CProduct(*cproduct);
+				product->m_pastpk = product->m_curpk;
+				product->m_pastType = product->m_curType;
+				product->m_curpk = m_pk;
+				product->m_curType = "STOCK";
+				CLOG->info("pastpk={} pastType={} curpk={} curtype={}", product->m_pastpk, product->m_pastType, product->m_curpk, product->m_curType);
 				GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
 				CLOG->info("PK: {}, idx : {} STOCK {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 				m_modelState = STATE::DECISION;
