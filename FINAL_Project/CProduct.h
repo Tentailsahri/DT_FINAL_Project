@@ -6,11 +6,11 @@ class CProduct : public WObject
 {
 public:
 	// 과거 설비 인덱스
-	int m_pastpk;
+	int m_pastPk;
 	// 과거 설비 타입
 	std::string m_pastType;
 	// 현재 설비 인덱스
-	int m_curpk;
+	int m_curPk;
 	// 현재 설비 타입
 	std::string m_curType;
 	// 제네레이터 생산 번호
