@@ -319,12 +319,15 @@ void Atomic_State::m_dataUpdate() {
 		m_endtime = WAISER->CurentSimulationTime().GetValue();
 	}
 	if (GLOBAL_VAR->SQLConnect == true) {
-		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"object_state_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, object_state, state_start_time, state_end_time) VALUES(1, " + std::to_string(m_pk) + ", '" + getState2Str(m_modelState) + "', " + std::to_string(m_current_time) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"object_state_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, object_state, state_start_time, state_end_time) VALUES(1, " + std::to_string(m_pk) + ", '" + getState2Str(m_modelState) + "', " + std::to_string(m_current_time) + ", " + std::to_string(m_endtime) + ")");
+		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"state_time_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, \"current_time\", init_time, active_time, error_time, wait_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(m_endtime) + ", " + std::to_string(timeStore[0]) + ", " + std::to_string(timeStore[1]) + ", " + std::to_string(timeStore[2]) + ", " + std::to_string(timeStore[3]) + ")");
+		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"state_rate_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, \"current_time\", init_rate, active_rate, error_rate, wait_rate) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(m_endtime) + ", " + std::to_string(100*timeStore[0]/m_endtime) + ", " + std::to_string(100*timeStore[1]/m_endtime) + ", " + std::to_string(100*timeStore[2]/m_endtime) + ", " + std::to_string(100*timeStore[3]/m_endtime) + ")");
+		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"buf_count_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, object_type, \"current_time\", buffer_count, stock_count) VALUES(1, " + std::to_string(m_pk) + ", '" + getModel2Str(m_type) + "', " + std::to_string(m_endtime) + ", " + std::to_string(GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) + ", " + std::to_string(GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->stock))+")");
 	}
 	timeStore[(int)m_modelState] = timeStore[(int)m_modelState]+ (m_endtime - m_current_time);
     GLOBAL_VAR->CsvStateInsert(m_pk, getState2Str(m_modelState), m_current_time, m_endtime);
 	GLOBAL_VAR->CsvStateTimeInsert(m_pk, m_endtime, timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
 	GLOBAL_VAR->CsvStateRateInsert(m_pk, m_endtime, timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
-	GLOBAL_VAR->CsvBufferSize(m_pk, getModel2Str(m_type), m_current_time, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer), GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->stock));
+	GLOBAL_VAR->CsvBufferSize(m_pk, getModel2Str(m_type), m_endtime, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer), GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->stock));
 	m_current_time = WAISER->CurentSimulationTime().GetValue();
 }
