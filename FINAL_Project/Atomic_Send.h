@@ -22,7 +22,8 @@ public:
 
 	// 출력포트 정의
 	enum class OUT_PORT : unsigned int {
-		PRODUCT = 310
+		PRODUCT = 310,
+	
 	};
 
 	// DEVS 함수 재정의

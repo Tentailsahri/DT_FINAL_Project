@@ -7,6 +7,12 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 	// 입,출력 포트 설정
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	switch (type) {
+	case 0:
+		AddInPort((unsigned int)IN_PORT::PRODUCT, "PRODUCT");
+		AddInPort((unsigned int)IN_PORT::SEND, "SEND");
+		AddOutPort((unsigned int)OUT_PORT::PAUSE, "PAUSE");
+		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
+		break;
 	case 1:
 		AddInPort((unsigned int)IN_PORT::PRODUCT, "PRODUCT");
 		AddInPort((unsigned int)IN_PORT::SEND, "SEND");
@@ -39,6 +45,21 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 // 외부 상태 천이 함수
 bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 	switch (m_type) {
+	case 0:
+		if (msg.GetPort() == (unsigned int)IN_PORT::PRODUCT) {
+			if (m_modelState == STATE::RECEIVE) {
+				m_modelState = STATE::DECISION;
+			}
+			else Continue();
+		}
+		else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
+			if (m_modelState == STATE::FULL) {
+				m_modelState = STATE::DECISION;
+			}
+			else Continue();
+		}
+		else Continue();
+		break;
 	case 1:
 		if (msg.GetPort() == (unsigned int)IN_PORT::PRODUCT) {
 			if (m_modelState == STATE::RECEIVE) {
@@ -118,6 +139,18 @@ bool Atomic_Receive::IntTransFn() {
 // 출력 함수
 bool Atomic_Receive::OutputFn(WMessage& msg) {
 	switch (m_type) {
+	case 0:
+		if (m_modelState == STATE::DECISION) {
+			if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) {
+				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
+				m_modelState = STATE::FULL;
+			}
+			else if (GLOBAL_VAR->m_maxbuffer_Receive > GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) {
+				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
+				m_modelState = STATE::RECEIVE;
+			}
+		}
+		break;
 	case 1:
 		if (m_modelState == STATE::DECISION) {
 			CLOG->info("PK: {}, idx : {} TRACK Buffer size {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer));
