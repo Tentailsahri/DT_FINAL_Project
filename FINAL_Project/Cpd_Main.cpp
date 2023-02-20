@@ -25,9 +25,46 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		coupProcTrack(proc, track1);
 		coupTrackStock(track1, stock);
 
-	} else if (scenario_num == 2) {
-
-	} else if (scenario_num == 3) {
+	} 
+	else if (scenario_num == 2) {
+		// 모델 생성
+		std::vector<WCoupModel*> gen_cpd_vec;
+		std::vector<WCoupModel*> track_cpd_vec;
+		std::vector<WCoupModel*> proc_cpd_vec;
+		std::vector<WCoupModel*> stock_cpd_vec;
+		for (int i = 0; i < 3; i++) {
+			gen_cpd_vec.push_back(new Cpd_GEN(i, i));
+			AddComponent(gen_cpd_vec.at(i));
+		}
+		for (int i = 0; i < 6; i++) {
+			track_cpd_vec.push_back(new Cpd_TRACK(i, i + 3));
+			AddComponent(track_cpd_vec.at(i));
+		}
+		for (int i = 0; i < 2; i++) {
+			proc_cpd_vec.push_back(new Cpd_PROC(i, i + 9));
+			AddComponent(proc_cpd_vec.at(i));
+		}
+		for (int i = 0; i < 2; i++) {
+			stock_cpd_vec.push_back(new Cpd_STOCK(i, i + 11));
+			AddComponent(stock_cpd_vec.at(i));
+		}
+		// 생성한 모델 연결
+		
+		// 모델 포트 연결
+		coupGenTrack(gen_cpd_vec.at(0), track_cpd_vec.at(0));
+		coupGenTrack(gen_cpd_vec.at(1), track_cpd_vec.at(1));
+		coupTrackProc(track_cpd_vec.at(0), proc_cpd_vec.at(0));
+		coupTrackProc(track_cpd_vec.at(1), proc_cpd_vec.at(0));
+		coupProcTrack(proc_cpd_vec.at(0), track_cpd_vec.at(2));
+		coupTrackProc(track_cpd_vec.at(2), proc_cpd_vec.at(1));
+		coupGenTrack(gen_cpd_vec.at(2), track_cpd_vec.at(3));
+		coupTrackProc(track_cpd_vec.at(3), proc_cpd_vec.at(1));
+		coupProcTrack(proc_cpd_vec.at(1), track_cpd_vec.at(4));
+		coupProcTrack(proc_cpd_vec.at(1), track_cpd_vec.at(5));
+		coupTrackStock(track_cpd_vec.at(4), stock_cpd_vec.at(0));
+		coupTrackStock(track_cpd_vec.at(5), stock_cpd_vec.at(1));
+	} 
+	else if (scenario_num == 3) {
 
 	}
 
