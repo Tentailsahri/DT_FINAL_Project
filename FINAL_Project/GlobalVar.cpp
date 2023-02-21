@@ -148,12 +148,16 @@ void CGlobalVar::ResetTable()
 		"(project_id integer,	object_id integer, object_state character varying(50) COLLATE pg_catalog.\"default\",	\
 		state_start_time double precision, \
 		state_end_time double precision, \
-		CONSTRAINT object_state_list_object_id_fk FOREIGN KEY(object_id)	\
-		REFERENCES public.object_list1(object_id) MATCH SIMPLE	\
+		CONSTRAINT object_state_list" + std::to_string(scenario_num) + \
+		"_object_id_fk FOREIGN KEY(object_id)	\
+		REFERENCES public.object_list" + std::to_string(scenario_num) + \
+		"(object_id)MATCH SIMPLE	\
 		ON UPDATE NO ACTION	\
 		ON DELETE NO ACTION, \
-		CONSTRAINT object_state_list_project_id_fk FOREIGN KEY(project_id)	\
-		REFERENCES public.project_list1(project_id) MATCH SIMPLE	\
+		CONSTRAINT object_state_list" + std::to_string(scenario_num) + \
+		"_project_id_fk FOREIGN KEY(project_id)	\
+		REFERENCES public.project_list" + std::to_string(scenario_num) + \
+		"(project_id)MATCH SIMPLE	\
 		ON UPDATE NO ACTION	\
 		ON DELETE NO ACTION	\
 	)");
@@ -164,12 +168,16 @@ void CGlobalVar::ResetTable()
 		\"current_time\" double precision, \
 		buffer_count integer, \
 		stock_count integer, \
-		CONSTRAINT buf_count_list1_object_id_fk FOREIGN KEY(object_id) \
-		REFERENCES public.object_list1(object_id) MATCH SIMPLE \
+		CONSTRAINT buf_count_list" + std::to_string(scenario_num) + \
+		"_object_id_fk FOREIGN KEY(object_id) \
+		REFERENCES public.object_list" + std::to_string(scenario_num) + \
+		"(object_id) MATCH SIMPLE \
 		ON UPDATE NO ACTION \
 		ON DELETE NO ACTION, \
-		CONSTRAINT buf_count_list1_project_id_fk FOREIGN KEY(project_id) \
-		REFERENCES public.project_list1(project_id) MATCH SIMPLE \
+		CONSTRAINT buf_count_list" + std::to_string(scenario_num) + \
+		"_project_id_fk FOREIGN KEY(project_id) \
+		REFERENCES public.project_list" + std::to_string(scenario_num) + \
+		"(project_id)MATCH SIMPLE \
 		ON UPDATE NO ACTION \
 		ON DELETE NO ACTION \
 	)");
@@ -181,12 +189,16 @@ void CGlobalVar::ResetTable()
 		active_time double precision, \
 		error_time double precision, \
 		wait_time double precision, \
-		CONSTRAINT state_time_list1_object_id_fk FOREIGN KEY(object_id) \
-		REFERENCES public.object_list1(object_id) MATCH SIMPLE \
+		CONSTRAINT state_time_list" + std::to_string(scenario_num) + \
+		"_object_id_fk FOREIGN KEY(object_id) \
+		REFERENCES public.object_list" + std::to_string(scenario_num) + \
+		"(object_id)MATCH SIMPLE \
 		ON UPDATE NO ACTION \
 		ON DELETE NO ACTION, \
-		CONSTRAINT state_time_list1_project_id_fk FOREIGN KEY(project_id) \
-		REFERENCES public.project_list1(project_id) MATCH SIMPLE \
+		CONSTRAINT state_time_list" + std::to_string(scenario_num) + \
+		"_project_id_fk FOREIGN KEY(project_id) \
+		REFERENCES public.project_list" + std::to_string(scenario_num) + \
+		"(project_id)MATCH SIMPLE \
 		ON UPDATE NO ACTION \
 		ON DELETE NO ACTION \
 	)");
@@ -198,12 +210,16 @@ void CGlobalVar::ResetTable()
 		active_rate double precision, \
 		error_rate double precision, \
 		wait_rate double precision, \
-		CONSTRAINT state_rate_list1_object_id_fk FOREIGN KEY(object_id) \
-		REFERENCES public.object_list1(object_id) MATCH SIMPLE \
+		CONSTRAINT state_rate_list" + std::to_string(scenario_num) + \
+		"_object_id_fk FOREIGN KEY(object_id) \
+		REFERENCES public.object_list" + std::to_string(scenario_num) + \
+		"(object_id)MATCH SIMPLE \
 		ON UPDATE NO ACTION \
 		ON DELETE NO ACTION, \
-		CONSTRAINT state_rate_list1_project_id_fk FOREIGN KEY(project_id) \
-		REFERENCES public.project_list1(project_id) MATCH SIMPLE \
+		CONSTRAINT state_rate_list" + std::to_string(scenario_num) + \
+		"_project_id_fk FOREIGN KEY(project_id) \
+		REFERENCES public.project_list" + std::to_string(scenario_num) + \
+		"(project_id)MATCH SIMPLE \
 		ON UPDATE NO ACTION \
 		ON DELETE NO ACTION \
 	)");
