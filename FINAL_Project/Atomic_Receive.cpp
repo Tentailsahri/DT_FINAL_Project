@@ -141,6 +141,7 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 	switch (m_type) {
 	case 0:
 		if (m_modelState == STATE::DECISION) {
+			CLOG->info("PK: {}, idx : {} GEN Buffer size {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer));
 			if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
 				m_modelState = STATE::FULL;

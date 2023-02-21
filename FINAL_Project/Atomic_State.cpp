@@ -11,6 +11,7 @@ Atomic_State::Atomic_State(int type, int idx, int pk) {
 	case 0:
 		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::POP, "POP");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::MAKE, "MAKE");
@@ -18,10 +19,12 @@ Atomic_State::Atomic_State(int type, int idx, int pk) {
 	case 1:
 		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::POP, "POP");
 		break;
 	case 2:
 		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::POP, "POP");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
 		break;
@@ -71,6 +74,8 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 				Continue();
 			}
 		}
+		else Continue();
+		
 		break;
 	case 1:
 		if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
@@ -91,6 +96,7 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 				Continue();
 			}
 		}
+		else Continue();
 		break;
 	case 2:
 		if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
@@ -212,6 +218,7 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 			CLOG->info("curPk={} curtype={}", product->m_curPk, product->m_curType);
 			GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
 			CLOG->info("PK: {}, idx : {} GEN MAKE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+			CLOG->info("GEN BUFFER SIZE : {} at {}", GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer), WAISER->CurentSimulationTime().GetValue());
 			msg.SetPortValue((unsigned int)(unsigned int)OUT_PORT::MAKE, nullptr);
 			if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
 				m_modelState = STATE::WAIT;

@@ -17,7 +17,8 @@ public:
 		READY,
 		MAKE,
 		ERROR_ON,
-		ERROR_OFF
+		ERROR_OFF,
+		RECEIVE
 	};
 
 	// 출력포트 정의
