@@ -17,11 +17,13 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	case 1:
 		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::RECEIVE, "RECEIVE");
 		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 		break;
 	case 2:
 		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::RECEIVE, "RECEIVE");
 		AddInPort((unsigned int)IN_PORT::ERROR_ON, "ERROR_ON");
 		AddInPort((unsigned int)IN_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
@@ -80,7 +82,7 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 		else Continue();
 		break;
 	case 1:
-		if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
+		if (msg.GetPort() == (unsigned int)IN_PORT::RECEIVE) {
 			if (m_modelState == STATE::WAIT) {
 				if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) == 1) {
 					m_modelState = STATE::SEND;
@@ -89,8 +91,11 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 					m_modelState = STATE::PENDING;
 				}
 			}
-			else if (m_modelState == STATE::PAUSE) {
-				m_modelState = STATE::SEND;
+		    else Continue();
+		}
+		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
+			if (m_modelState == STATE::PAUSE) {
+			m_modelState = STATE::SEND;
 			}
 			else Continue();
 		}
@@ -101,7 +106,7 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 		}
 		break;
 	case 2:
-		if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
+		if (msg.GetPort() == (unsigned int)IN_PORT::RECEIVE) {
 			if (m_modelState == STATE::WAIT) {
 
 				if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) == 1) {
@@ -111,7 +116,11 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 					m_modelState = STATE::PENDING;
 				}
 			}
-			else if (m_modelState == STATE::PAUSE) {
+			
+			else Continue();
+		}
+		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
+			if (m_modelState == STATE::PAUSE) {
 				m_modelState = STATE::SEND;
 			}
 			else Continue();

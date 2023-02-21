@@ -15,7 +15,8 @@ public:
 	// 입력포트 정의
 	enum class IN_PORT : unsigned int {
 		PAUSE = 200,
-		READY
+		READY,
+		POP
 	};
 
 	// 출력포트 정의

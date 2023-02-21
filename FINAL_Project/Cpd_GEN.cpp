@@ -30,5 +30,6 @@ Cpd_GEN::Cpd_GEN(int gen_idx, int pk) {
 	AddCoupling(State, (unsigned int)Atomic_State::OUT_PORT::MAKE, Send, (unsigned int)Atomic_Send::IN_PORT::MAKE);
 	AddCoupling(State, (unsigned int)Atomic_State::OUT_PORT::MAKE, receive, (unsigned int)Atomic_Receive::IN_PORT::PRODUCT);
 	AddCoupling(Send, (unsigned int)Atomic_Send::OUT_PORT::PRODUCT, receive, (unsigned int)Atomic_Receive::IN_PORT::SEND);
+	AddCoupling(Send, (unsigned int)Atomic_Send::OUT_PORT::PRODUCT, State, (unsigned int)Atomic_State::IN_PORT::POP);
 
 }
