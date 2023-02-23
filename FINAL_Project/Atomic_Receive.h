@@ -37,10 +37,12 @@ public:
 		RECEIVE = 0,
 		DECISION,
 		FULL,
+		INIT,
+		READYMAP
 	};
 
 	// 모델 TA 정의
-	double TA_STATE[3] = { WTime::infinity_, 0, WTime::infinity_};
+	double TA_STATE[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[2], 0};
 
 	// 현재 모델 상태 변수
 	STATE m_modelState;

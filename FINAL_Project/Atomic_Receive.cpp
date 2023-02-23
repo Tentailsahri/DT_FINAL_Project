@@ -34,7 +34,10 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 	}
 
 	// 초기 모델 상태 설정
-	m_modelState = STATE::RECEIVE;
+	if (type == 2) {
+		m_modelState = STATE::INIT;
+	}
+	else m_modelState = STATE::RECEIVE;
 	// 모델 변수 초기화
 	m_type = type;
 	m_idx = idx;
@@ -133,6 +136,13 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 
 // 내부 상태 천이 함수
 bool Atomic_Receive::IntTransFn() {
+	switch (m_type) {
+	case 2:
+		if (m_modelState == STATE::INIT) {
+			m_modelState = STATE::RECEIVE;
+		}
+		break;
+	}
 	return true;
 }
 
