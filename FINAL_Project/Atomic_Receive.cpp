@@ -156,7 +156,7 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
 				m_modelState = STATE::FULL;
 			}
-			else if (GLOBAL_VAR->m_maxbuffer_Receive > GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) {
+			else if (GLOBAL_VAR->m_maxbuffer_Generator > GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
 				m_modelState = STATE::RECEIVE;
 			}
@@ -181,7 +181,7 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
 				
 				m_modelState = STATE::RECEIVE;
-			} else if ((GLOBAL_VAR->m_maxbuffer_Receive <= GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer))) {
+			} else if (GLOBAL_VAR->m_maxbuffer_Process <= GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
 				m_modelState = STATE::FULL;
 			}
@@ -194,7 +194,7 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
 				
 				m_modelState = STATE::RECEIVE;
-			} else if ((GLOBAL_VAR->m_maxbuffer_Receive <= GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer))) {
+			} else if ((GLOBAL_VAR->m_maxbuffer_Stock <= GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer))) {
 				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
 				m_modelState = STATE::FULL;
 			}

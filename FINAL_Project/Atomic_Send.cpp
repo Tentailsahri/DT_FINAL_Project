@@ -64,7 +64,7 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			}
 			else Continue();
 		}
-		else if (msg.GetPort() == (unsigned int)IN_PORT::ERROR_ON) {
+		else if (msg.GetPort() == (unsigned int)IN_PORT::ERROR_ON) {	
 			if (m_modelState == STATE::WAIT || m_modelState == STATE::SEND) {
 				m_modelState = STATE::SERROR;
 			}

@@ -51,8 +51,6 @@ public:
 	int m_type;
 	// 설비 인덱스
 	int m_idx;
-	// FULL 구분용
-	
 	// pk
 	int m_pk;
 };
