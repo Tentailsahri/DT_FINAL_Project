@@ -53,5 +53,7 @@ public:
 	int m_idx;
 	// pk
 	int m_pk;
+
+	static const char* getModel2Str(int model_type);
 };
 

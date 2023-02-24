@@ -34,10 +34,9 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 	}
 
 	// 초기 모델 상태 설정
-	if (type == 2) {
-		m_modelState = STATE::INIT;
-	}
-	else m_modelState = STATE::RECEIVE;
+	
+	m_modelState = STATE::INIT;
+	
 	// 모델 변수 초기화
 	m_type = type;
 	m_idx = idx;
@@ -47,36 +46,20 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 
 // 외부 상태 천이 함수
 bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
-	switch (m_type) {
-	case 0:
-		if (msg.GetPort() == (unsigned int)IN_PORT::PRODUCT) {
+	if (msg.GetPort() == (unsigned int)IN_PORT::PRODUCT) {
 			if (m_modelState == STATE::RECEIVE) {
-				m_modelState = STATE::DECISION;
-			}
-			else Continue();
-		}
-		else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
-			if (m_modelState == STATE::FULL) {
-				m_modelState = STATE::DECISION;
-			}
-			else Continue();
-		}
-		else Continue();
-		break;
-	case 1:
-		if (msg.GetPort() == (unsigned int)IN_PORT::PRODUCT) {
-			if (m_modelState == STATE::RECEIVE) {
-				CProduct* cproduct = (CProduct*)msg.GetValue();
-				CProduct* product = new CProduct(*cproduct);
-				product->m_passTime = WAISER->CurentSimulationTime().GetValue();
-				product->m_pastPk = product->m_curPk;
-				product->m_pastType = product->m_curType;
-				product->m_curPk = m_pk;
-				product->m_curType = "TRACK";
-				CLOG->info("PK: {}, idx : {} TRACK {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
-				CLOG->info("pastPk={} pastType={} curPk={} curtype={}", product->m_pastPk, product->m_pastType, product->m_curPk, product->m_curType);
-				GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
-				
+				if (m_type != 0) {
+					CProduct* cproduct = (CProduct*)msg.GetValue();
+					CProduct* product = new CProduct(*cproduct);
+					product->m_passTime = WAISER->CurentSimulationTime().GetValue();
+					product->m_pastPk = product->m_curPk;
+					product->m_pastType = product->m_curType;
+					product->m_curPk = m_pk;
+					product->m_curType = getModel2Str(m_type);
+					CLOG->info("PK: {}, idx : {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_curType, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("pastPk={} pastType={} curPk={} curtype={}", product->m_pastPk, product->m_pastType, product->m_curPk, product->m_curType);
+					GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
+				}
 				m_modelState = STATE::DECISION;
 			}
 		}  else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
@@ -84,65 +67,16 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 				m_modelState = STATE::DECISION;
 			}
 		} 
-		break;
-	case 2:
-		if (msg.GetPort() == (unsigned int)IN_PORT::PRODUCT) {
-			if (m_modelState == STATE::RECEIVE) {
-				CProduct* cproduct = (CProduct*)msg.GetValue();
-				CProduct* product = new CProduct(*cproduct);
-				product->m_pastPk = product->m_curPk;
-				product->m_pastType = product->m_curType;
-				product->m_curPk = m_pk;
-				product->m_curType = "PROC";
-				CLOG->info("pastPk={} pastType={} curPk={} curtype={}", product->m_pastPk, product->m_pastType, product->m_curPk, product->m_curType);
-				GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
-				CLOG->info("PK: {}, idx : {} PROC {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
-
-				m_modelState = STATE::DECISION;
-			}
-		} else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
-			if (m_modelState == STATE::FULL) {
-				m_modelState = STATE::DECISION;
-			}
-		} 
-		else Continue();
-		break;
-	case 3:
-		if (msg.GetPort() == (unsigned int)IN_PORT::PRODUCT) {
-			if (m_modelState == STATE::RECEIVE) {
-				CProduct* cproduct = (CProduct*)msg.GetValue();
-				CProduct* product = new CProduct(*cproduct);
-				product->m_pastPk = product->m_curPk;
-				product->m_pastType = product->m_curType;
-				product->m_curPk = m_pk;
-				product->m_curType = "STOCK";
-				CLOG->info("pastPk={} pastType={} curPk={} curtype={}", product->m_pastPk, product->m_pastType, product->m_curPk, product->m_curType);
-				GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
-				CLOG->info("PK: {}, idx : {} STOCK {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
-				m_modelState = STATE::DECISION;
-			}
-		}
-		else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
-			if (m_modelState == STATE::FULL) {
-				m_modelState = STATE::DECISION;
-			}
-		}
 		
-		break;
-	}
-
 	return true;
 }
 
 // 내부 상태 천이 함수
 bool Atomic_Receive::IntTransFn() {
-	switch (m_type) {
-	case 2:
-		if (m_modelState == STATE::INIT) {
+	
+	if (m_modelState == STATE::INIT) {
 			m_modelState = STATE::RECEIVE;
 		}
-		break;
-	}
 	return true;
 }
 
@@ -208,4 +142,18 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 // TA함수
 WTime Atomic_Receive::TimeAdvanceFn() {
 	return TA_STATE[(int)m_modelState];
+}
+
+const char* Atomic_Receive::getModel2Str(int m_type)
+{
+	switch (m_type) {
+	case 0:
+		return "GEN";
+	case 1:
+		return "TRACK";
+	case 2:
+		return "PROC";
+	case 3:
+		return "STOCK";
+	}
 }

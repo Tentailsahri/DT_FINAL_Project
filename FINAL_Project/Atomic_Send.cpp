@@ -28,10 +28,12 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 		AddInPort((unsigned int)IN_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 		break;
+	case 3:
+		AddInPort((unsigned int)IN_PORT::RECEIVE, "RECEIVE");
+		AddInPort((unsigned int)IN_PORT::ERROR_ON, "ERROR_ON");
+		AddInPort((unsigned int)IN_PORT::ERROR_OFF, "ERROR_OFF");
+		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 	}
-	AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
-	AddInPort((unsigned int)IN_PORT::READY, "READY");
-	AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 	// 초기 모델 상태 설정
 	m_modelState = STATE::WAIT;
 	// 모델 변수 초기화
@@ -143,8 +145,40 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 				m_modelState = STATE::WAIT;
 			}
 			else Continue();
-			break;
+			
 		}
+		break;
+	case 3:
+		if (msg.GetPort() == (unsigned int)IN_PORT::RECEIVE) {
+			if (m_modelState == STATE::WAIT) {
+				if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) == 1) {
+					m_modelState = STATE::SEND;
+				}
+				else if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) > 1) {
+					m_modelState = STATE::PENDING;
+				}
+			}
+			else if (msg.GetPort() == (unsigned int)IN_PORT::ERROR_ON) {
+				if (m_modelState == STATE::WAIT || m_modelState == STATE::SEND) {
+					m_modelState = STATE::SERROR;
+				}
+				else Continue();
+			}
+			else if (msg.GetPort() == (unsigned int)IN_PORT::ERROR_OFF) {
+				if (m_modelState == STATE::SERROR && GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) != 0) {
+					m_modelState = STATE::SEND;
+				}
+				else if (m_modelState == STATE::SERROR && GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) == 0) {
+					m_modelState = STATE::WAIT;
+				}
+				else Continue();
+
+			}
+			else Continue();
+		}
+		
+		break;
+
 	}
 		return true;
 	
@@ -152,24 +186,12 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 
 // 내부 상태 천이 함수
 bool Atomic_Send::IntTransFn() {
-	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
-	switch (m_type) {
-	case 0:
+	
+	
 		if (m_modelState == STATE::PENDING) {
 			m_modelState = STATE::SEND;
 		}
-		break;
-	case 1:
-		if (m_modelState == STATE::PENDING) {
-			m_modelState = STATE::SEND;
-		}
-		break;
-	case 2:
-		if (m_modelState == STATE::PENDING) {
-			m_modelState = STATE::SEND;
-		}
-		break;
-	}
+	
 
 	return true;
 }
@@ -178,36 +200,63 @@ bool Atomic_Send::IntTransFn() {
 bool Atomic_Send::OutputFn(WMessage& msg) {
 	if (m_modelState == STATE::SEND) {
 		if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) == 1) {
-			CProduct* product = GLOBAL_VAR->popmap(m_pk, &GLOBAL_VAR->buffer);
-			msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
-			m_modelState = STATE::WAIT;
-			switch (m_type) {
-			case 0:
-				CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
-				break;
-			case 1:
-				CLOG->info("PK: {}, idx : {} TRACK {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
-				break;
-			case 2:
-				CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
-				break;
+			if (m_type == 3) {
+				
+					CProduct* product = GLOBAL_VAR->popmap(m_pk, &GLOBAL_VAR->buffer);
+					GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->stock);
+					auto a = GLOBAL_VAR->stockback(m_pk, &GLOBAL_VAR->stock);
+					CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->stock));
+					if (a != nullptr) {
+						CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
+					}
+				
 			}
+			else {
+				CProduct* product = GLOBAL_VAR->popmap(m_pk, &GLOBAL_VAR->buffer);
+				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
+				switch (m_type) {
+				case 0:
+					CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+					break;
+				case 1:
+					CLOG->info("PK: {}, idx : {} TRACK {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+					break;
+				case 2:
+					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+					break;
+				}
+			}
+			m_modelState = STATE::WAIT;
 		}
 		else if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) > 1) {
-			CProduct* product = GLOBAL_VAR->popmap(m_pk, &GLOBAL_VAR->buffer);
-			msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
-			m_modelState = STATE::PENDING;
-			switch (m_type) {
-			case 0:
-				CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
-				break;
-			case 1:
-				CLOG->info("PK: {}, idx : {} TRACK {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
-				break;
-			case 2:
-				CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
-				break;
+			if (m_type == 3) {
+
+				CProduct* product = GLOBAL_VAR->popmap(m_pk, &GLOBAL_VAR->buffer);
+				GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->stock);
+				auto a = GLOBAL_VAR->stockback(m_pk, &GLOBAL_VAR->stock);
+				CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->stock));
+				if (a != nullptr) {
+					CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
+				}
+
 			}
+			else {
+				CProduct* product = GLOBAL_VAR->popmap(m_pk, &GLOBAL_VAR->buffer);
+				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
+				
+				switch (m_type) {
+				case 0:
+					CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+					break;
+				case 1:
+					CLOG->info("PK: {}, idx : {} TRACK {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+					break;
+				case 2:
+					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+					break;
+				}
+			}
+			m_modelState = STATE::PENDING;
 		}
 	}
 	return true;
@@ -238,6 +287,9 @@ WTime Atomic_Send::TimeAdvanceFn() {
 		break;
 	case 2:
 		return TA_STATE_PROC[(int)m_modelState];
+		break;
+	case 3:
+		return TA_STATE_STOCK[(int)m_modelState];
 		break;
 	default:
 		return 0;

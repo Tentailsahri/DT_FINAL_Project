@@ -3,6 +3,7 @@
 #include "CProduct.h"
 #include "Atomic_Receive.h"
 #include "Atomic_State.h"
+#include "Atomic_Send.h"
 
 class Cpd_STOCK : public WCoupModel	//Ä¿ÇÃ¸ðµ¨
 {

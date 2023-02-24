@@ -29,7 +29,8 @@ Atomic_State::Atomic_State(int type, int idx, int pk) {
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
 		break;
 	case 3:
-		AddOutPort((unsigned int)OUT_PORT::SEND, "SEND");
+		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
+		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
 		break;
 	}
 	// 초기 모델 상태 설정
@@ -170,15 +171,6 @@ bool Atomic_State::IntTransFn() {
 		}
 		else if (m_modelState == STATE::ACTIVE) {
 			m_count++;
-			if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) != 0) {
-				CProduct* product = GLOBAL_VAR->popmap(m_pk, &GLOBAL_VAR->buffer);
-				GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->stock);
-				auto a = GLOBAL_VAR->stockback(m_pk, &GLOBAL_VAR->stock);
-				CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->stock));
-				if (a != nullptr) {
-					CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
-				}
-			}
 			if (m_count >= GLOBAL_VAR->error_stock) {
 				m_modelState = STATE::SERROR;
 				CLOG->info("PK: {}, idx : {} STOCK ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
@@ -261,9 +253,25 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 		}
 		break;
 	case 3:
-		if (m_modelState == STATE::ACTIVE) {
-			msg.SetPortValue((unsigned int)(unsigned int)OUT_PORT::SEND, nullptr);
+		if (m_modelState == STATE::INIT) {
+			m_modelState = STATE::ACTIVE;
+			CLOG->info("PK: {}, idx : {} STOCK ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 		}
+		else if (m_modelState == STATE::ACTIVE) {
+			m_count++;
+			if (m_count >= GLOBAL_VAR->error_stock) {
+				m_modelState = STATE::SERROR;
+				CLOG->info("PK: {}, idx : {} STOCK ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+				msg.SetPortValue((unsigned int)OUT_PORT::ERROR_ON, nullptr);
+			}
+		}
+		else if (m_modelState == STATE::SERROR) {
+			m_modelState = STATE::ACTIVE;
+			CLOG->info("PK: {}, idx : {} STOCK ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+			msg.SetPortValue((unsigned int)OUT_PORT::ERROR_OFF, nullptr);
+			m_count = 0;
+		}
+
 		break;
 	}
 

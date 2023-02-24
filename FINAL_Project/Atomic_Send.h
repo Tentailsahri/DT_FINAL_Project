@@ -46,6 +46,7 @@ public:
 	double TA_STATE_GEN[5] = { WTime::infinity_, GLOBAL_VAR->TA_SEND_SEND_TIME[0], 0, WTime::infinity_, WTime::infinity_ };
 	double TA_STATE_TRACK[4] = { WTime::infinity_, GLOBAL_VAR->TA_SEND_SEND_TIME[1], 0, WTime::infinity_};
 	double TA_STATE_PROC[5] = { WTime::infinity_, GLOBAL_VAR->TA_SEND_SEND_TIME[2], 0, WTime::infinity_ , WTime::infinity_};
+	double TA_STATE_STOCK[5] = { WTime::infinity_, GLOBAL_VAR->TA_SEND_SEND_TIME[2], 0, 0 , WTime::infinity_ };
 
 	// 현재 모델 상태 변수
 	STATE m_modelState;
