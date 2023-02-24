@@ -58,7 +58,7 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 					product->m_curType = getModel2Str(m_type);
 					CLOG->info("PK: {}, idx : {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_curType, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					CLOG->info("pastPk={} pastType={} curPk={} curtype={}", product->m_pastPk, product->m_pastType, product->m_curPk, product->m_curType);
-					GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
+					GLOBAL_VAR->pushmbuffer(0, m_pk, product, &GLOBAL_VAR->p_buffer);
 				}
 				m_modelState = STATE::DECISION;
 			}
@@ -85,12 +85,12 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 	switch (m_type) {
 	case 0:
 		if (m_modelState == STATE::DECISION) {
-			CLOG->info("PK: {}, idx : {} GEN Buffer size {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer));
-			if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) {
+			CLOG->info("PK: {}, idx : {} GEN Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer));
+			if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
 				m_modelState = STATE::FULL;
 			}
-			else if (GLOBAL_VAR->m_maxbuffer_Generator > GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) {
+			else if (GLOBAL_VAR->m_maxbuffer_Generator > GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
 				m_modelState = STATE::RECEIVE;
 			}
@@ -98,11 +98,11 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 		break;
 	case 1:
 		if (m_modelState == STATE::DECISION) {
-			CLOG->info("PK: {}, idx : {} TRACK Buffer size {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer));
-			if (GLOBAL_VAR->m_maxbuffer_Receive > GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) {
+			CLOG->info("PK: {}, idx : {} TRACK Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer));
+			if (GLOBAL_VAR->m_maxbuffer_Receive > GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
 				m_modelState = STATE::RECEIVE;
-			} else if((GLOBAL_VAR->m_maxbuffer_Receive <= GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer))){
+			} else if(GLOBAL_VAR->m_maxbuffer_Receive <= GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer)){
 				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
 				m_modelState = STATE::FULL;
 			}
@@ -110,12 +110,12 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 		break;
 	case 2:
 		if (m_modelState == STATE::DECISION) {
-			CLOG->info("PK: {}, idx : {} PROC Buffer size {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer));
-			if (GLOBAL_VAR->m_maxbuffer_Process > GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) {
+			CLOG->info("PK: {}, idx : {} PROC Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer));
+			if (GLOBAL_VAR->m_maxbuffer_Process > GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
 				
 				m_modelState = STATE::RECEIVE;
-			} else if (GLOBAL_VAR->m_maxbuffer_Process <= GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) {
+			} else if (GLOBAL_VAR->m_maxbuffer_Process <= GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
 				m_modelState = STATE::FULL;
 			}
@@ -123,12 +123,12 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 		break;
 	case 3:
 		if (m_modelState == STATE::DECISION) {
-			CLOG->info("PK: {}, idx : {} STOCK Buffer size {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer));
-			if (GLOBAL_VAR->m_maxbuffer_Stock > GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)) {
+			CLOG->info("PK: {}, idx : {} STOCK Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer));
+			if (GLOBAL_VAR->m_maxbuffer_Stock > GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
 				
 				m_modelState = STATE::RECEIVE;
-			} else if ((GLOBAL_VAR->m_maxbuffer_Stock <= GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer))) {
+			} else if (GLOBAL_VAR->m_maxbuffer_Stock <= GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
 				m_modelState = STATE::FULL;
 			}
