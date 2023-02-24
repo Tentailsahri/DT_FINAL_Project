@@ -204,13 +204,14 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 			if (m_type == 3) {
 				
 					CProduct* product = GLOBAL_VAR->popmap(m_pk, &GLOBAL_VAR->buffer);
+					
 					GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->stock);
 					auto a = GLOBAL_VAR->stockback(m_pk, &GLOBAL_VAR->stock);
 					CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->stock));
 					if (a != nullptr) {
 						CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 					}
-				
+					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
 			}
 			else {
 				CProduct* product = GLOBAL_VAR->popmap(m_pk, &GLOBAL_VAR->buffer);
@@ -233,13 +234,14 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 			if (m_type == 3) {
 
 				CProduct* product = GLOBAL_VAR->popmap(m_pk, &GLOBAL_VAR->buffer);
+				
 				GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->stock);
 				auto a = GLOBAL_VAR->stockback(m_pk, &GLOBAL_VAR->stock);
 				CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->stock));
 				if (a != nullptr) {
 					CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 				}
-
+				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
 			}
 			else {
 				CProduct* product = GLOBAL_VAR->popmap(m_pk, &GLOBAL_VAR->buffer);
