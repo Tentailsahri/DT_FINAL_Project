@@ -17,6 +17,12 @@ public:
 	std::map<int, std::queue<CProduct*>> procbuffer;
 	std::map<int, std::queue<CProduct*>> stock;
 
+	std::map<int, std::map<int, std::queue<CProduct*>>> m_buffer;
+
+	void pushmbuffer(int idx, int key, CProduct* product, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
+	CProduct* popmbuffer(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
+	CProduct* frontmbuffer(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
+	int mbuffer_size(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
 	void pushmap(int key, CProduct* product, std::map<int, std::queue<CProduct*>> *_buffer);
 	CProduct* popmap(int key, std::map<int, std::queue<CProduct*>> *_buffer);
 	CProduct* stockback(int key, std::map<int, std::queue<CProduct*>> *_stock);
@@ -45,7 +51,7 @@ public:
 
 	int m_maxbuffer_Generator = 10;
 	int m_maxbuffer_Receive = 10;
-	int m_maxbuffer_Process = 3;
+	int m_maxbuffer_Process = 10;
 	int m_maxbuffer_Stock = 10;
 	int	scenario_num = 1;
 	int track_speed = 1;
@@ -54,14 +60,14 @@ public:
 	int error_gen = 5;
 	int error_proc = 5;
 	int error_stock = 5;
-	int time = 100;
+	int time = 500;
 
 	bool SQLConnect = false;
 
 	double TA_STATE_INIT[4] = { 5,5,5,5 };
-	double TA_STATE_ACTIVE[4] = { 5,WTime::infinity_,5,5 };
-	double TA_STATE_ERROR[4] = { 5,0,5,5 };
-	double TA_SEND_SEND_TIME[4] = { TA_STATE_ACTIVE[0] / 5, 2, TA_STATE_ACTIVE[2], 0 };
+	double TA_STATE_ACTIVE[4] = { 0.1,WTime::infinity_,5,5 };
+	double TA_STATE_ERROR[4] = { 0.1,0,5,5 };
+	double TA_SEND_SEND_TIME[4] = { TA_STATE_ACTIVE[0] / 5, 2, 0.1, TA_STATE_ACTIVE[3] };
 };
 
 #define GLOBAL_VAR	(CGlobalVar::GetInstance())

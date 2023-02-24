@@ -18,6 +18,81 @@ CGlobalVar* CGlobalVar::GetInstance() {
 	return pInstance_;
 }
 
+void CGlobalVar::pushmbuffer(int idx, int key, CProduct* product, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
+{
+	std::map<int, std::map<int, std::queue<CProduct*>>>::iterator map_find_result = mbuffer->find(idx);
+	if (map_find_result != mbuffer->end()) {
+		std::map<int, std::queue<CProduct*>>::iterator map_find_result1 = mbuffer->at(idx).find(key);
+		if (map_find_result1 != mbuffer->at(idx).end()) {
+			mbuffer->at(idx).at(key).push(product);
+		}
+		else {
+			std::queue<CProduct*> m_buffer;
+			std::pair<int, std::queue<CProduct*>> tmp_pair = std::make_pair(key, m_buffer);
+			mbuffer->at(idx).insert(tmp_pair);
+			mbuffer->at(idx).at(key).push(product);
+		}
+	}
+	else {
+		std::queue<CProduct*> m_buffer;
+		std::map<int, std::queue<CProduct*>> _buffer;
+		std::pair<int, std::queue<CProduct*>> tmp_pair = std::make_pair(key, m_buffer);
+		_buffer.insert(tmp_pair);
+		std::pair<int, std::map<int, std::queue<CProduct*>>> tmp_pair2 = std::make_pair(idx, _buffer);
+		mbuffer->insert(tmp_pair2);
+		mbuffer->at(idx).at(key).push(product);
+	}
+}
+
+CProduct* CGlobalVar::popmbuffer(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
+{
+	CProduct* product;
+	std::map<int, std::map<int, std::queue<CProduct*>>>::iterator map_find_result = mbuffer->find(idx);
+	if (map_find_result != mbuffer->end()) {
+		std::map<int, std::queue<CProduct*>>::iterator map_find_result1 = mbuffer->at(idx).find(key);
+		if (map_find_result1 != mbuffer->at(idx).end()) {
+			product = mbuffer->at(idx).at(key).front();
+			mbuffer->at(idx).at(key).pop();
+			return product;
+		}
+		else return nullptr;
+	}
+	else return nullptr;
+	
+}
+
+CProduct* CGlobalVar::frontmbuffer(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
+{
+	CProduct* product;
+	std::map<int, std::map<int, std::queue<CProduct*>>>::iterator map_find_result = mbuffer->find(idx);
+	if (map_find_result != mbuffer->end()) {
+		std::map<int, std::queue<CProduct*>>::iterator map_find_result1 = mbuffer->at(idx).find(key);
+		if (map_find_result1 != mbuffer->at(idx).end()) {
+			product = mbuffer->at(idx).at(key).front();
+			return product;
+		}
+		else return nullptr;
+	}
+	else return nullptr;
+}
+
+int CGlobalVar::mbuffer_size(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
+{
+	
+	std::map<int, std::map<int, std::queue<CProduct*>>>::iterator map_find_result = mbuffer->find(idx);
+	if (map_find_result != mbuffer->end()) {
+		std::map<int, std::queue<CProduct*>>::iterator map_find_result1 = mbuffer->at(idx).find(key);
+		if (map_find_result1 != mbuffer->at(idx).end()) {
+			return mbuffer->at(idx).at(key).size();
+			
+		}
+		else return 0;
+	}
+	else return 0;
+	
+}
+
+
 void CGlobalVar::pushmap(int key, CProduct* product, std::map<int, std::queue<CProduct*>>* _buffer)
 {
 	std::map<int, std::queue<CProduct*>>::iterator map_find_result = _buffer->find(key);
