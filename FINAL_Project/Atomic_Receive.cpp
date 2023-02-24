@@ -56,7 +56,7 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 					product->m_pastType = product->m_curType;
 					product->m_curPk = m_pk;
 					product->m_curType = getModel2Str(m_type);
-					CLOG->info("PK: {}, idx : {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_curType, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("PK: {}, idx : {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_curType, product->m_genPk, WAISER->CurentSimulationTime().GetValue());
 					CLOG->info("pastPk={} pastType={} curPk={} curtype={}", product->m_pastPk, product->m_pastType, product->m_curPk, product->m_curType);
 					GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
 				}
