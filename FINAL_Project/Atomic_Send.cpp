@@ -109,12 +109,10 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 		if (msg.GetPort() == (unsigned int)IN_PORT::RECEIVE) {
 			if (m_modelState == STATE::WAIT) {
 
-				if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) == 1) {
+				if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= 1) {
 					m_modelState = STATE::SEND;
 				}
-				else if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) > 1) {
-					m_modelState = STATE::PENDING;
-				}
+				else Continue();
 			}
 			
 			else Continue();
@@ -126,7 +124,7 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
-			if (m_modelState == STATE::PENDING || m_modelState == STATE::SEND) {
+			if (m_modelState == STATE::SEND) {
 				m_modelState = STATE::PAUSE;
 			}
 			else Continue();
