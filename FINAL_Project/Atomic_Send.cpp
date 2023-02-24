@@ -47,22 +47,22 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 	switch (m_type) {
 	case 0:
 		if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
-			if (m_modelState == STATE::PAUSE) {
+			if (m_modelState == STATE::PAUSE && GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer)!=0) {
 				m_modelState = STATE::SEND;
+			}
+			else if (m_modelState == STATE::PAUSE && GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) == 0) {
+				m_modelState = STATE::WAIT;
 			}
 			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
-			if (m_modelState == STATE::PENDING || m_modelState == STATE::SEND || m_modelState == STATE::WAIT) {
+			if (m_modelState == STATE::SEND || m_modelState == STATE::WAIT) {
 				m_modelState = STATE::PAUSE;
 			}
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::MAKE) {
-			if (m_modelState == STATE::WAIT && GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) == 1) {
+			if (m_modelState == STATE::WAIT && GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= 1) {
 				m_modelState = STATE::SEND;
-			}
-			else if (m_modelState == STATE::WAIT && GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) > 1) {
-				m_modelState = STATE::PENDING;
 			}
 			else Continue();
 		}
@@ -86,23 +86,23 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 	case 1:
 		if (msg.GetPort() == (unsigned int)IN_PORT::RECEIVE) {
 			if (m_modelState == STATE::WAIT) {
-				if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) == 1) {
+				if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= 1) {
 					m_modelState = STATE::SEND;
-				}
-				else if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) > 1) {
-					m_modelState = STATE::PENDING;
 				}
 			}
 		    else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
-			if (m_modelState == STATE::PAUSE) {
-			m_modelState = STATE::SEND;
+			if (m_modelState == STATE::PAUSE && GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) != 0) {
+				m_modelState = STATE::SEND;
+			}
+			else if (m_modelState == STATE::PAUSE && GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) == 0) {
+				m_modelState = STATE::WAIT;
 			}
 			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
-			if (m_modelState == STATE::PENDING || m_modelState == STATE::SEND) {
+			if (m_modelState == STATE::WAIT || m_modelState == STATE::SEND) {
 				m_modelState = STATE::PAUSE;
 			}
 		}
@@ -120,13 +120,16 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
-			if (m_modelState == STATE::PAUSE) {
+			if (m_modelState == STATE::PAUSE && GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) != 0) {
 				m_modelState = STATE::SEND;
+			}
+			else if (m_modelState == STATE::PAUSE && GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) == 0) {
+				m_modelState = STATE::WAIT;
 			}
 			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
-			if (m_modelState == STATE::SEND) {
+			if (m_modelState==STATE::WAIT || m_modelState == STATE::SEND) {
 				m_modelState = STATE::PAUSE;
 			}
 			else Continue();
@@ -151,12 +154,10 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 	case 3:
 		if (msg.GetPort() == (unsigned int)IN_PORT::RECEIVE) {
 			if (m_modelState == STATE::WAIT) {
-				if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) == 1) {
+				if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= 1) {
 					m_modelState = STATE::SEND;
 				}
-				else if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) > 1) {
-					m_modelState = STATE::PENDING;
-				}
+				else Continue();
 			}
 			else if (msg.GetPort() == (unsigned int)IN_PORT::ERROR_ON) {
 				if (m_modelState == STATE::WAIT || m_modelState == STATE::SEND) {
