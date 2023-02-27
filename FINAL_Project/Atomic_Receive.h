@@ -46,8 +46,7 @@ public:
 
 	// 현재 모델 상태 변수
 	STATE m_modelState;
-	CProduct* m_product;
-
+	CProduct* product;
 	// 설비 타입
 	int m_type;
 	// 설비 인덱스
