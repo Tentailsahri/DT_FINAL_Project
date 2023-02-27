@@ -47,14 +47,16 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 	m_type = type;
 	m_idx = idx;
 	m_pk = pk;
-	GLOBAL_VAR->ReadyMapPush(m_pk, false);
+	GLOBAL_VAR->readymap[m_pk] = false;
 }
 
 // 외부 상태 천이 함수
 bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
+	
 	if (msg.GetPort() == (unsigned int)IN_PORT::PRODUCT) {
 		if (m_modelState == STATE::RECEIVE) {
-			if (m_type != 0) {
+			
+		 if (m_type != 0) {
 				CProduct* cproduct = (CProduct*)msg.GetValue();
 				product = new CProduct(*cproduct);
 				product->m_passTime = WAISER->CurentSimulationTime().GetValue();
@@ -68,19 +70,21 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 			}
 			m_modelState = STATE::DECISION;
 		}
-	} else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
-			if (m_modelState == STATE::FULL) {
-				m_modelState = STATE::DECISION;
-			}
-		} 
-		else if (m_type!=3 && msg.GetPort() == (unsigned int)IN_PORT::READY) {
-		GLOBAL_VAR->ReadyMapPush(m_pk, true);
-		m_modelState = STATE::READYMAP;
+	}
+	else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
+		if (m_modelState == STATE::FULL) {
+			m_modelState = STATE::DECISION;
 		}
-		else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
-		GLOBAL_VAR->ReadyMapPush(m_pk, false);
+	}
+	else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::READY) {
+		GLOBAL_VAR->readymap[m_pk] = true;
 		m_modelState = STATE::READYMAP;
 	}
+	else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
+		GLOBAL_VAR->readymap[m_pk] = false;
+		m_modelState = STATE::READYMAP;
+	}
+	else Continue();
 	return true;
 }
 
@@ -94,18 +98,18 @@ bool Atomic_Receive::IntTransFn() {
 			m_modelState = STATE::FULL;
 		}
 	}
+	
 	return true;
 }
 
 // 출력 함수
 bool Atomic_Receive::OutputFn(WMessage& msg) {
-	if (m_modelState == STATE::INIT) {
-		msg.SetPortValue((unsigned int)OUT_PORT::READY, product);
-		m_modelState = STATE::RECEIVE;
-	}
 	switch (m_type) {
 	case 0:
-		if (m_modelState == STATE::DECISION) {
+		if (m_modelState == STATE::INIT) {
+			m_modelState = STATE::RECEIVE;
+		}
+	else if (m_modelState == STATE::DECISION) {
 			CLOG->info("PK: {}, idx : {} GEN Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
 			if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
@@ -116,9 +120,14 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 				m_modelState = STATE::RECEIVE;
 			}
 		}
+		
 		break;
 	case 1:
-		if (m_modelState == STATE::DECISION) {
+		if (m_modelState == STATE::INIT) {
+			m_modelState = STATE::RECEIVE;
+
+		}
+		else if (m_modelState == STATE::DECISION) {
 			CLOG->info("PK: {}, idx : {} TRACK Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
 			if (GLOBAL_VAR->m_maxbuffer_Receive > GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
@@ -128,9 +137,14 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 				m_modelState = STATE::FULL;
 			}
 		}
+		
 		break;
 	case 2:
-		if (m_modelState == STATE::DECISION) {
+		if (m_modelState == STATE::INIT) {
+			m_modelState = STATE::RECEIVE;
+
+		}
+		else if (m_modelState == STATE::DECISION) {
 			CLOG->info("PK: {}, idx : {} PROC Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
 			if (GLOBAL_VAR->m_maxbuffer_Process > GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
@@ -141,8 +155,13 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 				m_modelState = STATE::FULL;
 			}
 		}
+		
 		break;
 	case 3:
+		if (m_modelState == STATE::INIT) {
+			m_modelState = STATE::RECEIVE;
+
+		}
 		if (m_modelState == STATE::DECISION) {
 			CLOG->info("PK: {}, idx : {} STOCK Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
 			if (GLOBAL_VAR->m_maxbuffer_Stock > GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer)) {
@@ -154,6 +173,7 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 				m_modelState = STATE::FULL;
 			}
 		}
+		
 		break;
 	}
 
@@ -162,7 +182,23 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 
 // TA함수
 WTime Atomic_Receive::TimeAdvanceFn() {
-	return TA_STATE[(int)m_modelState];
+	switch (m_type) {
+	case 0:
+		return TA_STATE_GEN[(int)m_modelState];
+		break;
+	case 1:
+		return TA_STATE_TRACK[(int)m_modelState];
+		break;
+	case 2:
+		return TA_STATE_PROC[(int)m_modelState];
+		break;
+	case 3:
+		return TA_STATE_STOCK[(int)m_modelState];
+		break;
+	default:
+		return 0;
+
+	}
 }
 
 const char* Atomic_Receive::getModel2Str(int m_type)
