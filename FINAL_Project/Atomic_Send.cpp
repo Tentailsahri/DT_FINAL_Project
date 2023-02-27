@@ -35,7 +35,7 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 	}
 	// 초기 모델 상태 설정
-	next = nullptr;
+	
 	m_modelState = STATE::WAIT;
 	// 모델 변수 초기화
 	m_type = type;
@@ -48,20 +48,16 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 	if (m_type != 3) {
 		if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
 			if (m_modelState == STATE::PAUSE) {
-				CProduct* cnext = (CProduct*)msg.GetValue();
-				next = new CProduct(*cnext);
-				if (GLOBAL_VAR->readymap.at(next->m_curPk) == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
+				if (GLOBAL_VAR->ShowReadyMap(m_pk) == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
 					m_modelState = STATE::SEND;
-				} else if (GLOBAL_VAR->readymap.at(next->m_curPk) == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+				} else if (GLOBAL_VAR->ShowReadyMap(m_pk) == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
 					m_modelState = STATE::WAIT;
 				} else Continue();
 			}
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 			if ((m_modelState == STATE::SEND || m_modelState == STATE::WAIT)) {
-				CProduct* cnext = (CProduct*)msg.GetValue();
-				next = new CProduct(*cnext);
-				if (GLOBAL_VAR->readymap.at(next->m_curPk) == false) {
+				if (GLOBAL_VAR->ShowReadyMap(m_pk) == false) {
 					m_modelState = STATE::PAUSE;
 				} else Continue();
 			}
@@ -124,8 +120,9 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
+					m_modelState = STATE::WAIT;
 			}
-			else {
+			else if(GLOBAL_VAR->ShowReadyMap(m_pk)==true) {
 				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 				switch (m_type) {
@@ -139,8 +136,9 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					break;
 				}
+				m_modelState = STATE::WAIT;
 			}
-			m_modelState = STATE::WAIT;
+			
 		}
 		else if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) > 1) {
 			if (m_type == 3) {
@@ -154,8 +152,9 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 				}
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
+				m_modelState = STATE::PENDING;
 			}
-			else {
+			else if (GLOBAL_VAR->ShowReadyMap(m_pk)==true) {
 				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 				
@@ -170,8 +169,9 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					break;
 				}
+				m_modelState = STATE::PENDING;
 			}
-			m_modelState = STATE::PENDING;
+			
 		}
 	}
 	return true;
