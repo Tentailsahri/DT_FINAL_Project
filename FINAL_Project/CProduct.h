@@ -17,7 +17,7 @@ public:
 	// 제네레이터 생산 번호 규칙은 제네레이터 인덱스 * 1000 + 제네레이터 생산 카운트
 	int m_genID;
 	// 제네레이터 인덱스
-	int m_genIdx;
+	int m_genPk;
 	// 생성 시간
 	double m_genTime;
 	// 통과 시간
