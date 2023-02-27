@@ -48,7 +48,6 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 	m_idx = idx;
 	m_pk = pk;
 	GLOBAL_VAR->ReadyMapPush(m_pk, false);
-	rf = 0;
 }
 
 // 외부 상태 천이 함수
@@ -75,17 +74,10 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 			}
 		} 
 		else if (m_type!=3 && msg.GetPort() == (unsigned int)IN_PORT::READY) {
-		if (m_modelState == STATE::RECEIVE) {
-			rf = 0;
-		}
-		else rf = 1;
 		GLOBAL_VAR->ReadyMapPush(m_pk, true);
 		m_modelState = STATE::READYMAP;
 		}
 		else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
-		if (m_modelState == STATE::RECEIVE) {
-			rf = 0;
-		} else rf = 1;
 		GLOBAL_VAR->ReadyMapPush(m_pk, false);
 		m_modelState = STATE::READYMAP;
 	}
@@ -95,10 +87,10 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 // 내부 상태 천이 함수
 bool Atomic_Receive::IntTransFn() {
 	if (m_modelState == STATE::READYMAP) {
-		if (rf == 0) {
+		if (GLOBAL_VAR->m_maxbuffer_Generator > GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 			m_modelState = STATE::RECEIVE;
 		}
-		else if (rf == 1) {
+		else if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 			m_modelState = STATE::FULL;
 		}
 	}
