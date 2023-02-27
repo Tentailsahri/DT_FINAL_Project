@@ -18,7 +18,7 @@ CGlobalVar* CGlobalVar::GetInstance() {
 	return pInstance_;
 }
 
-void CGlobalVar::pushmbuffer(int idx, int key, CProduct* product, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
+void CGlobalVar::mBufferPush(int idx, int key, CProduct* product, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
 {
 	std::map<int, std::map<int, std::queue<CProduct*>>>::iterator map_find_result = mbuffer->find(idx);
 	if (map_find_result != mbuffer->end()) {
@@ -44,7 +44,7 @@ void CGlobalVar::pushmbuffer(int idx, int key, CProduct* product, std::map<int, 
 	}
 }
 
-CProduct* CGlobalVar::popmbuffer(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
+CProduct* CGlobalVar::mBufferPop(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
 {
 	CProduct* product;
 	std::map<int, std::map<int, std::queue<CProduct*>>>::iterator map_find_result = mbuffer->find(idx);
@@ -61,7 +61,7 @@ CProduct* CGlobalVar::popmbuffer(int idx, int key, std::map<int, std::map<int, s
 	
 }
 
-CProduct* CGlobalVar::frontmbuffer(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
+CProduct* CGlobalVar::mBufferFront(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
 {
 	CProduct* product;
 	std::map<int, std::map<int, std::queue<CProduct*>>>::iterator map_find_result = mbuffer->find(idx);
@@ -76,7 +76,7 @@ CProduct* CGlobalVar::frontmbuffer(int idx, int key, std::map<int, std::map<int,
 	else return nullptr;
 }
 
-int CGlobalVar::mbuffer_size(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
+int CGlobalVar::mBufferSize(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
 {
 	
 	std::map<int, std::map<int, std::queue<CProduct*>>>::iterator map_find_result = mbuffer->find(idx);
@@ -93,7 +93,7 @@ int CGlobalVar::mbuffer_size(int idx, int key, std::map<int, std::map<int, std::
 }
 
 
-void CGlobalVar::pushmap(int key, CProduct* product, std::map<int, std::queue<CProduct*>>* _buffer)
+void CGlobalVar::MapPush(int key, CProduct* product, std::map<int, std::queue<CProduct*>>* _buffer)
 {
 	std::map<int, std::queue<CProduct*>>::iterator map_find_result = _buffer->find(key);
 	if (map_find_result != _buffer->end()) {
@@ -107,7 +107,7 @@ void CGlobalVar::pushmap(int key, CProduct* product, std::map<int, std::queue<CP
 	}
 }
 
-CProduct* CGlobalVar::popmap(int key, std::map<int, std::queue<CProduct*>>* _buffer)
+CProduct* CGlobalVar::MapPop(int key, std::map<int, std::queue<CProduct*>>* _buffer)
 {
 	CProduct* product;
 	std::map<int, std::queue<CProduct*>>::iterator map_find_result = _buffer->find(key);
@@ -120,7 +120,7 @@ CProduct* CGlobalVar::popmap(int key, std::map<int, std::queue<CProduct*>>* _buf
 
 }
 
-CProduct* CGlobalVar::frontmap(int key, std::map<int, std::queue<CProduct*>>* _buffer)
+CProduct* CGlobalVar::MapFront(int key, std::map<int, std::queue<CProduct*>>* _buffer)
 {
 	CProduct* product;
 	std::map<int, std::queue<CProduct*>>::iterator map_find_result = _buffer->find(key);
@@ -131,7 +131,7 @@ CProduct* CGlobalVar::frontmap(int key, std::map<int, std::queue<CProduct*>>* _b
 	else return nullptr;
 }
 
-CProduct* CGlobalVar::stockback(int key, std::map<int, std::queue<CProduct*>>* _stock)
+CProduct* CGlobalVar::StockBack(int key, std::map<int, std::queue<CProduct*>>* _stock)
 {
 	CProduct* product;
 	std::map<int, std::queue<CProduct*>>::iterator map_find_result = _stock->find(key);
@@ -143,7 +143,7 @@ CProduct* CGlobalVar::stockback(int key, std::map<int, std::queue<CProduct*>>* _
 
 }
 
-int CGlobalVar::buffer_size(int key, std::map<int, std::queue<CProduct*>>* _buffer)
+int CGlobalVar::BufferSize(int key, std::map<int, std::queue<CProduct*>>* _buffer)
 {
 	std::map<int, std::queue<CProduct*>>::iterator map_find_result = _buffer->find(key);
 	if (map_find_result != _buffer->end()) {
@@ -152,7 +152,7 @@ int CGlobalVar::buffer_size(int key, std::map<int, std::queue<CProduct*>>* _buff
 	else return 0;
 }
 
-void CGlobalVar::pushreadymap(int key, bool mapstate)
+void CGlobalVar::ReadyMapPush(int key, bool mapstate)
 {
 	std::map<int, bool>::iterator map_find_result = readymap.find(key);
 	if (map_find_result != readymap.end()) {
@@ -164,7 +164,7 @@ void CGlobalVar::pushreadymap(int key, bool mapstate)
 	}
 }
 
-bool CGlobalVar::showreadymap(int key)
+bool CGlobalVar::ShowReadyMap(int key)
 {
 	std::map<int, bool>::iterator map_find_result = readymap.find(key);
 	if (map_find_result != readymap.end()) {

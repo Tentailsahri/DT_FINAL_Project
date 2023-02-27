@@ -54,32 +54,31 @@ int main()
 		Cpd_Main* model = new Cpd_Main(GLOBAL_VAR->scenario_num);
 		WAISER->SetModel(model);
 		WAISER->Run(GLOBAL_VAR->time);
-		WAISER->Destroy();
 		if (GLOBAL_VAR->SQLConnect == true) {
 			GLOBAL_VAR->Deletepgconn();
 		}
 		GLOBAL_VAR->CsvFileClose();
-
+		WAISER->WaitSimulationEnd();
+		WAISER->Destroy();
 	}
 	catch (std::runtime_error& e)
 	{
 		WAISER->WaitSimulationEnd();
-		WAISER->Destroy();
 		GLOBAL_VAR->CsvFileClose();
 		if (GLOBAL_VAR->SQLConnect == true) {
 			GLOBAL_VAR->Deletepgconn();
 		}
+		WAISER->Destroy();
 		CLOG->critical("Exception: {}", e.what());
-
 	}
 	catch (...)
 	{
 		WAISER->WaitSimulationEnd();
-		WAISER->Destroy();
 		GLOBAL_VAR->CsvFileClose();
 		if (GLOBAL_VAR->SQLConnect == true) {
 			GLOBAL_VAR->Deletepgconn();
 		}
+		WAISER->Destroy();
 		CLOG->critical("Unknown exception");
 	}
 

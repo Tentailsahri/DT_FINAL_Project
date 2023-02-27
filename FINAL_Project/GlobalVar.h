@@ -21,17 +21,20 @@ public:
 
 	std::map<int, bool> readymap;
 
-	void pushmbuffer(int idx, int key, CProduct* product, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
-	CProduct* popmbuffer(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
-	CProduct* frontmbuffer(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
-	int mbuffer_size(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
-	void pushmap(int key, CProduct* product, std::map<int, std::queue<CProduct*>> *_buffer);
-	CProduct* popmap(int key, std::map<int, std::queue<CProduct*>> *_buffer);
-	CProduct* stockback(int key, std::map<int, std::queue<CProduct*>> *_stock);
-	CProduct* frontmap(int key, std::map<int, std::queue<CProduct*>>* _buffer);
-	int buffer_size(int key, std::map<int, std::queue<CProduct*>> *_buffer);
-	void pushreadymap(int key, bool mapstate);
-	bool showreadymap(int key);
+	void mBufferPush(int idx, int key, CProduct* product, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
+	CProduct* mBufferPop(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
+	CProduct* mBufferFront(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
+	int mBufferSize(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
+
+	void MapPush(int key, CProduct* product, std::map<int, std::queue<CProduct*>> *_buffer);
+	CProduct* MapPop(int key, std::map<int, std::queue<CProduct*>> *_buffer);
+	CProduct* MapFront(int key, std::map<int, std::queue<CProduct*>>* _buffer);
+	int BufferSize(int key, std::map<int, std::queue<CProduct*>> *_buffer);
+
+	CProduct* StockBack(int key, std::map<int, std::queue<CProduct*>> *_stock);
+
+	void ReadyMapPush(int key, bool mapstate);
+	bool ShowReadyMap(int key);
 
 	PostgreSQLConnector* pgconn;
 
