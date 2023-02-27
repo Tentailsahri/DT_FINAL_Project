@@ -51,9 +51,9 @@ public:
 	int m_type;
 	// 설비 인덱스
 	int m_idx;
-	// pk
+	// 설비의 pk
 	int m_pk;
-
+	// READYMAP 직전상태 기록
 	int rf;
 
 	static const char* getModel2Str(int model_type);

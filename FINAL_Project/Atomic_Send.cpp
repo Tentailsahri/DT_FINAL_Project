@@ -99,13 +99,14 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 		    else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
-			CProduct* cnext = (CProduct*)msg.GetValue();
-			next = new CProduct(*cnext);
-			if (GLOBAL_VAR->readymap.at(next->m_curPk) == true && m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
-				m_modelState = STATE::SEND;
-			}
-			else if (GLOBAL_VAR->readymap.at(next->m_curPk) == true && m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
-				m_modelState = STATE::WAIT;
+			if (m_modelState == STATE::PAUSE) {
+				CProduct* cnext = (CProduct*)msg.GetValue();
+				next = new CProduct(*cnext);
+				if (GLOBAL_VAR->readymap.at(next->m_curPk) == true && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
+					m_modelState = STATE::SEND;
+				} else if (GLOBAL_VAR->readymap.at(next->m_curPk) == true && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+					m_modelState = STATE::WAIT;
+				}
 			}
 			else Continue();
 		}
