@@ -35,6 +35,7 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 	}
 	// 초기 모델 상태 설정
+	next = nullptr;
 	m_modelState = STATE::WAIT;
 	// 모델 변수 초기화
 	m_type = type;
@@ -47,16 +48,20 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 	switch (m_type) {
 	case 0:
 		if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
-			if (m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) !=0) {
+			CProduct* cnext = (CProduct*)msg.GetValue();
+			next = new CProduct(*cnext);
+			if (GLOBAL_VAR->readymap.at(next->m_curPk) == true && m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) !=0) {
 				m_modelState = STATE::SEND;
 			}
-			else if (m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+			else if (GLOBAL_VAR->readymap.at(next->m_curPk)==true && m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
 				m_modelState = STATE::WAIT;
 			}
 			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
-			if (m_modelState == STATE::SEND || m_modelState == STATE::WAIT) {
+			CProduct* cnext = (CProduct*)msg.GetValue();
+			next = new CProduct(*cnext);
+			if (GLOBAL_VAR->readymap.at(next->m_curPk) == false && (m_modelState == STATE::SEND || m_modelState == STATE::WAIT)) {
 				m_modelState = STATE::PAUSE;
 			}
 		}
@@ -93,16 +98,18 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 		    else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
-			if (m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
+			CProduct* cnext = (CProduct*)msg.GetValue();
+			next = new CProduct(*cnext);
+			if (GLOBAL_VAR->readymap.at(next->m_curPk) == true && m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
 				m_modelState = STATE::SEND;
 			}
-			else if (m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+			else if (GLOBAL_VAR->readymap.at(next->m_curPk) == true && m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
 				m_modelState = STATE::WAIT;
 			}
 			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
-			if (m_modelState == STATE::WAIT || m_modelState == STATE::SEND) {
+			if (GLOBAL_VAR->readymap.at(next->m_curPk) == false && (m_modelState == STATE::WAIT || m_modelState == STATE::SEND)) {
 				m_modelState = STATE::PAUSE;
 			}
 		}
@@ -120,16 +127,16 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
-			if (m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
+			if (GLOBAL_VAR->readymap.at(next->m_curPk) == true && m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
 				m_modelState = STATE::SEND;
 			}
-			else if (m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+			else if (GLOBAL_VAR->readymap.at(next->m_curPk) == true && m_modelState == STATE::PAUSE && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
 				m_modelState = STATE::WAIT;
 			}
 			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
-			if (m_modelState==STATE::WAIT || m_modelState == STATE::SEND) {
+			if (GLOBAL_VAR->readymap.at(next->m_curPk) == false && (m_modelState == STATE::WAIT || m_modelState == STATE::SEND)) {
 				m_modelState = STATE::PAUSE;
 			}
 			else Continue();

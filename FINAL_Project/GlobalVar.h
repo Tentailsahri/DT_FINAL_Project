@@ -19,6 +19,8 @@ public:
 
 	std::map<int, std::map<int, std::queue<CProduct*>>> p_buffer;
 
+	std::map<int, bool> readymap;
+
 	void pushmbuffer(int idx, int key, CProduct* product, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
 	CProduct* popmbuffer(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
 	CProduct* frontmbuffer(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
@@ -28,6 +30,8 @@ public:
 	CProduct* stockback(int key, std::map<int, std::queue<CProduct*>> *_stock);
 	CProduct* frontmap(int key, std::map<int, std::queue<CProduct*>>* _buffer);
 	int buffer_size(int key, std::map<int, std::queue<CProduct*>> *_buffer);
+	void pushreadymap(int key, bool mapstate);
+	bool showreadymap(int key);
 
 	PostgreSQLConnector* pgconn;
 
