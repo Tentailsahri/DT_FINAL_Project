@@ -60,9 +60,9 @@ public:
 	int error_gen = 5;
 	int error_proc = 5;
 	int error_stock = 5;
-	int time = 500;
+	int time = 100;
 
-	bool SQLConnect = false;
+	bool SQLConnect = true;
 
 	double TA_STATE_INIT[4] = { 5,5,5,5 };
 	double TA_STATE_ACTIVE[4] = { 0.1,WTime::infinity_,5,5 };
