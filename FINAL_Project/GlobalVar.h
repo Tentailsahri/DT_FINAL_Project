@@ -67,7 +67,7 @@ public:
 	int error_stock = 5;
 	int time = 100;
 
-	bool SQLConnect = false;
+	bool SQLConnect = true;
 
 	double TA_STATE_INIT[4] = { 5,5,5,5 };
 	double TA_STATE_ACTIVE[4] = { 5,WTime::infinity_,5,5 };
