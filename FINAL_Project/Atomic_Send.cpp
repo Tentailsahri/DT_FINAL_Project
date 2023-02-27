@@ -209,7 +209,6 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 	if (m_modelState == STATE::SEND) {
 		if (GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) == 1) {
 			if (m_type == 3) {
-				
 					CProduct* product = GLOBAL_VAR->popmbuffer(0, m_pk, &GLOBAL_VAR->p_buffer);
 					
 					GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->stock);

@@ -132,32 +132,6 @@ bool Atomic_State::IntTransFn() {
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	m_dataUpdate();
 	switch (m_type) {
-		//case 0:
-		//	if (m_modelState == STATE::INIT) {
-		//		m_modelState = STATE::ACTIVE;
-		//		CLOG->info("PK: {}, idx : {} GEN ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-		//	} else if (m_modelState == STATE::ACTIVE) {
-		//		m_count++;
-		//		m_genCount++;
-		//		auto genID = m_idx * 1000 + m_genCount;
-		//		CProduct* cproduct = new CProduct(genID, WAISER->CurentSimulationTime().GetValue());
-		//		CProduct* product = new CProduct(*cproduct);
-		//		CLOG->info("PK: {}, idx : {} GEN {}번 제품 생산, at t = {}", m_pk, m_idx, genID,WAISER->CurentSimulationTime().GetValue());
-		//		GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
-		//		if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
-		//			m_modelState = STATE::PAUSE;
-		//			CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-		//		} else if (m_count >= GLOBAL_VAR->error_gen) {
-		//			m_modelState = STATE::SERROR;
-		//			CLOG->info("PK: {}, idx : {} GEN ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-		//			
-		//		}
-		//	} else if (m_modelState == STATE::SERROR) {
-		//		m_modelState = STATE::ACTIVE;
-		//		CLOG->info("PK: {}, idx : {} GEN ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-		//		m_count = 0;
-		//	}
-		//	break;
 	case 1:
 		if (m_modelState == STATE::INIT) {
 			m_modelState = STATE::ACTIVE;
