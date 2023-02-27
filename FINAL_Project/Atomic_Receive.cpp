@@ -42,7 +42,7 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 	// 초기 모델 상태 설정
 	
 	m_modelState = STATE::INIT;
-	product = nullptr;
+	m_product = nullptr;
 	// 모델 변수 초기화
 	m_type = type;
 	m_idx = idx;
@@ -56,15 +56,15 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 		if (m_modelState == STATE::RECEIVE) {
 			if (m_type != 0) {
 				CProduct* cproduct = (CProduct*)msg.GetValue();
-				product = new CProduct(*cproduct);
-				product->m_passTime = WAISER->CurentSimulationTime().GetValue();
-				product->m_pastPk = product->m_curPk;
-				product->m_pastType = product->m_curType;
-				product->m_curPk = m_pk;
-				product->m_curType = getModel2Str(m_type);
-				CLOG->info("PK: {}, idx : {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_curType, product->m_genID, WAISER->CurentSimulationTime().GetValue());
-				CLOG->info("pastPk={} pastType={} curPk={} curtype={}", product->m_pastPk, product->m_pastType, product->m_curPk, product->m_curType);
-				GLOBAL_VAR->mBufferPush(0, m_pk, product, &GLOBAL_VAR->p_buffer);
+				m_product = new CProduct(*cproduct);
+				m_product->m_passTime = WAISER->CurentSimulationTime().GetValue();
+				m_product->m_pastPk = m_product->m_curPk;
+				m_product->m_pastType = m_product->m_curType;
+				m_product->m_curPk = m_pk;
+				m_product->m_curType = getModel2Str(m_type);
+				CLOG->info("PK: {}, idx : {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, m_product->m_curType, m_product->m_genID, WAISER->CurentSimulationTime().GetValue());
+				CLOG->info("pastPk={} pastType={} curPk={} curtype={}", m_product->m_pastPk, m_product->m_pastType, m_product->m_curPk, m_product->m_curType);
+				GLOBAL_VAR->mBufferPush(0, m_pk, m_product, &GLOBAL_VAR->p_buffer);
 			}
 			m_modelState = STATE::DECISION;
 		}
@@ -100,7 +100,7 @@ bool Atomic_Receive::IntTransFn() {
 // 출력 함수
 bool Atomic_Receive::OutputFn(WMessage& msg) {
 	if (m_modelState == STATE::INIT) {
-		msg.SetPortValue((unsigned int)OUT_PORT::READY, product);
+		msg.SetPortValue((unsigned int)OUT_PORT::READY, m_product);
 		m_modelState = STATE::RECEIVE;
 	}
 	switch (m_type) {
