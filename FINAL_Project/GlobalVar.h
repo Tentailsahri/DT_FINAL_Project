@@ -17,7 +17,9 @@ public:
 	std::map<int, std::queue<CProduct*>> procbuffer;
 	std::map<int, std::queue<CProduct*>> stock;
 
-	std::map<int, std::map<int, std::queue<CProduct*>>> m_buffer;
+	std::map<int, std::map<int, std::queue<CProduct*>>> p_buffer;
+
+	std::map<int, bool> readymap;
 
 	void pushmbuffer(int idx, int key, CProduct* product, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
 	CProduct* popmbuffer(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
@@ -28,6 +30,8 @@ public:
 	CProduct* stockback(int key, std::map<int, std::queue<CProduct*>> *_stock);
 	CProduct* frontmap(int key, std::map<int, std::queue<CProduct*>>* _buffer);
 	int buffer_size(int key, std::map<int, std::queue<CProduct*>> *_buffer);
+	void pushreadymap(int key, bool mapstate);
+	bool showreadymap(int key);
 
 	PostgreSQLConnector* pgconn;
 
@@ -60,14 +64,14 @@ public:
 	int error_gen = 5;
 	int error_proc = 5;
 	int error_stock = 5;
-	int time = 500;
+	int time = 100;
 
 	bool SQLConnect = false;
 
 	double TA_STATE_INIT[4] = { 5,5,5,5 };
-	double TA_STATE_ACTIVE[4] = { 0.1,WTime::infinity_,5,5 };
-	double TA_STATE_ERROR[4] = { 0.1,0,5,5 };
-	double TA_SEND_SEND_TIME[4] = { TA_STATE_ACTIVE[0] / 5, 2, 0.1, TA_STATE_ACTIVE[3] };
+	double TA_STATE_ACTIVE[4] = { 5,WTime::infinity_,5,5 };
+	double TA_STATE_ERROR[4] = { 5,0,5,5 };
+	double TA_SEND_SEND_TIME[4] = { TA_STATE_ACTIVE[0] / 5, 2, TA_STATE_ACTIVE[2], TA_STATE_ACTIVE[3] };
 };
 
 #define GLOBAL_VAR	(CGlobalVar::GetInstance())

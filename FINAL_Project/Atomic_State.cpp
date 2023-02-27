@@ -208,11 +208,11 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 			product->m_curType = "GEN";
 			CLOG->info("PK: {}, idx : {} GEN {}번 제품 생산, at t = {}", m_pk, m_idx, genPk, WAISER->CurentSimulationTime().GetValue());
 			CLOG->info("curPk={} curtype={}", product->m_curPk, product->m_curType);
-			GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
+			GLOBAL_VAR->pushmbuffer(0, m_pk, product, &GLOBAL_VAR->p_buffer);
 			CLOG->info("PK: {}, idx : {} GEN MAKE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-			CLOG->info("GEN BUFFER SIZE : {} at {}", GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer), WAISER->CurentSimulationTime().GetValue());
+			CLOG->info("GEN BUFFER SIZE : {} at {}", GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer), WAISER->CurentSimulationTime().GetValue());
 			msg.SetPortValue((unsigned int)(unsigned int)OUT_PORT::MAKE, nullptr);
-			if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
+			if (GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
 				m_modelState = STATE::WAIT;
 				CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
@@ -235,9 +235,9 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 			CLOG->info("PK: {}, idx : {} PROC ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 		}
 		else if (m_modelState == STATE::ACTIVE) {
-			if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) != 0) {
+			if (GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
 				m_count++;
-				CLOG->info("PK: {}, idx : {} PROC BUFFER SIZE = {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer));
+				CLOG->info("PK: {}, idx : {} PROC BUFFER SIZE = {}", m_pk, m_idx, GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer));
 				if (m_count >= GLOBAL_VAR->error_proc) {
 					m_modelState = STATE::SERROR;
 					CLOG->info("PK: {}, idx : {} PROC ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());

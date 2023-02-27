@@ -152,6 +152,27 @@ int CGlobalVar::buffer_size(int key, std::map<int, std::queue<CProduct*>>* _buff
 	else return 0;
 }
 
+void CGlobalVar::pushreadymap(int key, bool mapstate)
+{
+	std::map<int, bool>::iterator map_find_result = readymap.find(key);
+	if (map_find_result != readymap.end()) {
+		readymap.at(key)=mapstate;
+	}
+	else {
+		std::pair<int, bool> tmp_pair = std::make_pair(key, mapstate);
+		readymap.insert(tmp_pair);
+	}
+}
+
+bool CGlobalVar::showreadymap(int key)
+{
+	std::map<int, bool>::iterator map_find_result = readymap.find(key);
+	if (map_find_result != readymap.end()) {
+		return readymap.at(key);
+	}
+	else return false;
+}
+
 
 void CGlobalVar::CsvMake() {
 	std::ofstream file;
