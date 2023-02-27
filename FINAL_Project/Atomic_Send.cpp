@@ -216,7 +216,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					auto a = GLOBAL_VAR->stockback(m_pk, &GLOBAL_VAR->stock);
 					CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->stock));
 					if (a != nullptr) {
-						CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genPk, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
 			}
@@ -225,13 +225,13 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 				switch (m_type) {
 				case 0:
-					CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genPk, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					break;
 				case 1:
-					CLOG->info("PK: {}, idx : {} TRACK {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genPk, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("PK: {}, idx : {} TRACK {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					break;
 				case 2:
-					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genPk, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					break;
 				}
 			}
@@ -246,7 +246,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				auto a = GLOBAL_VAR->stockback(m_pk, &GLOBAL_VAR->stock);
 				CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->stock));
 				if (a != nullptr) {
-					CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genPk, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 				}
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
 			}
@@ -256,13 +256,13 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				
 				switch (m_type) {
 				case 0:
-					CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genPk, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					break;
 				case 1:
-					CLOG->info("PK: {}, idx : {} TRACK {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genPk, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("PK: {}, idx : {} TRACK {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					break;
 				case 2:
-					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genPk, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					break;
 				}
 			}

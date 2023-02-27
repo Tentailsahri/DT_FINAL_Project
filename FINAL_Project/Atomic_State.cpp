@@ -139,10 +139,10 @@ bool Atomic_State::IntTransFn() {
 		//	} else if (m_modelState == STATE::ACTIVE) {
 		//		m_count++;
 		//		m_genCount++;
-		//		auto genPk = m_idx * 1000 + m_genCount;
-		//		CProduct* cproduct = new CProduct(genPk, WAISER->CurentSimulationTime().GetValue());
+		//		auto genID = m_idx * 1000 + m_genCount;
+		//		CProduct* cproduct = new CProduct(genID, WAISER->CurentSimulationTime().GetValue());
 		//		CProduct* product = new CProduct(*cproduct);
-		//		CLOG->info("PK: {}, idx : {} GEN {}锅 力前 积魂, at t = {}", m_pk, m_idx, genPk,WAISER->CurentSimulationTime().GetValue());
+		//		CLOG->info("PK: {}, idx : {} GEN {}锅 力前 积魂, at t = {}", m_pk, m_idx, genID,WAISER->CurentSimulationTime().GetValue());
 		//		GLOBAL_VAR->pushmap(m_pk, product, &GLOBAL_VAR->buffer);
 		//		if (GLOBAL_VAR->buffer_size(m_pk, &GLOBAL_VAR->buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
 		//			m_modelState = STATE::PAUSE;
@@ -201,12 +201,12 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 		else if (m_modelState == STATE::ACTIVE) {
 			m_count++;
 			m_genCount++;
-			auto genPk = m_idx * 1000 + m_genCount;
-			CProduct* cproduct = new CProduct(genPk, WAISER->CurentSimulationTime().GetValue());
+			auto genID = m_idx * 1000 + m_genCount;
+			CProduct* cproduct = new CProduct(genID, WAISER->CurentSimulationTime().GetValue());
 			CProduct* product = new CProduct(*cproduct);
 			product->m_curPk = m_pk;
 			product->m_curType = "GEN";
-			CLOG->info("PK: {}, idx : {} GEN {}锅 力前 积魂, at t = {}", m_pk, m_idx, genPk, WAISER->CurentSimulationTime().GetValue());
+			CLOG->info("PK: {}, idx : {} GEN {}锅 力前 积魂, at t = {}", m_pk, m_idx, genID, WAISER->CurentSimulationTime().GetValue());
 			CLOG->info("curPk={} curtype={}", product->m_curPk, product->m_curType);
 			GLOBAL_VAR->pushmbuffer(0, m_pk, product, &GLOBAL_VAR->p_buffer);
 			CLOG->info("PK: {}, idx : {} GEN MAKE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
