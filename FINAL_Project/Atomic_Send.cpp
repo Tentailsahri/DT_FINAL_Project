@@ -64,6 +64,7 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			if (GLOBAL_VAR->readymap.at(next->m_curPk) == false && (m_modelState == STATE::SEND || m_modelState == STATE::WAIT)) {
 				m_modelState = STATE::PAUSE;
 			}
+			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::MAKE) {
 			if (m_modelState == STATE::WAIT && GLOBAL_VAR->mbuffer_size(0, m_pk, &GLOBAL_VAR->p_buffer) >= 1) {
@@ -123,7 +124,6 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 				}
 				else Continue();
 			}
-			
 			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
@@ -184,23 +184,18 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			}
 			else Continue();
 		}
-		
 		break;
 
 	}
-		return true;
+	return true;
 	
 }
 
 // 내부 상태 천이 함수
 bool Atomic_Send::IntTransFn() {
-	
-	
-		if (m_modelState == STATE::PENDING) {
-			m_modelState = STATE::SEND;
-		}
-	
-
+	if (m_modelState == STATE::PENDING) {
+		m_modelState = STATE::SEND;
+	}
 	return true;
 }
 

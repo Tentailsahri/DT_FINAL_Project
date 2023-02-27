@@ -54,22 +54,22 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 // 외부 상태 천이 함수
 bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 	if (msg.GetPort() == (unsigned int)IN_PORT::PRODUCT) {
-			if (m_modelState == STATE::RECEIVE) {
-				if (m_type != 0) {
-					CProduct* cproduct = (CProduct*)msg.GetValue();
-					product = new CProduct(*cproduct);
-					product->m_passTime = WAISER->CurentSimulationTime().GetValue();
-					product->m_pastPk = product->m_curPk;
-					product->m_pastType = product->m_curType;
-					product->m_curPk = m_pk;
-					product->m_curType = getModel2Str(m_type);
-					CLOG->info("PK: {}, idx : {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_curType, product->m_genID, WAISER->CurentSimulationTime().GetValue());
-					CLOG->info("pastPk={} pastType={} curPk={} curtype={}", product->m_pastPk, product->m_pastType, product->m_curPk, product->m_curType);
-					GLOBAL_VAR->pushmbuffer(0, m_pk, product, &GLOBAL_VAR->p_buffer);
-				}
-				m_modelState = STATE::DECISION;
+		if (m_modelState == STATE::RECEIVE) {
+			if (m_type != 0) {
+				CProduct* cproduct = (CProduct*)msg.GetValue();
+				product = new CProduct(*cproduct);
+				product->m_passTime = WAISER->CurentSimulationTime().GetValue();
+				product->m_pastPk = product->m_curPk;
+				product->m_pastType = product->m_curType;
+				product->m_curPk = m_pk;
+				product->m_curType = getModel2Str(m_type);
+				CLOG->info("PK: {}, idx : {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, product->m_curType, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+				CLOG->info("pastPk={} pastType={} curPk={} curtype={}", product->m_pastPk, product->m_pastType, product->m_curPk, product->m_curType);
+				GLOBAL_VAR->pushmbuffer(0, m_pk, product, &GLOBAL_VAR->p_buffer);
 			}
-		}  else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
+			m_modelState = STATE::DECISION;
+		}
+	} else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
 			if (m_modelState == STATE::FULL) {
 				m_modelState = STATE::DECISION;
 			}
@@ -85,8 +85,7 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 		else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 		if (m_modelState == STATE::RECEIVE) {
 			rf = 0;
-		}
-		else rf = 1;
+		} else rf = 1;
 		GLOBAL_VAR->pushreadymap(m_pk, false);
 		m_modelState = STATE::READYMAP;
 	}
@@ -95,7 +94,6 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 
 // 내부 상태 천이 함수
 bool Atomic_Receive::IntTransFn() {
-	
 	if (m_modelState == STATE::READYMAP) {
 		if (rf == 0) {
 			m_modelState = STATE::RECEIVE;
@@ -109,7 +107,7 @@ bool Atomic_Receive::IntTransFn() {
 
 // 출력 함수
 bool Atomic_Receive::OutputFn(WMessage& msg) {
-	if (m_type == 0 && m_modelState == STATE::INIT) {
+	if (m_modelState == STATE::INIT) {
 		msg.SetPortValue((unsigned int)OUT_PORT::READY, product);
 		m_modelState = STATE::RECEIVE;
 	}
