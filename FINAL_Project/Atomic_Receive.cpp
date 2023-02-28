@@ -98,6 +98,9 @@ bool Atomic_Receive::IntTransFn() {
 			m_modelState = STATE::FULL;
 		}
 	}
+	if (m_modelState == STATE::INIT) {
+		m_modelState = STATE::RECEIVE;
+	}
 	
 	return true;
 }
@@ -106,10 +109,7 @@ bool Atomic_Receive::IntTransFn() {
 bool Atomic_Receive::OutputFn(WMessage& msg) {
 	switch (m_type) {
 	case 0:
-		if (m_modelState == STATE::INIT) {
-			m_modelState = STATE::RECEIVE;
-		}
-	else if (m_modelState == STATE::DECISION) {
+	if (m_modelState == STATE::DECISION) {
 			CLOG->info("PK: {}, idx : {} GEN Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
 			if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
@@ -123,11 +123,7 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 		
 		break;
 	case 1:
-		if (m_modelState == STATE::INIT) {
-			m_modelState = STATE::RECEIVE;
-
-		}
-		else if (m_modelState == STATE::DECISION) {
+		 if (m_modelState == STATE::DECISION) {
 			CLOG->info("PK: {}, idx : {} TRACK Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
 			if (GLOBAL_VAR->m_maxbuffer_Receive > GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
@@ -140,11 +136,7 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 		
 		break;
 	case 2:
-		if (m_modelState == STATE::INIT) {
-			m_modelState = STATE::RECEIVE;
-
-		}
-		else if (m_modelState == STATE::DECISION) {
+		if (m_modelState == STATE::DECISION) {
 			CLOG->info("PK: {}, idx : {} PROC Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
 			if (GLOBAL_VAR->m_maxbuffer_Process > GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer)) {
 				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
@@ -158,10 +150,6 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 		
 		break;
 	case 3:
-		if (m_modelState == STATE::INIT) {
-			m_modelState = STATE::RECEIVE;
-
-		}
 		if (m_modelState == STATE::DECISION) {
 			CLOG->info("PK: {}, idx : {} STOCK Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
 			if (GLOBAL_VAR->m_maxbuffer_Stock > GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer)) {
