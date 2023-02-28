@@ -5,7 +5,7 @@ CGlobalVar* CGlobalVar::pInstance_ = NULL;
 
 CGlobalVar::CGlobalVar() {
 	pgconn = nullptr;
-
+	
 }
 
 CGlobalVar::~CGlobalVar(void) {
@@ -58,7 +58,7 @@ CProduct* CGlobalVar::mBufferPop(int idx, int key, std::map<int, std::map<int, s
 		else return nullptr;
 	}
 	else return nullptr;
-
+	
 }
 
 CProduct* CGlobalVar::mBufferFront(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
@@ -78,18 +78,18 @@ CProduct* CGlobalVar::mBufferFront(int idx, int key, std::map<int, std::map<int,
 
 int CGlobalVar::mBufferSize(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer)
 {
-
+	
 	std::map<int, std::map<int, std::queue<CProduct*>>>::iterator map_find_result = mbuffer->find(idx);
 	if (map_find_result != mbuffer->end()) {
 		std::map<int, std::queue<CProduct*>>::iterator map_find_result1 = mbuffer->at(idx).find(key);
 		if (map_find_result1 != mbuffer->at(idx).end()) {
 			return mbuffer->at(idx).at(key).size();
-
+			
 		}
 		else return 0;
 	}
 	else return 0;
-
+	
 }
 
 
@@ -169,14 +169,12 @@ void CGlobalVar::CsvMake() {
 		file_name1 = "../../state_time_list1.csv";
 		file_name2 = "../../state_rate_list1.csv";
 		file_name3 = "../../buf_count_list1.csv";
-	}
-	else if (GLOBAL_VAR->scenario_num == 2) {
+	} else if (GLOBAL_VAR->scenario_num == 2) {
 		file_name = "../../object_state_list2.csv";
 		file_name1 = "../../state_time_list2.csv";
 		file_name2 = "../../state_rate_list2.csv";
 		file_name3 = "../../buf_count_list2.csv";
-	}
-	else if (GLOBAL_VAR->scenario_num == 3) {
+	} else if (GLOBAL_VAR->scenario_num == 3) {
 		file_name = "../../object_state_list3.csv";
 		file_name1 = "../../state_time_list3.csv";
 		file_name2 = "../../state_rate_list3.csv";
@@ -203,7 +201,7 @@ void CGlobalVar::CsvStateTimeInsert(int pk, double current_time, double init_tim
 
 void CGlobalVar::CsvStateRateInsert(int pk, double current_time, double init_time, double active_time, double error_time, double pause_time)
 {
-	m_file2 << scenario_num << "," << pk << "," << current_time << "," << (double)init_time / current_time * 100 << "," << (double)active_time / current_time * 100 << "," << (double)error_time / current_time * 100 << "," << (double)pause_time / current_time * 100 << "\n";
+	m_file2 << scenario_num << "," << pk << "," << current_time << "," << (double)init_time/current_time*100 << "," << (double)active_time/current_time*100 << "," << (double)error_time/current_time*100 << "," << (double)pause_time/current_time*100 << "\n";
 }
 void CGlobalVar::CsvBufferSize(int pk, std::string type, double current_time, double buffersize, double stocksize)
 {
@@ -302,24 +300,6 @@ void CGlobalVar::ResetTable()
 		ON DELETE NO ACTION \
 	)");
 	pgconn->SendQuery("TRUNCATE TABLE \"state_rate_list" + std::to_string(scenario_num) + "\"");
-
-	pgconn->SendQuery("CREATE TABLE IF NOT EXISTS public.product_flow_list" + std::to_string(scenario_num) + \
-		"(project_id integer, object_id integer, product_id integer, in_time double precision, \
-		out_time double precision, \
-		CONSTRAINT product_flow_list" + std::to_string(scenario_num) + \
-		"_object_id_fk FOREIGN KEY(object_id) \
-		REFERENCES public.object_list" + std::to_string(scenario_num) + \
-		"(object_id) MATCH SIMPLE \
-		ON UPDATE NO ACTION \
-		ON DELETE NO ACTION, \
-		CONSTRAINT product_flow_list" + std::to_string(scenario_num) + \
-		"_project_id_fk FOREIGN KEY(project_id) \
-		REFERENCES public.project_list" + std::to_string(scenario_num) + \
-		"(project_id) MATCH SIMPLE \
-		ON UPDATE NO ACTION \
-		ON DELETE NO ACTION \
-	)");
-	pgconn->SendQuery("TRUNCATE TABLE \"product_flow_list" + std::to_string(scenario_num) + "\"");
 }
 
 void CGlobalVar::Makepgconn()
