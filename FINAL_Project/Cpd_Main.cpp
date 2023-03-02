@@ -9,7 +9,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		WCoupModel* gen = new Cpd_GEN(0,0);
 		WCoupModel* track0 = new Cpd_TRACK(0,1);
 		WCoupModel* track1 = new Cpd_TRACK(1,2);
-		WCoupModel* proc = new Cpd_PROC(0,3);
+		WCoupModel* proc = new Cpd_PROC(0, 0, 3);
 		WCoupModel* stock = new Cpd_STOCK(0,4);
 
 		// 생성한 모델 연결
@@ -41,7 +41,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 			AddComponent(track_cpd_vec.at(i));
 		}
 		for (int i = 0; i < 2; i++) {
-			proc_cpd_vec.push_back(new Cpd_PROC(i, i + 9));
+			proc_cpd_vec.push_back(new Cpd_PROC(i, 0, i + 9));
 			AddComponent(proc_cpd_vec.at(i));
 		}
 		for (int i = 0; i < 2; i++) {
