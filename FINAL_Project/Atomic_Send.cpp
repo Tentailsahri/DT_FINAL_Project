@@ -35,7 +35,7 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 	}
 	// 초기 모델 상태 설정
-	
+
 	m_modelState = STATE::WAIT;
 	// 모델 변수 초기화
 	m_type = type;
@@ -50,16 +50,19 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			if (m_modelState == STATE::PAUSE) {
 				if (GLOBAL_VAR->readymap[m_pk] == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
 					m_modelState = STATE::SEND;
-				} else if (GLOBAL_VAR->readymap[m_pk] == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+				}
+				else if (GLOBAL_VAR->readymap[m_pk] == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
 					m_modelState = STATE::WAIT;
-				} else Continue();
+				}
+				else Continue();
 			}
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 			if ((m_modelState == STATE::SEND || m_modelState == STATE::WAIT)) {
 				if (GLOBAL_VAR->readymap[m_pk] == false) {
 					m_modelState = STATE::PAUSE;
-				} else Continue();
+				}
+				else Continue();
 			}
 		}
 	}
@@ -67,13 +70,17 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 		if (msg.GetPort() == (unsigned int)IN_PORT::ERROR_ON) {
 			if (m_modelState == STATE::WAIT || m_modelState == STATE::SEND) {
 				m_modelState = STATE::SERROR;
-			} else Continue();
-		} else if (msg.GetPort() == (unsigned int)IN_PORT::ERROR_OFF) {
+			}
+			else Continue();
+		}
+		else if (msg.GetPort() == (unsigned int)IN_PORT::ERROR_OFF) {
 			if (m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
 				m_modelState = STATE::SEND;
-			} else if (m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+			}
+			else if (m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
 				m_modelState = STATE::WAIT;
-			} else Continue();
+			}
+			else Continue();
 		}
 	}
 	if (m_type != 0) {
@@ -81,8 +88,10 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			if (m_modelState == STATE::WAIT) {
 				if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) >= 1) {
 					m_modelState = STATE::SEND;
-				} else Continue();
-			} else Continue();
+				}
+				else Continue();
+			}
+			else Continue();
 		}
 	}
 	switch (m_type) {
@@ -96,7 +105,7 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 		break;
 	}
 	return true;
-	
+
 }
 
 // 내부 상태 천이 함수
@@ -112,23 +121,32 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 	if (m_modelState == STATE::SEND) {
 		if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 1) {
 			if (m_type == 3) {
-					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-					GLOBAL_VAR->MapPush(m_pk, product, &GLOBAL_VAR->stock);
-					auto a = GLOBAL_VAR->StockBack(m_pk, &GLOBAL_VAR->stock);
-					CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock));
-					if (a != nullptr) {
-						CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
-						GLOBAL_VAR->CsvProductFlowList(m_pk, a->m_genID, a->m_passTime, WAISER->CurentSimulationTime().GetValue());
-					}
-					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
-					m_modelState = STATE::WAIT;
+				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
+				GLOBAL_VAR->MapPush(m_pk, product, &GLOBAL_VAR->stock);
+				auto a = GLOBAL_VAR->StockBack(m_pk, &GLOBAL_VAR->stock);
+				CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock));
+				if (a != nullptr) {
+					CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
+					GLOBAL_VAR->CsvProductFlowList(m_pk, a->m_genID, a->m_passTime, WAISER->CurentSimulationTime().GetValue());
+					if (GLOBAL_VAR->SQLConnect == true)
+						GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(a->m_genID) + ", " + std::to_string(a->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+				}
+				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
+				m_modelState = STATE::WAIT;
 			}
-			else if(GLOBAL_VAR->readymap[m_pk] == true) {
+			else if (GLOBAL_VAR->readymap[m_pk] == true) {
 				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 				if (m_type == 0) {
 					GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
+					if (GLOBAL_VAR->SQLConnect == true)
+						GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_genTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
 				}
-				else GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
+				else
+				{
+					GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
+					if (GLOBAL_VAR->SQLConnect == true)
+						GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+				}
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 				switch (m_type) {
 				case 0:
@@ -143,7 +161,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				}
 				m_modelState = STATE::WAIT;
 			}
-			
+
 		}
 		else if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) > 1) {
 			if (m_type == 3) {
@@ -154,6 +172,8 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				if (a != nullptr) {
 					CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 					GLOBAL_VAR->CsvProductFlowList(m_pk, a->m_genID, a->m_passTime, WAISER->CurentSimulationTime().GetValue());
+					if (GLOBAL_VAR->SQLConnect == true)
+						GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(a->m_genID) + ", " + std::to_string(a->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
 				}
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
 				m_modelState = STATE::PENDING;
@@ -162,8 +182,15 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 				if (m_type == 0) {
 					GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
+					if (GLOBAL_VAR->SQLConnect == true)
+						GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_genTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
 				}
-				else GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
+				else
+				{
+					GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
+					if (GLOBAL_VAR->SQLConnect == true)
+						GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+				}
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 				switch (m_type) {
 				case 0:
@@ -178,7 +205,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				}
 				m_modelState = STATE::PENDING;
 			}
-			
+
 		}
 	}
 	return true;
@@ -199,7 +226,8 @@ WTime Atomic_Send::TimeAdvanceFn() {
 				if ((2 - PasstoSend) <= 0) {
 					double sendTime = 2.0;
 					TA_STATE_TRACK[1] = sendTime;
-				} else {
+				}
+				else {
 					double sendTime = 2 - PasstoSend;
 					TA_STATE_TRACK[1] = sendTime;
 				}
@@ -216,5 +244,5 @@ WTime Atomic_Send::TimeAdvanceFn() {
 	default:
 		return 0;
 	}
-	
+
 }
