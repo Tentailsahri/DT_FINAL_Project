@@ -9,7 +9,7 @@ class Cpd_Main : public WCoupModel	//Ä¿ÇÃ¸ðµ¨
 {
 private:
 	void coupGenTrack(WCoupModel* GEN, WCoupModel* TRACK);
-	void coupTrackProc(WCoupModel* TRACK, WCoupModel* PROC);
+	void coupTrackProc(int num, WCoupModel* TRACK, WCoupModel* PROC);
 	void coupProcTrack(WCoupModel* PROC, WCoupModel* TRACK);
 	void coupTrackStock(WCoupModel* TRACK, WCoupModel* STOCK);
 	void coupTrackTrack(WCoupModel* TRACK1, WCoupModel* TRACK2);

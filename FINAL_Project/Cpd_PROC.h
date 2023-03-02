@@ -19,8 +19,8 @@ public:
 	// 출력포트 정의
 	enum class OUT_PORT : unsigned int {
 		PAUSE = 1210,
-		READY,
-		PRODUCT
+		READY=1220,
+		PRODUCT=1230
 	};
 
 	// 임시 버퍼

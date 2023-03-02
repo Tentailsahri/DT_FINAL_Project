@@ -9,7 +9,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		WCoupModel* gen = new Cpd_GEN(0,0);
 		WCoupModel* track0 = new Cpd_TRACK(0,1);
 		WCoupModel* track1 = new Cpd_TRACK(1,2);
-		WCoupModel* proc = new Cpd_PROC(0, 0, 3);
+		WCoupModel* proc = new Cpd_PROC(0, 1, 3);
 		WCoupModel* stock = new Cpd_STOCK(0,4);
 
 		// 생성한 모델 연결
@@ -21,7 +21,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 
 		// 모델 포트 연결
 		coupGenTrack(gen, track0);
-		coupTrackProc(track0, proc);
+		coupTrackProc(0, track0, proc);
 		coupProcTrack(proc, track1);
 		coupTrackStock(track1, stock);
 
@@ -41,7 +41,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 			AddComponent(track_cpd_vec.at(i));
 		}
 		for (int i = 0; i < 2; i++) {
-			proc_cpd_vec.push_back(new Cpd_PROC(i, 0, i + 9));
+		    proc_cpd_vec.push_back(new Cpd_PROC(i, 2, i + 9));
 			AddComponent(proc_cpd_vec.at(i));
 		}
 		for (int i = 0; i < 2; i++) {
@@ -53,12 +53,13 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		// 모델 포트 연결
 		coupGenTrack(gen_cpd_vec.at(0), track_cpd_vec.at(0));
 		coupGenTrack(gen_cpd_vec.at(1), track_cpd_vec.at(1));
-		coupTrackProc(track_cpd_vec.at(0), proc_cpd_vec.at(0));
-		coupTrackProc(track_cpd_vec.at(1), proc_cpd_vec.at(0));
+		for (int i = 0; i < 2; i++) {
+			coupTrackProc(i, track_cpd_vec.at(i), proc_cpd_vec.at(0));
+		}
 		coupProcTrack(proc_cpd_vec.at(0), track_cpd_vec.at(2));
-		coupTrackProc(track_cpd_vec.at(2), proc_cpd_vec.at(1));
+		coupTrackProc(0, track_cpd_vec.at(2), proc_cpd_vec.at(1));
 		coupGenTrack(gen_cpd_vec.at(2), track_cpd_vec.at(3));
-		coupTrackProc(track_cpd_vec.at(3), proc_cpd_vec.at(1));
+		coupTrackProc(0, track_cpd_vec.at(3), proc_cpd_vec.at(1));
 		coupProcTrack(proc_cpd_vec.at(1), track_cpd_vec.at(4));
 		coupProcTrack(proc_cpd_vec.at(1), track_cpd_vec.at(5));
 		coupTrackStock(track_cpd_vec.at(4), stock_cpd_vec.at(0));
@@ -76,10 +77,10 @@ void Cpd_Main::coupGenTrack(WCoupModel* GEN, WCoupModel* TRACK) {
 	AddCoupling(TRACK, (unsigned int)Cpd_TRACK::OUT_PORT::READY, GEN, (unsigned int)Cpd_GEN::IN_PORT::READY);
 }
 
-void Cpd_Main::coupTrackProc(WCoupModel* TRACK, WCoupModel* PROC) {
-	AddCoupling(PROC, (unsigned int)Cpd_PROC::OUT_PORT::PAUSE, TRACK, (unsigned int)Cpd_TRACK::IN_PORT::PAUSE);
-	AddCoupling(PROC, (unsigned int)Cpd_PROC::OUT_PORT::READY, TRACK, (unsigned int)Cpd_TRACK::IN_PORT::READY);
-	AddCoupling(TRACK, (unsigned int)Cpd_TRACK::OUT_PORT::PRODUCT, PROC, (unsigned int)Cpd_PROC::IN_PORT::PRODUCT);
+void Cpd_Main::coupTrackProc(int num, WCoupModel* TRACK, WCoupModel* PROC) {
+	AddCoupling(PROC, (unsigned int)Cpd_PROC::OUT_PORT::PAUSE+num, TRACK, (unsigned int)Cpd_TRACK::IN_PORT::PAUSE);
+	AddCoupling(PROC, (unsigned int)Cpd_PROC::OUT_PORT::READY+num, TRACK, (unsigned int)Cpd_TRACK::IN_PORT::READY);
+	AddCoupling(TRACK, (unsigned int)Cpd_TRACK::OUT_PORT::PRODUCT, PROC, (unsigned int)Cpd_PROC::IN_PORT::PRODUCT+num);
 }
 
 void Cpd_Main::coupProcTrack(WCoupModel* PROC, WCoupModel* TRACK) {
