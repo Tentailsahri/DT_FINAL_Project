@@ -93,6 +93,7 @@ int CGlobalVar::mBufferSize(int idx, int key, std::map<int, std::map<int, std::q
 }
 
 
+
 void CGlobalVar::MapPush(int key, CProduct* product, std::map<int, std::queue<CProduct*>>* _buffer)
 {
 	std::map<int, std::queue<CProduct*>>::iterator map_find_result = _buffer->find(key);

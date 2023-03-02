@@ -12,7 +12,7 @@ Cpd_TRACK::Cpd_TRACK(int track_idx, int pk) {
 
 	// 모델 생성
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
-	WAtomModel* Receive = new Atomic_Receive(1, track_idx, pk);
+	WAtomModel* Receive = new Atomic_Receive(1, track_idx, 0, pk);
 	WAtomModel* State = new Atomic_State(1, track_idx, pk);
 	WAtomModel* Send = new Atomic_Send(1, track_idx, pk);
 

@@ -16,6 +16,7 @@ public:
 	std::map<int, std::queue<CProduct*>> buffer;
 	std::map<int, std::queue<CProduct*>> procbuffer;
 	std::map<int, std::queue<CProduct*>> stock;
+	
 
 	std::map<int, std::map<int, std::queue<CProduct*>>> p_buffer;
 
@@ -25,7 +26,6 @@ public:
 	CProduct* mBufferPop(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
 	CProduct* mBufferFront(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
 	int mBufferSize(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
-
 	void MapPush(int key, CProduct* product, std::map<int, std::queue<CProduct*>> *_buffer);
 	CProduct* MapPop(int key, std::map<int, std::queue<CProduct*>> *_buffer);
 	CProduct* MapFront(int key, std::map<int, std::queue<CProduct*>>* _buffer);

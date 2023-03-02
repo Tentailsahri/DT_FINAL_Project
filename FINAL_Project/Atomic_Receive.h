@@ -10,7 +10,7 @@
 class Atomic_Receive : public WAtomModel	// DEVS 원자모델
 {
 public:
-	Atomic_Receive(int type, int idx, int pk);
+	Atomic_Receive(int type, int idx, int subidx, int pk);
 	
 	// 입력포트 정의
 	enum class IN_PORT : unsigned int {
@@ -53,8 +53,8 @@ public:
 	int m_idx;
 	// 설비의 pk
 	int m_pk;
-	//시나리오 2, 3시 pk구분용
-	int m_ppk;
+	//설비의 subidx
+	int m_subidx;
 
 	double TA_STATE_GEN[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[0], 0 };
 	double TA_STATE_TRACK[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[1], 0 };

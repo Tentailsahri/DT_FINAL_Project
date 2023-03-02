@@ -1,6 +1,6 @@
 #include "Cpd_PROC.h"
 
-Cpd_PROC::Cpd_PROC(int proc_idx, int pk) {
+Cpd_PROC::Cpd_PROC(int proc_idx, int proc_subidx, int pk) {
 	SetName("Cpd_PROC");// 모델 이름 지정
 	
 	AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
@@ -12,7 +12,7 @@ Cpd_PROC::Cpd_PROC(int proc_idx, int pk) {
 
 	// 모델 생성
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
-	WAtomModel* Receive = new Atomic_Receive(2, proc_idx, pk);
+	WAtomModel* Receive = new Atomic_Receive(2, proc_idx, 0, pk);
 	WAtomModel* State = new Atomic_State(2, proc_idx, pk);
 	WAtomModel* Send = new Atomic_Send(2, proc_idx, pk);
 
