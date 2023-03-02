@@ -53,6 +53,8 @@ public:
 	int m_idx;
 	// 설비의 pk
 	int m_pk;
+	//시나리오 2, 3시 pk구분용
+	int m_ppk;
 
 	double TA_STATE_GEN[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[0], 0 };
 	double TA_STATE_TRACK[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[1], 0 };
