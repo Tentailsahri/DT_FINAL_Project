@@ -118,12 +118,17 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock));
 					if (a != nullptr) {
 						CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
+						GLOBAL_VAR->CsvProductFlowList(m_pk, a->m_genID, a->m_passTime, WAISER->CurentSimulationTime().GetValue());
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
 					m_modelState = STATE::WAIT;
 			}
 			else if(GLOBAL_VAR->readymap[m_pk] == true) {
 				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
+				if (m_type == 0) {
+					GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
+				}
+				else GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 				switch (m_type) {
 				case 0:
@@ -142,22 +147,24 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 		}
 		else if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) > 1) {
 			if (m_type == 3) {
-
 				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-				
 				GLOBAL_VAR->MapPush(m_pk, product, &GLOBAL_VAR->stock);
 				auto a = GLOBAL_VAR->StockBack(m_pk, &GLOBAL_VAR->stock);
 				CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock));
 				if (a != nullptr) {
 					CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
+					GLOBAL_VAR->CsvProductFlowList(m_pk, a->m_genID, a->m_passTime, WAISER->CurentSimulationTime().GetValue());
 				}
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
 				m_modelState = STATE::PENDING;
 			}
 			else if (GLOBAL_VAR->readymap[m_pk] == true) {
 				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
+				if (m_type == 0) {
+					GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
+				}
+				else GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
-				
 				switch (m_type) {
 				case 0:
 					CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
