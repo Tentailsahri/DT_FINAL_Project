@@ -5,10 +5,13 @@ Cpd_PROC::Cpd_PROC(int proc_idx, int proc_subidx, int pk) {
 	
 	AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 	AddInPort((unsigned int)IN_PORT::READY, "READY");
-	AddInPort((unsigned int)IN_PORT::PRODUCT, "PRODUCT");
-	AddOutPort((unsigned int)OUT_PORT::PAUSE, "PAUSE");
-	AddOutPort((unsigned int)OUT_PORT::READY, "READY");
+	for (int i = 0; i < proc_subidx; i++) {
+		AddInPort((unsigned int)IN_PORT::PRODUCT+i, "PRODUCT" + std::to_string(i));
+		AddOutPort((unsigned int)OUT_PORT::PAUSE+i, "PAUSE" + std::to_string(i));
+		AddOutPort((unsigned int)OUT_PORT::READY+i, "READY" + std::to_string(i));
+	}
 	AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
+	
 
 	WAtomModel* State = new Atomic_State(2, proc_idx, pk);
 	WAtomModel* Send = new Atomic_Send(2, proc_idx, pk);

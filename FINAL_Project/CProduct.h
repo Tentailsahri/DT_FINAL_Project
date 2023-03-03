@@ -23,6 +23,8 @@ public:
 	// 통과 시간
 	double m_passTime;
 
+	int m_targetPk;
+
 
 	CProduct(int genID, double genTime);
 	CProduct(CProduct& copy);

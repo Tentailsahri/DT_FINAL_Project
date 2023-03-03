@@ -57,6 +57,7 @@ public:
 	int m_idx;
 	// pk
 	int m_pk;
+	int newgencount;
 
 };
 

@@ -10,6 +10,7 @@ CProduct::CProduct(int genID, double genTime)
 	m_genPk = -1;
 	m_genTime = genTime;
 	m_passTime = -1;
+	m_targetPk = -1;
 }
 
 /**
@@ -27,4 +28,5 @@ CProduct::CProduct(CProduct& copy)
 	m_genPk = copy.m_genPk;
 	m_genTime = copy.m_genTime;
 	m_passTime = copy.m_passTime;
+	m_targetPk = copy.m_targetPk;
 }

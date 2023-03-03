@@ -20,7 +20,7 @@ public:
 
 	std::map<int, std::map<int, std::queue<CProduct*>>> p_buffer;
 
-	std::map<int, bool> readymap;
+	std::map<int, std::vector<bool>> readymap;
 
 	void mBufferPush(int idx, int key, CProduct* product, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
 	CProduct* mBufferPop(int idx, int key, std::map<int, std::map<int, std::queue<CProduct*>>>* mbuffer);
@@ -60,7 +60,7 @@ public:
 	int m_maxbuffer_Receive = 10;
 	int m_maxbuffer_Process = 10;
 	int m_maxbuffer_Stock = 10;
-	int	scenario_num = 1;
+	int	scenario_num = 2;
 	int track_speed = 1;
 
 	// 공정 오류율(x회마다 고장)
@@ -69,7 +69,7 @@ public:
 	int error_stock = 5;
 	int time = 100;
 
-	bool SQLConnect = true;
+	bool SQLConnect = false;
 
 	double TA_STATE_INIT[4] = { 5,5,5,5 };
 	double TA_STATE_ACTIVE[4] = { 5,WTime::infinity_,5,5 };

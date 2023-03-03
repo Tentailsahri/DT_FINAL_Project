@@ -21,7 +21,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 
 		// 모델 포트 연결
 		coupGenTrack(gen, track0);
-		coupTrackProc(0, track0, proc);
+		coupTrackProc(track0, proc);
 		coupProcTrack(proc, track1);
 		coupTrackStock(track1, stock);
 
@@ -56,10 +56,11 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		for (int i = 0; i < 2; i++) {
 			coupTrackProc(i, track_cpd_vec.at(i), proc_cpd_vec.at(0));
 		}
+		for (int i = 0; i < 2; i++) {
+			coupTrackProc(i, track_cpd_vec.at(2 + i), proc_cpd_vec.at(1));
+		}
 		coupProcTrack(proc_cpd_vec.at(0), track_cpd_vec.at(2));
-		coupTrackProc(0, track_cpd_vec.at(2), proc_cpd_vec.at(1));
 		coupGenTrack(gen_cpd_vec.at(2), track_cpd_vec.at(3));
-		coupTrackProc(0, track_cpd_vec.at(3), proc_cpd_vec.at(1));
 		coupProcTrack(proc_cpd_vec.at(1), track_cpd_vec.at(4));
 		coupProcTrack(proc_cpd_vec.at(1), track_cpd_vec.at(5));
 		coupTrackStock(track_cpd_vec.at(4), stock_cpd_vec.at(0));
@@ -75,6 +76,12 @@ void Cpd_Main::coupGenTrack(WCoupModel* GEN, WCoupModel* TRACK) {
 	AddCoupling(GEN, (unsigned int)Cpd_GEN::OUT_PORT::PRODUCT, TRACK, (unsigned int)Cpd_TRACK::IN_PORT::PRODUCT);
 	AddCoupling(TRACK, (unsigned int)Cpd_TRACK::OUT_PORT::PAUSE, GEN, (unsigned int)Cpd_GEN::IN_PORT::PAUSE);
 	AddCoupling(TRACK, (unsigned int)Cpd_TRACK::OUT_PORT::READY, GEN, (unsigned int)Cpd_GEN::IN_PORT::READY);
+}
+
+void Cpd_Main::coupTrackProc(WCoupModel* TRACK, WCoupModel* PROC) {
+	AddCoupling(PROC, (unsigned int)Cpd_PROC::OUT_PORT::PAUSE, TRACK, (unsigned int)Cpd_TRACK::IN_PORT::PAUSE);
+	AddCoupling(PROC, (unsigned int)Cpd_PROC::OUT_PORT::READY, TRACK, (unsigned int)Cpd_TRACK::IN_PORT::READY);
+	AddCoupling(TRACK, (unsigned int)Cpd_TRACK::OUT_PORT::PRODUCT, PROC, (unsigned int)Cpd_PROC::IN_PORT::PRODUCT);
 }
 
 void Cpd_Main::coupTrackProc(int num, WCoupModel* TRACK, WCoupModel* PROC) {
