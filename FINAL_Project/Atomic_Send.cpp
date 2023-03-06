@@ -272,7 +272,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 							newgencount1++;
 							int genid = 4000 + newgencount1;
 							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-							newproduct->m_targetPk = 4;
+							newproduct->m_targetPk = 7;
 							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 							CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 						}
@@ -282,7 +282,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 							newgencount1++;
 							int genid = 4000 + newgencount1;
 							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-							newproduct->m_targetPk = 5;
+							newproduct->m_targetPk = 8;
 							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 							CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 						}
@@ -292,7 +292,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 							newgencount1++;
 							int genid = 4000 + newgencount1;
 							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-							std::uniform_int_distribution<int> u_dis(4, 5);
+							std::uniform_int_distribution<int> u_dis(7, 8);
 							newproduct->m_targetPk = u_dis(WAISER->random_gen_);
 							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 							CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());

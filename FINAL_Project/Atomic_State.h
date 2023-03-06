@@ -22,8 +22,8 @@ public:
 	// 출력포트 정의
 	enum class OUT_PORT : unsigned int {
 		READY = 210,
-		PAUSE,
-		ERROR_ON,
+		PAUSE=220,
+		ERROR_ON=230,
 		ERROR_OFF,
 		MAKE,
 		SEND
