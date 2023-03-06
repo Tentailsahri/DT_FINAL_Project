@@ -9,7 +9,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		WCoupModel* gen = new Cpd_GEN(0,0);
 		WCoupModel* track0 = new Cpd_TRACK(0,1);
 		WCoupModel* track1 = new Cpd_TRACK(1,2);
-		WCoupModel* proc = new Cpd_PROC(0, 1, 3);
+		WCoupModel* proc = new Cpd_PROC(0, 3);
 		WCoupModel* stock = new Cpd_STOCK(0,4);
 
 		// 생성한 모델 연결

@@ -58,6 +58,7 @@ public:
 	// pk
 	int m_pk;
 	int newgencount;
+	int newgencount1;
 
 };
 

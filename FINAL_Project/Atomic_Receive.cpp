@@ -68,20 +68,21 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 						m_product->m_pastType = m_product->m_curType;
 						m_product->m_curPk = m_pk;
 						m_product->m_curType = getModel2Str(m_type);
-						CLOG->info("PK: {}, idx : {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, m_product->m_curType, m_product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, m_subidx, m_product->m_curType, m_product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						CLOG->info("pastPk={} pastType={} curPk={} curtype={}", m_product->m_pastPk, m_product->m_pastType, m_product->m_curPk, m_product->m_curType);
 						GLOBAL_VAR->mBufferPush(m_subidx, m_pk, m_product, &GLOBAL_VAR->p_buffer);
 					}
 				}
-				else
-				m_product->m_passTime = WAISER->CurentSimulationTime().GetValue();
-				m_product->m_pastPk = m_product->m_curPk;
-				m_product->m_pastType = m_product->m_curType;
-				m_product->m_curPk = m_pk;
-				m_product->m_curType = getModel2Str(m_type);
-				CLOG->info("PK: {}, idx : {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, m_product->m_curType, m_product->m_genID, WAISER->CurentSimulationTime().GetValue());
-				CLOG->info("pastPk={} pastType={} curPk={} curtype={}", m_product->m_pastPk, m_product->m_pastType, m_product->m_curPk, m_product->m_curType);
-				GLOBAL_VAR->mBufferPush(m_subidx , m_pk, m_product, &GLOBAL_VAR->p_buffer);
+				else {
+					m_product->m_passTime = WAISER->CurentSimulationTime().GetValue();
+					m_product->m_pastPk = m_product->m_curPk;
+					m_product->m_pastType = m_product->m_curType;
+					m_product->m_curPk = m_pk;
+					m_product->m_curType = getModel2Str(m_type);
+					CLOG->info("PK: {}, idx : {} {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, m_subidx, m_product->m_curType, m_product->m_genID, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("pastPk={} pastType={} curPk={} curtype={}", m_product->m_pastPk, m_product->m_pastType, m_product->m_curPk, m_product->m_curType);
+					GLOBAL_VAR->mBufferPush(m_subidx, m_pk, m_product, &GLOBAL_VAR->p_buffer);
+				}
 			}
 			m_modelState = STATE::DECISION;
 		}
@@ -95,12 +96,15 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 		if (GLOBAL_VAR->scenario_num == 1) GLOBAL_VAR->readymap[m_pk].at(0) = true;
 		else if (GLOBAL_VAR->scenario_num == 2 && m_pk != 10) GLOBAL_VAR->readymap[m_pk].at(0) = true;
 		else if (GLOBAL_VAR->scenario_num == 2 && m_pk == 10) {
-			CProduct* next = (CProduct*)msg.GetPort();
-			if (next->m_curPk == 7) {
-				GLOBAL_VAR->readymap[m_pk].at(0) = true;
-			}
-			else if(next->m_curPk == 8) {
-				GLOBAL_VAR->readymap[m_pk].at(1) == true;
+			CProduct* cnext = (CProduct*)msg.GetValue();
+			if (cnext != nullptr) {
+				CProduct* next = new CProduct(*cnext);
+				if (next->m_curPk == 7) {
+					GLOBAL_VAR->readymap[m_pk].at(0) = true;
+				}
+				else if (next->m_curPk == 8) {
+					GLOBAL_VAR->readymap[m_pk].at(1) = true;
+				}
 			}
 		}
 		m_modelState = STATE::READYMAP;
@@ -109,12 +113,15 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 		if (GLOBAL_VAR->scenario_num == 1) GLOBAL_VAR->readymap[m_pk].at(0) = false;
 		else if (GLOBAL_VAR->scenario_num == 2 && m_pk != 10) GLOBAL_VAR->readymap[m_pk].at(0) = false;
 		else if (GLOBAL_VAR->scenario_num == 2 && m_pk == 10) {
-			CProduct* next = (CProduct*)msg.GetPort();
-			if (next->m_curPk == 7) {
-				GLOBAL_VAR->readymap[m_pk].at(0) = false;
-			}
-			else if (next->m_curPk == 8) {
-				GLOBAL_VAR->readymap[m_pk].at(1) == false;
+			CProduct* cnext = (CProduct*)msg.GetValue();
+			if (cnext != nullptr) {
+				CProduct* next = new CProduct(*cnext);
+				if (next->m_curPk == 7) {
+					GLOBAL_VAR->readymap[m_pk].at(0) = false;
+				}
+				else if (next->m_curPk == 8) {
+					GLOBAL_VAR->readymap[m_pk].at(1) = false;
+				}
 			}
 		}
 		m_modelState = STATE::READYMAP;
@@ -176,13 +183,16 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 		break;
 	case 2:
 		if (m_modelState == STATE::DECISION) {
-			CLOG->info("PK: {}, idx : {} PROC Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(m_subidx, m_pk, &GLOBAL_VAR->p_buffer));
+			CLOG->info("PK: {}, idx : {} PROC Buffer {} size {}", m_pk, m_idx, m_subidx, GLOBAL_VAR->mBufferSize(m_subidx, m_pk, &GLOBAL_VAR->p_buffer));
 			if (GLOBAL_VAR->m_maxbuffer_Process > GLOBAL_VAR->mBufferSize(m_subidx, m_pk, &GLOBAL_VAR->p_buffer)) {
-				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
-				
+				CProduct* next = new CProduct(1, 0.0);
+				next->m_curPk = m_pk;
+				msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
 				m_modelState = STATE::RECEIVE;
 			} else if (GLOBAL_VAR->m_maxbuffer_Process <= GLOBAL_VAR->mBufferSize(m_subidx, m_pk, &GLOBAL_VAR->p_buffer)) {
-				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
+				CProduct* next = new CProduct(1, 0.0);
+				next->m_curPk = m_pk;
+				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, next);
 				m_modelState = STATE::FULL;
 			}
 		}
@@ -192,11 +202,14 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 		if (m_modelState == STATE::DECISION) {
 			CLOG->info("PK: {}, idx : {} STOCK Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(m_subidx, m_pk, &GLOBAL_VAR->p_buffer));
 			if (GLOBAL_VAR->m_maxbuffer_Stock > GLOBAL_VAR->mBufferSize(m_subidx, m_pk, &GLOBAL_VAR->p_buffer)) {
-				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
-				
+				CProduct* next = new CProduct(1, 0.0);
+				next->m_curPk = m_pk;
+				msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
 				m_modelState = STATE::RECEIVE;
 			} else if (GLOBAL_VAR->m_maxbuffer_Stock <= GLOBAL_VAR->mBufferSize(m_subidx, m_pk, &GLOBAL_VAR->p_buffer)) {
-				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
+				CProduct* next = new CProduct(1, 0.0);
+				next->m_curPk = m_pk;
+				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, next);
 				m_modelState = STATE::FULL;
 			}
 		}

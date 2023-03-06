@@ -42,6 +42,7 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	m_idx = idx;
 	m_pk = pk;
 	newgencount = 0;
+	newgencount1 = 0;
 }
 
 // 외부 상태 천이 함수
@@ -257,7 +258,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					    CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
 						newgencount++;
-						int genid= 2000 + newgencount;
+						int genid= 3000 + newgencount;
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
@@ -268,8 +269,8 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
 							CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 							product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-							newgencount++;
-							int genid = 2000 + newgencount;
+							newgencount1++;
+							int genid = 4000 + newgencount1;
 							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 							newproduct->m_targetPk = 4;
 							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
@@ -278,8 +279,8 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
 							CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 							product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-							newgencount++;
-							int genid = 2000 + newgencount;
+							newgencount1++;
+							int genid = 4000 + newgencount1;
 							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 							newproduct->m_targetPk = 5;
 							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
@@ -288,8 +289,8 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						else if(GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 							CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 							product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-							newgencount++;
-							int genid = 2000 + newgencount;
+							newgencount1++;
+							int genid = 4000 + newgencount1;
 							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 							std::uniform_int_distribution<int> u_dis(4, 5);
 							newproduct->m_targetPk = u_dis(WAISER->random_gen_);
@@ -305,7 +306,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 					product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
 					newgencount++;
-					int genid = 2000 + newgencount;
+					int genid = 3000 + newgencount;
 					CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
@@ -316,8 +317,8 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
 						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount++;
-						int genid = 2000 + newgencount;
+						newgencount1++;
+						int genid = 4000 + newgencount1;
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 						newproduct->m_targetPk = 7;
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
@@ -326,8 +327,8 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
 						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount++;
-						int genid = 2000 + newgencount;
+						newgencount1++;
+						int genid = 4000 + newgencount1;
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 						newproduct->m_targetPk = 8;
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
@@ -336,8 +337,8 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount++;
-						int genid = 2000 + newgencount;
+						newgencount1++;
+						int genid = 4000 + newgencount1;
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 						std::uniform_int_distribution<int> u_dis(7, 8);
 						newproduct->m_targetPk = u_dis(WAISER->random_gen_);
@@ -391,7 +392,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 					product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
 					newgencount++;
-					int genid = 2000 + newgencount;
+					int genid = 3000 + newgencount;
 					CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
@@ -402,8 +403,8 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
 						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount++;
-						int genid = 2000 + newgencount;
+						newgencount1++;
+						int genid = 4000 + newgencount1;
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 						newproduct->m_targetPk = 7;
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
@@ -412,8 +413,8 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
 						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount++;
-						int genid = 2000 + newgencount;
+						newgencount1++;
+						int genid = 4000 + newgencount1;
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 						newproduct->m_targetPk = 8;
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
@@ -422,8 +423,8 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount++;
-						int genid = 2000 + newgencount;
+						newgencount1++;
+						int genid = 4000 + newgencount1;
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 						std::uniform_int_distribution<int> u_dis(7, 8);
 						newproduct->m_targetPk = u_dis(WAISER->random_gen_);

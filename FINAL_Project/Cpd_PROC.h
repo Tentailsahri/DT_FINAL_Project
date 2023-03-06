@@ -9,6 +9,7 @@ class Cpd_PROC : public WCoupModel	//커플모델
 {
 public:
 	Cpd_PROC(int proc_idx, int proc_subidx, int pk);
+	Cpd_PROC(int proc_idx, int pk);
 	// 입력포트 정의
 	enum class IN_PORT : unsigned int {
 		PAUSE = 1200,

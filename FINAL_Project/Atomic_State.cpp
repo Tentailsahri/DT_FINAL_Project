@@ -184,7 +184,9 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 			if (m_modelState == STATE::INIT) {
 				m_modelState = STATE::ACTIVE;
 				CLOG->info("PK: {}, idx : {} TRACK ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
+				CProduct* next = new CProduct(1, 1);
+				next->m_curPk = m_pk;
+				msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
 			}
 			break;
 		
@@ -192,19 +194,36 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 		if (m_modelState == STATE::INIT) {
 			m_modelState = STATE::ACTIVE;
 			CLOG->info("PK: {}, idx : {} PROC ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-			msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
+			CProduct* next = new CProduct(1, 1);
+			next->m_curPk = m_pk;
+			msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
 		}
 		else if (m_modelState == STATE::ACTIVE) {
+			if (GLOBAL_VAR->scenario_num == 1) {
 			if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
-				m_count++;
-				CLOG->info("PK: {}, idx : {} PROC BUFFER SIZE = {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
-				if (m_count >= GLOBAL_VAR->error_proc) {
-					m_modelState = STATE::SERROR;
-					CLOG->info("PK: {}, idx : {} PROC ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-					msg.SetPortValue((unsigned int)OUT_PORT::ERROR_ON, nullptr);
+				
+					m_count++;
+					CLOG->info("PK: {}, idx : {} PROC BUFFER SIZE = {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
+					if (m_count >= GLOBAL_VAR->error_proc) {
+						m_modelState = STATE::SERROR;
+						CLOG->info("PK: {}, idx : {} PROC ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+						msg.SetPortValue((unsigned int)OUT_PORT::ERROR_ON, nullptr);
+					}
 				}
 			}
-		}
+			else {
+				if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
+					m_count++;
+					CLOG->info("PK: {}, idx : {} PROC BUFFER 0 SIZE = {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
+					CLOG->info("PK: {}, idx : {} PROC BUFFER 1 SIZE = {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer));
+					if (m_count >= GLOBAL_VAR->error_proc) {
+						m_modelState = STATE::SERROR;
+						CLOG->info("PK: {}, idx : {} PROC ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+						msg.SetPortValue((unsigned int)OUT_PORT::ERROR_ON, nullptr);
+					}
+				}
+			}
+			}
 		else if (m_modelState == STATE::SERROR) {
 			m_modelState = STATE::ACTIVE;
 			CLOG->info("PK: {}, idx : {} PROC ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
@@ -216,7 +235,9 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 		if (m_modelState == STATE::INIT) {
 			m_modelState = STATE::ACTIVE;
 			CLOG->info("PK: {}, idx : {} STOCK ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-			msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
+			CProduct* next = new CProduct(1, 1);
+			next->m_curPk = m_pk;
+			msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
 		}
 		else if (m_modelState == STATE::ACTIVE) {
 			m_count++;
