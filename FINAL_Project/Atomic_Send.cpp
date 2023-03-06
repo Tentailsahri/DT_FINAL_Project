@@ -261,6 +261,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						int genid= 3000 + newgencount;
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 						m_modelState = STATE::WAIT;
 				}
@@ -274,6 +275,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 							newproduct->m_targetPk = 7;
 							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+							GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 							CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 						}
 						else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
@@ -284,6 +286,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 							newproduct->m_targetPk = 8;
 							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+							GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 							CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 						}
 						else if(GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
@@ -295,6 +298,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 							std::uniform_int_distribution<int> u_dis(7, 8);
 							newproduct->m_targetPk = u_dis(WAISER->random_gen_);
 							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+							GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 							CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 							
 						}
@@ -309,6 +313,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					int genid = 3000 + newgencount;
 					CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+					GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 					m_modelState = STATE::WAIT;
 				}
@@ -322,6 +327,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 						newproduct->m_targetPk = 7;
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 					}
 					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
@@ -332,6 +338,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 						newproduct->m_targetPk = 8;
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 					}
 					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
@@ -343,6 +350,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						std::uniform_int_distribution<int> u_dis(7, 8);
 						newproduct->m_targetPk = u_dis(WAISER->random_gen_);
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 
 					}
@@ -395,6 +403,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					int genid = 3000 + newgencount;
 					CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+					GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 					m_modelState = STATE::PENDING;
 				}
@@ -408,6 +417,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 						newproduct->m_targetPk = 7;
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 					}
 					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
@@ -418,6 +428,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
 						newproduct->m_targetPk = 8;
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 					}
 					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
@@ -429,6 +440,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						std::uniform_int_distribution<int> u_dis(7, 8);
 						newproduct->m_targetPk = u_dis(WAISER->random_gen_);
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 
 					}

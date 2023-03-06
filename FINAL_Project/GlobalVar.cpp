@@ -172,12 +172,14 @@ void CGlobalVar::CsvMake() {
 		file_name1 = "../../state_time_list1.csv";
 		file_name2 = "../../state_rate_list1.csv";
 		file_name3 = "../../buf_count_list1.csv";
+		file_name4 = "../../product_flow_list1.csv";
 	}
 	else if (GLOBAL_VAR->scenario_num == 2) {
 		file_name = "../../object_state_list2.csv";
 		file_name1 = "../../state_time_list2.csv";
 		file_name2 = "../../state_rate_list2.csv";
 		file_name3 = "../../buf_count_list2.csv";
+		file_name4 = "../../product_flow_list2.csv";
 	}
 	else if (GLOBAL_VAR->scenario_num == 3) {
 		file_name = "../../object_state_list3.csv";
