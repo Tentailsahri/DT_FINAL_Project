@@ -8,6 +8,7 @@
 class Cpd_Main : public WCoupModel	//커플모델
 {
 private:
+	// 설비 연결 함수
 	void coupGenTrack(WCoupModel* GEN, WCoupModel* TRACK);
 	void coupTrackProc(WCoupModel* TRACK, WCoupModel* PROC);
 	void coupTrackProc(int num, WCoupModel* TRACK, WCoupModel* PROC);

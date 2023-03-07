@@ -2,27 +2,28 @@
 #include <SimLogger.h>
 
 Atomic_Send::Atomic_Send(int type, int idx, int pk) {
-	// ¸ðµ¨ ÀÌ¸§ ¼³Á¤
+	// ëª¨ë¸ ì´ë¦„ ì„¤ì •
 	SetName("Atomic_Send");
-	// ÀÔ,Ãâ·Â Æ÷Æ® ¼³Á¤
+	// ìž…,ì¶œë ¥ í¬íŠ¸ ì„¤ì •
+	// íƒ€ìž… : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	switch (type) {
 	case 0:
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::MAKE, "MAKE");
 		AddInPort((unsigned int)IN_PORT::ERROR_ON, "ERROR_ON");
 		AddInPort((unsigned int)IN_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 		break;
 	case 1:
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::RECEIVE, "RECEIVE");
 		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 		break;
 	case 2:
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::RECEIVE, "RECEIVE");
 		AddInPort((unsigned int)IN_PORT::ERROR_ON, "ERROR_ON");
 		AddInPort((unsigned int)IN_PORT::ERROR_OFF, "ERROR_OFF");
@@ -34,10 +35,9 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 		AddInPort((unsigned int)IN_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 	}
-	// ÃÊ±â ¸ðµ¨ »óÅÂ ¼³Á¤
-
+	// ì´ˆê¸° ëª¨ë¸ ìƒíƒœ ì„¤ì •
 	m_modelState = STATE::WAIT;
-	// ¸ðµ¨ º¯¼ö ÃÊ±âÈ­
+	// ëª¨ë¸ ë³€ìˆ˜ ì´ˆê¸°í™”
 	m_type = type;
 	m_idx = idx;
 	m_pk = pk;
@@ -45,7 +45,7 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	newgencount1 = 0;
 }
 
-// ¿ÜºÎ »óÅÂ ÃµÀÌ ÇÔ¼ö
+// ì™¸ë¶€ ìƒíƒœ ì²œì´ í•¨ìˆ˜
 bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 	if (m_type != 3) {
 		if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
@@ -110,7 +110,7 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 
 }
 
-// ³»ºÎ »óÅÂ ÃµÀÌ ÇÔ¼ö
+// ë‚´ë¶€ ìƒíƒœ ì²œì´ í•¨ìˆ˜
 bool Atomic_Send::IntTransFn() {
 	if (m_modelState == STATE::PENDING) {
 		m_modelState = STATE::SEND;
@@ -118,7 +118,7 @@ bool Atomic_Send::IntTransFn() {
 	return true;
 }
 
-// Ãâ·Â ÇÔ¼ö
+// ì¶œë ¥ í•¨ìˆ˜
 bool Atomic_Send::OutputFn(WMessage& msg) {
 	switch (GLOBAL_VAR->scenario_num) {
 	case 1:
@@ -130,10 +130,9 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					auto a = GLOBAL_VAR->StockBack(m_pk, &GLOBAL_VAR->stock);
 					CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock));
 					if (a != nullptr) {
-						CLOG->info("PK: {}, idx : {} STOCK {}¹ø Á¦Ç° ÀûÀç ¿Ï·á, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} STOCK {}ë²ˆ ì œí’ˆ ì ìž¬ ì™„ë£Œ, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 						GLOBAL_VAR->CsvProductFlowList(m_pk, a->m_genID, a->m_passTime, WAISER->CurentSimulationTime().GetValue());
-						if (GLOBAL_VAR->SQLConnect == true)
-							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(a->m_genID) + ", " + std::to_string(a->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+						m_sendPassQuery(a);
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
 					m_modelState = STATE::WAIT;
@@ -142,25 +141,23 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 					if (m_type == 0) {
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-						if (GLOBAL_VAR->SQLConnect == true)
-							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_genTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+						m_sendGenQuery(product);
 					}
 					else
 					{
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
-						if (GLOBAL_VAR->SQLConnect == true)
-							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+						m_sendPassQuery(product);
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					switch (m_type) {
 					case 0:
-						CLOG->info("PK: {}, idx : {} GEN {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} GEN {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					case 1:
-						CLOG->info("PK: {}, idx : {} TRACK {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} TRACK {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					case 2:
-						CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} PROC {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					}
 					m_modelState = STATE::WAIT;
@@ -174,10 +171,9 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					auto a = GLOBAL_VAR->StockBack(m_pk, &GLOBAL_VAR->stock);
 					CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock));
 					if (a != nullptr) {
-						CLOG->info("PK: {}, idx : {} STOCK {}¹ø Á¦Ç° ÀûÀç ¿Ï·á, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} STOCK {}ë²ˆ ì œí’ˆ ì ìž¬ ì™„ë£Œ, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 						GLOBAL_VAR->CsvProductFlowList(m_pk, a->m_genID, a->m_passTime, WAISER->CurentSimulationTime().GetValue());
-						if (GLOBAL_VAR->SQLConnect == true)
-							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(a->m_genID) + ", " + std::to_string(a->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+						m_sendPassQuery(a);
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
 					m_modelState = STATE::PENDING;
@@ -186,25 +182,23 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 					if (m_type == 0) {
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-						if (GLOBAL_VAR->SQLConnect == true)
-							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_genTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+						m_sendGenQuery(product);
 					}
 					else
 					{
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
-						if (GLOBAL_VAR->SQLConnect == true)
-							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+						m_sendPassQuery(product);
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					switch (m_type) {
 					case 0:
-						CLOG->info("PK: {}, idx : {} GEN {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} GEN {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					case 1:
-						CLOG->info("PK: {}, idx : {} TRACK {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} TRACK {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					case 2:
-						CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} PROC {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					}
 					m_modelState = STATE::PENDING;
@@ -222,140 +216,97 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					auto a = GLOBAL_VAR->StockBack(m_pk, &GLOBAL_VAR->stock);
 					CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock));
 					if (a != nullptr) {
-						CLOG->info("PK: {}, idx : {} STOCK {}¹ø Á¦Ç° ÀûÀç ¿Ï·á, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} STOCK {}ë²ˆ ì œí’ˆ ì ìž¬ ì™„ë£Œ, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 						GLOBAL_VAR->CsvProductFlowList(m_pk, a->m_genID, a->m_passTime, WAISER->CurentSimulationTime().GetValue());
-						if (GLOBAL_VAR->SQLConnect == true)
-							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(a->m_genID) + ", " + std::to_string(a->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+						m_sendPassQuery(a);
+
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
 					m_modelState = STATE::WAIT;
 				}
-				else if (m_type!=2 && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
+				else if (m_type != 2 && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 					if (m_type == 0) {
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-						if (GLOBAL_VAR->SQLConnect == true)
-							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_genTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+						m_sendGenQuery(product);
 					}
 					else
 					{
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
-						if (GLOBAL_VAR->SQLConnect == true)
-							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+						m_sendPassQuery(product);
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					switch (m_type) {
 					case 0:
-						CLOG->info("PK: {}, idx : {} GEN {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} GEN {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					case 1:
-						CLOG->info("PK: {}, idx : {} TRACK {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} TRACK {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					}
 					m_modelState = STATE::WAIT;
 				}
-				else if (m_type == 2 && m_idx==0 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) >= 1 && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
-					    CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount++;
-						int genid= 3000 + newgencount;
-						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-						CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-						m_modelState = STATE::WAIT;
-				}
-				else if (m_type == 2 && m_idx == 1 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) >= 1) {
-
-						if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
-							CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-							product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-							newgencount1++;
-							int genid = 4000 + newgencount1;
-							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-							newproduct->m_targetPk = 7;
-							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-							GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-							CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-						}
-						else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
-							CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-							product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-							newgencount1++;
-							int genid = 4000 + newgencount1;
-							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-							newproduct->m_targetPk = 8;
-							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-							GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-							CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-						}
-						else if(GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
-							CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-							product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-							newgencount1++;
-							int genid = 4000 + newgencount1;
-							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-							std::uniform_int_distribution<int> u_dis(7, 8);
-							newproduct->m_targetPk = u_dis(WAISER->random_gen_);
-							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-							GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-							CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-							
-						}
-						m_modelState = STATE::WAIT;
-				}
-                }
-			else if (m_type == 2 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) == 1) {
-				if (m_idx == 0 && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) >= 1 && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
+				else if (m_type == 2 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) >= 1 && (GLOBAL_VAR->readymap[m_pk].at(0) == true || GLOBAL_VAR->readymap[m_pk].at(1) == true)) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 					product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-					newgencount++;
-					int genid = 3000 + newgencount;
+					int genid = 0;
+					if (m_idx == 0) {
+						newgencount++;
+						genid = m_pk * 1000 + newgencount;
+					}
+					else if (m_idx == 1) {
+						newgencount1++;
+						genid = m_pk * 1000 + newgencount1;
+					}
 					CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
+					if (m_idx == 1) {
+						if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
+							std::uniform_int_distribution<int> u_dis(7, 8);
+							newproduct->m_targetPk = u_dis(WAISER->random_gen_);
+						}
+						else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
+							newproduct->m_targetPk = 8;
+						}
+						else if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
+							newproduct->m_targetPk = 7;
+						}
+					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 					GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-					CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("PK: {}, idx : {} PROC {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 					m_modelState = STATE::WAIT;
 				}
-				else if (m_idx == 1 && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) >= 1) {
-
-					if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
-						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount1++;
-						int genid = 4000 + newgencount1;
-						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-						newproduct->m_targetPk = 7;
-						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-						CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-					}
-					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
-						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount1++;
-						int genid = 4000 + newgencount1;
-						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-						newproduct->m_targetPk = 8;
-						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-						CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-					}
-					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
-						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount1++;
-						int genid = 4000 + newgencount1;
-						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
+			}
+			else if (m_type == 2 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) == 1 && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) >= 1 && (GLOBAL_VAR->readymap[m_pk].at(0) == true || GLOBAL_VAR->readymap[m_pk].at(1) == true)) {
+				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
+				product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
+				int genid = 0;
+				if (m_idx == 0) {
+					newgencount++;
+					genid = m_pk * 1000 + newgencount;
+				}
+				else if (m_idx == 1) {
+					newgencount1++;
+					genid = m_pk * 1000 + newgencount1;
+				}
+				CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
+				if (m_idx == 1) {
+					if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 						std::uniform_int_distribution<int> u_dis(7, 8);
 						newproduct->m_targetPk = u_dis(WAISER->random_gen_);
-						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-						CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-
 					}
-					m_modelState = STATE::WAIT;
+					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
+						newproduct->m_targetPk = 8;
+					}
+					else if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
+						newproduct->m_targetPk = 7;
+					}
 				}
+				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+				GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
+				CLOG->info("PK: {}, idx : {} PROC {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
+				m_modelState = STATE::WAIT;
+
 			}
 			else if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) > 1) {
 				if (m_type == 3) {
@@ -364,99 +315,84 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					auto a = GLOBAL_VAR->StockBack(m_pk, &GLOBAL_VAR->stock);
 					CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock));
 					if (a != nullptr) {
-						CLOG->info("PK: {}, idx : {} STOCK {}¹ø Á¦Ç° ÀûÀç ¿Ï·á, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} STOCK {}ë²ˆ ì œí’ˆ ì ìž¬ ì™„ë£Œ, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 						GLOBAL_VAR->CsvProductFlowList(m_pk, a->m_genID, a->m_passTime, WAISER->CurentSimulationTime().GetValue());
 						if (GLOBAL_VAR->SQLConnect == true)
 							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(a->m_genID) + ", " + std::to_string(a->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
-					m_modelState = STATE::PENDING;
+
 				}
 				else if (m_type != 2 && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 					if (m_type == 0) {
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 						if (GLOBAL_VAR->SQLConnect == true)
-							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_genTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+							m_sendGenQuery(product);
 					}
 					else
 					{
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 						if (GLOBAL_VAR->SQLConnect == true)
-							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+							m_sendPassQuery(product);
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					switch (m_type) {
 					case 0:
-						CLOG->info("PK: {}, idx : {} GEN {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} GEN {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					case 1:
-						CLOG->info("PK: {}, idx : {} TRACK {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} TRACK {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					}
-					m_modelState = STATE::PENDING;
+
 				}
-				else if (m_type == 2 && m_idx == 0 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) > 1 && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
+				else if (m_type == 2 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) > 1 && (GLOBAL_VAR->readymap[m_pk].at(0) == true || GLOBAL_VAR->readymap[m_pk].at(1) == true)) {
+
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 					product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-					newgencount++;
-					int genid = 3000 + newgencount;
+					int genid = 0;
+					if (m_idx == 0) {
+						newgencount++;
+						genid = m_pk * 1000 + newgencount;
+					}
+					else if (m_idx == 1) {
+						newgencount1++;
+						genid = m_pk * 1000 + newgencount1;
+					}
 					CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
+					if (m_idx == 1) {
+						if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
+							std::uniform_int_distribution<int> u_dis(7, 8);
+							newproduct->m_targetPk = u_dis(WAISER->random_gen_);
+						}
+						else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
+							newproduct->m_targetPk = 8;
+						}
+						else if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
+							newproduct->m_targetPk = 7;
+						}
+					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 					GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-					CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-					m_modelState = STATE::PENDING;
+					CLOG->info("PK: {}, idx : {} PROC {}ë²ˆ ì œí’ˆ ì†¡ì‹  ì™„ë£Œ, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
+
+
+
 				}
-				else if (m_type == 2 && m_idx == 1 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) > 1) {
-
-					if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
-						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount1++;
-						int genid = 4000 + newgencount1;
-						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-						newproduct->m_targetPk = 7;
-						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-						CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-					}
-					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
-						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount1++;
-						int genid = 4000 + newgencount1;
-						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-						newproduct->m_targetPk = 8;
-						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-						CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-					}
-					else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
-						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount1++;
-						int genid = 4000 + newgencount1;
-						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-						std::uniform_int_distribution<int> u_dis(7, 8);
-						newproduct->m_targetPk = u_dis(WAISER->random_gen_);
-						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-						CLOG->info("PK: {}, idx : {} PROC {}¹ø Á¦Ç° ¼Û½Å ¿Ï·á, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-
-					}
-					m_modelState = STATE::PENDING;
-				}
-
+				m_modelState = STATE::PENDING;
 			}
 		}
+	
 		break;
+
 	}
 	return true;
 }
 
-// TAÇÔ¼ö
+// TAï¿½Ô¼ï¿½
 WTime Atomic_Send::TimeAdvanceFn() {
-	// Å¸ÀÔ : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3-+
+	// Å¸ï¿½ï¿½ : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3-+
 	switch (m_type) {
 	case 0:
 		return TA_STATE_GEN[(int)m_modelState];
@@ -488,4 +424,18 @@ WTime Atomic_Send::TimeAdvanceFn() {
 		return 0;
 	}
 
+}
+
+void Atomic_Send::m_sendPassQuery(CProduct* product)
+{
+	if (GLOBAL_VAR->SQLConnect == true) {
+		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+	}
+}
+
+void Atomic_Send::m_sendGenQuery(CProduct* product)
+{
+	if (GLOBAL_VAR->SQLConnect == true){
+		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_genTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+     }
 }
