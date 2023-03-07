@@ -80,7 +80,6 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 
 // 내부 상태 천이 함수
 bool Atomic_State::IntTransFn() {
-	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	m_dataUpdate();
 
 	if (m_modelState == STATE::INIT) {

@@ -2,9 +2,10 @@
 #include <SimLogger.h>
 
 Atomic_Send::Atomic_Send(int type, int idx, int pk) {
-	// �� �̸� ����
+	// 모델 이름 설정
 	SetName("Atomic_Send");
-	// ��,��� ��Ʈ ����
+	// 입,출력 포트 설정
+	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	switch (type) {
 	case 0:
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
@@ -34,10 +35,9 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 		AddInPort((unsigned int)IN_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 	}
-	// �ʱ� �� ���� ����
-
+	// 초기 모델 상태 설정
 	m_modelState = STATE::WAIT;
-	// �� ���� �ʱ�ȭ
+	// 모델 변수 초기화
 	m_type = type;
 	m_idx = idx;
 	m_pk = pk;
@@ -45,7 +45,7 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	newgencount1 = 0;
 }
 
-// �ܺ� ���� õ�� �Լ�
+// 외부 상태 천이 함수
 bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 	if (m_type != 3) {
 		if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
@@ -110,7 +110,7 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 
 }
 
-// ���� ���� õ�� �Լ�
+// 내부 상태 천이 함수
 bool Atomic_Send::IntTransFn() {
 	if (m_modelState == STATE::PENDING) {
 		m_modelState = STATE::SEND;
@@ -118,7 +118,7 @@ bool Atomic_Send::IntTransFn() {
 	return true;
 }
 
-// ��� �Լ�
+// 출력 함수
 bool Atomic_Send::OutputFn(WMessage& msg) {
 	switch (GLOBAL_VAR->scenario_num) {
 	case 1:
