@@ -117,81 +117,29 @@ bool Atomic_Receive::IntTransFn() {
 			m_modelState = STATE::FULL;
 		}
 	}
-	if (m_modelState == STATE::INIT) {
-		m_modelState = STATE::RECEIVE;
-	}
 	
 	return true;
 }
 
 // 출력 함수
 bool Atomic_Receive::OutputFn(WMessage& msg) {
-	switch (m_type) {
-	case 0:
-	if (m_modelState == STATE::DECISION) {
-			CLOG->info("PK: {}, idx : {} GEN Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer));
-			if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
-				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, nullptr);
-				m_modelState = STATE::FULL;
-			}
-			else if (GLOBAL_VAR->m_maxbuffer_Generator > GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
-				msg.SetPortValue((unsigned int)OUT_PORT::READY, nullptr);
-				m_modelState = STATE::RECEIVE;
-			}
+	if (m_modelState == STATE::INIT) {
+		m_modelState = STATE::RECEIVE;
+		CLOG->info("PK: {}, idx : {} {} ACTIVE, at t = {}", m_pk, m_idx, getModel2Str(m_type), WAISER->CurentSimulationTime().GetValue());
+		CProduct* next = new CProduct(1, 1);
+		next->m_curPk = m_pk;
+		msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
+	} else if (m_modelState == STATE::DECISION) {
+		CProduct* next = new CProduct(1, 0.0);
+		next->m_curPk = m_pk;
+		CLOG->info("PK: {}, idx : {} {} Buffer size {}, at t = {}", m_pk, m_idx, getModel2Str(m_type), GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer), WAISER->CurentSimulationTime().GetValue());
+		if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
+			msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, next);
+			m_modelState = STATE::FULL;
+		} else if (GLOBAL_VAR->m_maxbuffer_Generator > GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
+			msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
+			m_modelState = STATE::RECEIVE;
 		}
-		
-		break;
-	case 1:
-		 if (m_modelState == STATE::DECISION) {
-			CLOG->info("PK: {}, idx : {} TRACK Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer));
-			if (GLOBAL_VAR->m_maxbuffer_Receive > GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
-				CProduct* next = new CProduct(1, 0.0);
-				next->m_curPk = m_pk;
-				msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
-				m_modelState = STATE::RECEIVE;
-			} else if(GLOBAL_VAR->m_maxbuffer_Receive <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)){
-				CProduct* next = new CProduct(1, 0.0);
-				next->m_curPk = m_pk;
-				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, next);
-				m_modelState = STATE::FULL;
-			}
-		}
-		
-		break;
-	case 2:
-		if (m_modelState == STATE::DECISION) {
-			CLOG->info("PK: {}, idx : {} PROC Buffer {} size {}", m_pk, m_idx, m_subIdx, GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer));
-			if (GLOBAL_VAR->m_maxbuffer_Process > GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
-				CProduct* next = new CProduct(1, 0.0);
-				next->m_curPk = m_pk;
-				msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
-				m_modelState = STATE::RECEIVE;
-			} else if (GLOBAL_VAR->m_maxbuffer_Process <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
-				CProduct* next = new CProduct(1, 0.0);
-				next->m_curPk = m_pk;
-				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, next);
-				m_modelState = STATE::FULL;
-			}
-		}
-		
-		break;
-	case 3:
-		if (m_modelState == STATE::DECISION) {
-			CLOG->info("PK: {}, idx : {} STOCK Buffer size {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer));
-			if (GLOBAL_VAR->m_maxbuffer_Stock > GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
-				CProduct* next = new CProduct(1, 0.0);
-				next->m_curPk = m_pk;
-				msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
-				m_modelState = STATE::RECEIVE;
-			} else if (GLOBAL_VAR->m_maxbuffer_Stock <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
-				CProduct* next = new CProduct(1, 0.0);
-				next->m_curPk = m_pk;
-				msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, next);
-				m_modelState = STATE::FULL;
-			}
-		}
-		
-		break;
 	}
 
 	return true;
