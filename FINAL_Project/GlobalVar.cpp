@@ -332,6 +332,29 @@ void CGlobalVar::ResetTable()
 		ON DELETE NO ACTION \
 	)");
 	pgconn->SendQuery("TRUNCATE TABLE \"product_flow_list" + std::to_string(scenario_num) + "\"");
+
+	pgconn->SendQuery("CREATE TABLE IF NOT EXISTS public.obj_coup_list" + std::to_string(scenario_num) + \
+		"(project_id integer, send_object_id integer, receive_object_id integer, \
+		CONSTRAINT obj_coup_list" + std::to_string(scenario_num) + \
+		"_project_id_fk FOREIGN KEY(project_id) \
+		REFERENCES public.project_list" + std::to_string(scenario_num) + \
+		"(project_id)MATCH SIMPLE \
+		ON UPDATE NO ACTION \
+		ON DELETE NO ACTION, \
+		CONSTRAINT obj_coup_list" + std::to_string(scenario_num) + \
+		"_receive_object_id_fk FOREIGN KEY(receive_object_id) \
+		REFERENCES public.object_list" + std::to_string(scenario_num) + \
+		"(object_id)MATCH SIMPLE \
+		ON UPDATE NO ACTION \
+		ON DELETE NO ACTION, \
+		CONSTRAINT obj_coup_list" + std::to_string(scenario_num) + \
+		"_send_object_id_fk FOREIGN KEY(send_object_id) \
+		REFERENCES public.object_list" + std::to_string(scenario_num) + \
+		"(object_id)MATCH SIMPLE \
+		ON UPDATE NO ACTION \
+		ON DELETE NO ACTION \
+	)");
+	pgconn->SendQuery("TRUNCATE TABLE \"obj_coup_list" + std::to_string(scenario_num) + "\"");
 }
 
 void CGlobalVar::Makepgconn()
