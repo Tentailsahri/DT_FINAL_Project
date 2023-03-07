@@ -16,14 +16,14 @@ public:
 	enum class IN_PORT : unsigned int {
 		PAUSE = 200,
 		READY,
-		SEND
+		POP
 	};
 
 	// 출력포트 정의
 	enum class OUT_PORT : unsigned int {
 		READY = 210,
-		PAUSE,
-		ERROR_ON,
+		PAUSE=220,
+		ERROR_ON=230,
 		ERROR_OFF,
 		MAKE,
 		SEND
@@ -69,7 +69,7 @@ public:
 
 	// STATE 시작 시간 저장용
 	double m_current_time;
-	double m_endTime;
+	double m_endtime;
 	double timeStore[4]={0, 0, 0, 0};
 	void m_dataUpdate();
 	

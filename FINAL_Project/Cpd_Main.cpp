@@ -32,8 +32,6 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		std::vector<WCoupModel*> track_cpd_vec;
 		std::vector<WCoupModel*> proc_cpd_vec;
 		std::vector<WCoupModel*> stock_cpd_vec;
-
-		// 생성한 모델 연결
 		for (int i = 0; i < 3; i++) {
 			gen_cpd_vec.push_back(new Cpd_GEN(i, i));
 			AddComponent(gen_cpd_vec.at(i));
@@ -50,6 +48,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 			stock_cpd_vec.push_back(new Cpd_STOCK(i, i + 11));
 			AddComponent(stock_cpd_vec.at(i));
 		}
+		// 생성한 모델 연결
 		
 		// 모델 포트 연결
 		coupGenTrack(gen_cpd_vec.at(0), track_cpd_vec.at(0));
