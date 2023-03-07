@@ -60,5 +60,7 @@ public:
 	int newgencount;
 	int newgencount1;
 
+	void m_sendGenQuery(CProduct* product);
+	void m_sendPassQuery(CProduct* product);
 };
 
