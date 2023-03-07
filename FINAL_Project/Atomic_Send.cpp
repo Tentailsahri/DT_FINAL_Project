@@ -151,13 +151,13 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					switch (m_type) {
 					case 0:
-						CLOG->info("PK: {}, idx : {} GEN {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					case 1:
-						CLOG->info("PK: {}, idx : {} TRACK {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} TRACK {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					case 2:
-						CLOG->info("PK: {}, idx : {} PROC {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					}
 					m_modelState = STATE::WAIT;
@@ -192,13 +192,13 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					switch (m_type) {
 					case 0:
-						CLOG->info("PK: {}, idx : {} GEN {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					case 1:
-						CLOG->info("PK: {}, idx : {} TRACK {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} TRACK {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					case 2:
-						CLOG->info("PK: {}, idx : {} PROC {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					}
 					m_modelState = STATE::PENDING;
@@ -238,10 +238,10 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					switch (m_type) {
 					case 0:
-						CLOG->info("PK: {}, idx : {} GEN {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					case 1:
-						CLOG->info("PK: {}, idx : {} TRACK {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} TRACK {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					}
 					m_modelState = STATE::WAIT;
@@ -273,7 +273,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 					GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-					CLOG->info("PK: {}, idx : {} PROC {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 					m_modelState = STATE::WAIT;
 				}
 			}
@@ -304,7 +304,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				}
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 				GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-				CLOG->info("PK: {}, idx : {} PROC {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
+				CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 				m_modelState = STATE::WAIT;
 
 			}
@@ -339,10 +339,10 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					switch (m_type) {
 					case 0:
-						CLOG->info("PK: {}, idx : {} GEN {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					case 1:
-						CLOG->info("PK: {}, idx : {} TRACK {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} TRACK {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
 						break;
 					}
 
@@ -375,7 +375,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 					GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-					CLOG->info("PK: {}, idx : {} PROC {}�� ��ǰ �۽� �Ϸ�, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 
 
 
