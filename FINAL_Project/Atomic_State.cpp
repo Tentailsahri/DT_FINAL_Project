@@ -11,7 +11,7 @@ Atomic_State::Atomic_State(int type, int idx, int pk) {
 	case 0:
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
 		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
-		AddInPort((unsigned int)IN_PORT::POP, "POP");
+		AddInPort((unsigned int)IN_PORT::SEND, "SEND");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::MAKE, "MAKE");
@@ -19,13 +19,13 @@ Atomic_State::Atomic_State(int type, int idx, int pk) {
 	case 1:
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
 		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
-		AddInPort((unsigned int)IN_PORT::POP, "POP");
+		AddInPort((unsigned int)IN_PORT::SEND, "SEND");
 		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
 		break;
 	case 2:
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
 		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
-		AddInPort((unsigned int)IN_PORT::POP, "POP");
+		AddInPort((unsigned int)IN_PORT::SEND, "SEND");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::READY, "READY");

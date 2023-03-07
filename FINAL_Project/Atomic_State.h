@@ -16,14 +16,14 @@ public:
 	enum class IN_PORT : unsigned int {
 		PAUSE = 200,
 		READY,
-		POP
+		SEND
 	};
 
 	// 출력포트 정의
 	enum class OUT_PORT : unsigned int {
 		READY = 210,
-		PAUSE=220,
-		ERROR_ON=230,
+		PAUSE,
+		ERROR_ON,
 		ERROR_OFF,
 		MAKE,
 		SEND
