@@ -57,7 +57,7 @@ public:
 	// 설비의 pk
 	int m_pk;
 	//설비의 subidx
-	int m_subidx;
+	int m_subIdx;
 
 	// 현재 상태를 문자열로 변환
 	static const char* getModel2Str(int model_type);
