@@ -173,7 +173,12 @@
     <ClCompile Include="Cpd_PROC.cpp" />
     <ClCompile Include="Cpd_Main.cpp" />
     <ClCompile Include="FINAL_Project.cpp" />
-    <ClCompile Include="Atomic_Send.cpp" />
+    <ClCompile Include="Atomic_Send.cpp">
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableLanguageExtensions>
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DisableLanguageExtensions>
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DisableLanguageExtensions>
+      <DisableLanguageExtensions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DisableLanguageExtensions>
+    </ClCompile>
     <ClCompile Include="Atomic_State.cpp" />
     <ClCompile Include="PostgreSQLConnector.cpp" />
   </ItemGroup>
