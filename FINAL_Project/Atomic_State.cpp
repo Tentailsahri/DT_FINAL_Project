@@ -9,31 +9,31 @@ Atomic_State::Atomic_State(int type, int idx, int pk) {
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	switch (type) {
 	case 0:
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::POP, "POP");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::MAKE, "MAKE");
 		break;
 	case 1:
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::POP, "POP");
 		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
 		break;
 	case 2:
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::POP, "POP");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
 		break;
 	case 3:
+		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
-		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
 		break;
 	}
 	// 초기 모델 상태 설정

@@ -7,22 +7,22 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	// 입,출력 포트 설정
 	switch (type) {
 	case 0:
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::MAKE, "MAKE");
 		AddInPort((unsigned int)IN_PORT::ERROR_ON, "ERROR_ON");
 		AddInPort((unsigned int)IN_PORT::ERROR_OFF, "ERROR_OFF");
 		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 		break;
 	case 1:
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::RECEIVE, "RECEIVE");
 		AddOutPort((unsigned int)OUT_PORT::PRODUCT, "PRODUCT");
 		break;
 	case 2:
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::RECEIVE, "RECEIVE");
 		AddInPort((unsigned int)IN_PORT::ERROR_ON, "ERROR_ON");
 		AddInPort((unsigned int)IN_PORT::ERROR_OFF, "ERROR_OFF");
