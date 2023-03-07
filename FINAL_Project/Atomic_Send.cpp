@@ -171,7 +171,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					auto a = GLOBAL_VAR->StockBack(m_pk, &GLOBAL_VAR->stock);
 					CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock));
 					if (a != nullptr) {
-						CLOG->info("PK: {}, idx : {} STOCK {}�� ��ǰ ���� �Ϸ�, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 						GLOBAL_VAR->CsvProductFlowList(m_pk, a->m_genID, a->m_passTime, WAISER->CurentSimulationTime().GetValue());
 						m_sendPassQuery(a);
 					}
@@ -315,7 +315,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					auto a = GLOBAL_VAR->StockBack(m_pk, &GLOBAL_VAR->stock);
 					CLOG->info("PK: {}, idx : {} Stock Size : {}", m_pk, m_idx, GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock));
 					if (a != nullptr) {
-						CLOG->info("PK: {}, idx : {} STOCK {}�� ��ǰ ���� �Ϸ�, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} STOCK {}번 제품 적재 완료, at t = {}", m_pk, m_idx, a->m_genID, WAISER->CurentSimulationTime().GetValue());
 						GLOBAL_VAR->CsvProductFlowList(m_pk, a->m_genID, a->m_passTime, WAISER->CurentSimulationTime().GetValue());
 						if (GLOBAL_VAR->SQLConnect == true)
 							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(a->m_genID) + ", " + std::to_string(a->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
