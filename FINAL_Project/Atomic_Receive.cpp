@@ -6,36 +6,26 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int subidx, int pk) {
 	SetName("Atomic_Receive");
 	// 입,출력 포트 설정
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
+
+	AddInPort((unsigned int)IN_PORT::PRODUCT, "PRODUCT");
+	AddInPort((unsigned int)IN_PORT::SEND, "SEND");
+	AddOutPort((unsigned int)OUT_PORT::READY, "READY");
+	AddOutPort((unsigned int)OUT_PORT::PAUSE, "PAUSE");
+
 	switch (type) {
 	case 0:
-		AddInPort((unsigned int)IN_PORT::PRODUCT, "PRODUCT");
-		AddInPort((unsigned int)IN_PORT::SEND, "SEND");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
 		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
-		AddOutPort((unsigned int)OUT_PORT::PAUSE, "PAUSE");
-		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
 		break;
 	case 1:
-		AddInPort((unsigned int)IN_PORT::PRODUCT, "PRODUCT");
-		AddInPort((unsigned int)IN_PORT::SEND, "SEND");
-		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
-		AddOutPort((unsigned int)OUT_PORT::PAUSE, "PAUSE");
-		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		break;
 	case 2:
-		AddInPort((unsigned int)IN_PORT::PRODUCT, "PRODUCT");
-		AddInPort((unsigned int)IN_PORT::SEND, "SEND");
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
 		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
-		AddOutPort((unsigned int)OUT_PORT::PAUSE, "PAUSE");
-		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
 		break;
 	case 3:
-		AddInPort((unsigned int)IN_PORT::SEND, "SEND");
-		AddInPort((unsigned int)IN_PORT::PRODUCT, "PRODUCT");
-		AddOutPort((unsigned int)OUT_PORT::PAUSE, "PAUSE");
-		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
 		break;
 	}
 
@@ -48,7 +38,9 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int subidx, int pk) {
 	m_idx = idx;
 	m_pk = pk;
 	GLOBAL_VAR->readymap[m_pk].push_back(false);
-	if(GLOBAL_VAR->scenario_num!=1) GLOBAL_VAR->readymap[m_pk].push_back(false);
+	if (GLOBAL_VAR->scenario_num != 1) {
+		GLOBAL_VAR->readymap[m_pk].push_back(false);
+	}
 	m_subidx = subidx;
 }
 
@@ -57,8 +49,7 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 	
 	if (msg.GetPort() == (unsigned int)IN_PORT::PRODUCT) {
 		if (m_modelState == STATE::RECEIVE) {
-			
-		 if (m_type != 0) {
+			if (m_type != 0) {
 				CProduct* cproduct = (CProduct*)msg.GetValue();
 				m_product = new CProduct(*cproduct);
 				if (GLOBAL_VAR->scenario_num == 2 && (m_pk == 7 || m_pk == 8)) {
@@ -72,8 +63,7 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 						CLOG->info("pastPk={} pastType={} curPk={} curtype={}", m_product->m_pastPk, m_product->m_pastType, m_product->m_curPk, m_product->m_curType);
 						GLOBAL_VAR->mBufferPush(m_subidx, m_pk, m_product, &GLOBAL_VAR->p_buffer);
 					}
-				}
-				else {
+				} else {
 					m_product->m_passTime = WAISER->CurentSimulationTime().GetValue();
 					m_product->m_pastPk = m_product->m_curPk;
 					m_product->m_pastType = m_product->m_curType;

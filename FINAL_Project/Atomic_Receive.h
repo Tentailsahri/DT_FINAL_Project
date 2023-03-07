@@ -42,7 +42,10 @@ public:
 	};
 
 	// 모델 TA 정의
-	
+	double TA_STATE_GEN[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[0], 0 };
+	double TA_STATE_TRACK[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[1], 0 };
+	double TA_STATE_PROC[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[2], 0 };
+	double TA_STATE_STOCK[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[3], 0 };
 
 	// 현재 모델 상태 변수
 	STATE m_modelState;
@@ -56,11 +59,7 @@ public:
 	//설비의 subidx
 	int m_subidx;
 
-	double TA_STATE_GEN[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[0], 0 };
-	double TA_STATE_TRACK[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[1], 0 };
-	double TA_STATE_PROC[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[2], 0 };
-	double TA_STATE_STOCK[5] = { WTime::infinity_, 0, WTime::infinity_, GLOBAL_VAR->TA_STATE_INIT[3], 0 };
-
+	// 현재 상태를 문자열로 변환
 	static const char* getModel2Str(int model_type);
 };
 
