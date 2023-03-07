@@ -95,9 +95,18 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 	// е╦ют : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	m_dataUpdate();
 
-	if (m_modelState == STATE::SERROR) {
+	if (m_modelState == STATE::ACTIVE) {
+		if (m_type != 1) {
+			m_count++;
+			if (m_count >= GLOBAL_VAR->error_all) {
+				m_modelState = STATE::SERROR;
+				CLOG->info("PK: {}, idx : {} {} ERROR, at t = {}", m_pk, m_idx, getModel2Str(m_type), WAISER->CurentSimulationTime().GetValue());
+				msg.SetPortValue((unsigned int)OUT_PORT::ERROR_ON, nullptr);
+			}
+		}
+	} else if (m_modelState == STATE::SERROR) {
 		m_modelState = STATE::ACTIVE;
-		CLOG->info("PK: {}, idx : {} GEN ACTIVE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+		CLOG->info("PK: {}, idx : {} {} ACTIVE, at t = {}", m_pk, m_idx, getModel2Str(m_type), WAISER->CurentSimulationTime().GetValue());
 		msg.SetPortValue((unsigned int)(unsigned int)OUT_PORT::ERROR_OFF, nullptr);
 		m_count = 0;
 	}
@@ -105,7 +114,6 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 	switch (m_type) {
 	case 0:
 		if (m_modelState == STATE::ACTIVE) {
-			m_count++;
 			m_genCount++;
 			auto genID = m_idx * 1000 + m_genCount;
 			CProduct* cproduct = new CProduct(genID, WAISER->CurentSimulationTime().GetValue());
@@ -122,55 +130,7 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 				m_modelState = STATE::WAIT;
 				CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 			}
-			else if (m_count >= GLOBAL_VAR->error_gen) {
-				m_modelState = STATE::SERROR;
-				CLOG->info("PK: {}, idx : {} GEN ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-				msg.SetPortValue((unsigned int)(unsigned int)OUT_PORT::ERROR_ON, nullptr);
-			}
 		}
-
-		break;
-		
-	case 1:
-		break;
-		
-	case 2:
-		if (m_modelState == STATE::ACTIVE) {
-			if (GLOBAL_VAR->scenario_num == 1) {
-				if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
-
-					m_count++;
-					CLOG->info("PK: {}, idx : {} PROC BUFFER SIZE = {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
-					if (m_count >= GLOBAL_VAR->error_proc) {
-						m_modelState = STATE::SERROR;
-						CLOG->info("PK: {}, idx : {} PROC ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-						msg.SetPortValue((unsigned int)OUT_PORT::ERROR_ON, nullptr);
-					}
-				}
-			} else {
-				if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
-					m_count++;
-					CLOG->info("PK: {}, idx : {} PROC BUFFER 0 SIZE = {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer));
-					CLOG->info("PK: {}, idx : {} PROC BUFFER 1 SIZE = {}", m_pk, m_idx, GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer));
-					if (m_count >= GLOBAL_VAR->error_proc) {
-						m_modelState = STATE::SERROR;
-						CLOG->info("PK: {}, idx : {} PROC ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-						msg.SetPortValue((unsigned int)OUT_PORT::ERROR_ON, nullptr);
-					}
-				}
-			}
-		}
-		break;
-	case 3:
-		if (m_modelState == STATE::ACTIVE) {
-			m_count++;
-			if (m_count >= GLOBAL_VAR->error_stock) {
-				m_modelState = STATE::SERROR;
-				CLOG->info("PK: {}, idx : {} STOCK ERROR, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-				msg.SetPortValue((unsigned int)OUT_PORT::ERROR_ON, nullptr);
-			}
-		}
-
 		break;
 	}
 
