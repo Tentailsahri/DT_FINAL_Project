@@ -229,16 +229,13 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
 					m_modelState = STATE::WAIT;
-				}
-				else if (m_type!=2 && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
+				} else if (m_type != 2 && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 					if (m_type == 0) {
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 						if (GLOBAL_VAR->SQLConnect == true)
 							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_genTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
-					}
-					else
-					{
+					} else {
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 						if (GLOBAL_VAR->SQLConnect == true)
 							GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
@@ -253,58 +250,54 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						break;
 					}
 					m_modelState = STATE::WAIT;
-				}
-				else if (m_type == 2 && m_idx==0 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) >= 1 && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
-					    CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
+				} else if (m_type == 2 && m_idx == 0 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) >= 1 && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
+					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
+					product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
+					newgencount++;
+					int genid = 3000 + newgencount;
+					CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
+					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+					GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
+					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
+					m_modelState = STATE::WAIT;
+				} else if (m_type == 2 && m_idx == 1 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) >= 1) {
+
+					if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
+						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-						newgencount++;
-						int genid= 3000 + newgencount;
+						newgencount1++;
+						int genid = 4000 + newgencount1;
 						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
+						newproduct->m_targetPk = 7;
 						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-						m_modelState = STATE::WAIT;
-				}
-				else if (m_type == 2 && m_idx == 1 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) >= 1) {
+					} else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
+						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
+						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
+						newgencount1++;
+						int genid = 4000 + newgencount1;
+						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
+						newproduct->m_targetPk = 8;
+						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
+					} else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
+						CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
+						product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
+						newgencount1++;
+						int genid = 4000 + newgencount1;
+						CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
+						std::uniform_int_distribution<int> u_dis(7, 8);
+						newproduct->m_targetPk = u_dis(WAISER->random_gen_);
+						msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
+						GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
+						CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 
-						if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
-							CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-							product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-							newgencount1++;
-							int genid = 4000 + newgencount1;
-							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-							newproduct->m_targetPk = 7;
-							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-							GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-							CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-						}
-						else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
-							CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-							product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-							newgencount1++;
-							int genid = 4000 + newgencount1;
-							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-							newproduct->m_targetPk = 8;
-							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-							GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-							CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-						}
-						else if(GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
-							CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-							product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-							newgencount1++;
-							int genid = 4000 + newgencount1;
-							CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
-							std::uniform_int_distribution<int> u_dis(7, 8);
-							newproduct->m_targetPk = u_dis(WAISER->random_gen_);
-							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-							GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
-							CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
-							
-						}
-						m_modelState = STATE::WAIT;
+					}
+					m_modelState = STATE::WAIT;
 				}
-                }
+			}
 			else if (m_type == 2 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) == 1) {
 				if (m_idx == 0 && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) >= 1 && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
