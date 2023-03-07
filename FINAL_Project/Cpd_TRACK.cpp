@@ -34,7 +34,7 @@ Cpd_TRACK::Cpd_TRACK(int track_idx, int pk) {
 	AddCoupling(Receive, (unsigned int)Atomic_Receive::OUT_PORT::READY, State, (unsigned int)Atomic_State::IN_PORT::READY);
 	AddCoupling(Send, (unsigned int)Atomic_Send::OUT_PORT::PRODUCT, this, (unsigned int)OUT_PORT::PRODUCT);
 	AddCoupling(Send, (unsigned int)Atomic_Send::OUT_PORT::PRODUCT, Receive, (unsigned int)Atomic_Receive::IN_PORT::SEND);
-	AddCoupling(Send, (unsigned int)Atomic_Send::OUT_PORT::PRODUCT, State, (unsigned int)Atomic_State::IN_PORT::POP);
+	AddCoupling(Send, (unsigned int)Atomic_Send::OUT_PORT::PRODUCT, State, (unsigned int)Atomic_State::IN_PORT::SEND);
 	AddCoupling(State, (unsigned int)Atomic_State::OUT_PORT::READY, this, (unsigned int)OUT_PORT::READY);
 
 }
