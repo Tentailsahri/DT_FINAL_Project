@@ -44,6 +44,49 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int subidx, int pk) {
 	m_subIdx = subidx;
 }
 
+Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
+	// 모델 이름 설정
+	SetName("Atomic_Receive");
+	// 입,출력 포트 설정
+	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
+
+	AddInPort((unsigned int)IN_PORT::PRODUCT, "PRODUCT");
+	AddInPort((unsigned int)IN_PORT::SEND, "SEND");
+	AddOutPort((unsigned int)OUT_PORT::READY, "READY");
+	AddOutPort((unsigned int)OUT_PORT::PAUSE, "PAUSE");
+
+	switch (type) {
+	case 0:
+		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
+		break;
+	case 1:
+		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
+		break;
+	case 2:
+		AddInPort((unsigned int)IN_PORT::READY, "READY");
+		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
+		break;
+	case 3:
+		break;
+	}
+
+	// 초기 모델 상태 설정
+
+	m_modelState = STATE::INIT;
+	m_product = nullptr;
+	// 모델 변수 초기화
+	m_type = type;
+	m_idx = idx;
+	m_pk = pk;
+	GLOBAL_VAR->readymap[m_pk].push_back(false);
+	if (GLOBAL_VAR->scenario_num != 1) {
+		GLOBAL_VAR->readymap[m_pk].push_back(false);
+	}
+	m_subIdx = 0;
+}
+
 // 외부 상태 천이 함수
 bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 	

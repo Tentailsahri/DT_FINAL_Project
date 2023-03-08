@@ -63,7 +63,7 @@ Cpd_PROC::Cpd_PROC(int proc_idx, int pk)
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	WAtomModel* State = new Atomic_State(2, proc_idx, pk);
 	WAtomModel* Send = new Atomic_Send(2, proc_idx, pk);
-	WAtomModel* Receive = new Atomic_Receive(2, proc_idx, 0, pk);
+	WAtomModel* Receive = new Atomic_Receive(2, proc_idx, pk);
 
 	// 생성한 모델 연결
 	AddComponent(State);

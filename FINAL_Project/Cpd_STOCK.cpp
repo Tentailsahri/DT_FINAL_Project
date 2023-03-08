@@ -9,7 +9,7 @@ Cpd_STOCK::Cpd_STOCK(int stock_idx, int pk) {
 
 	// 모델 생성
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
-	WAtomModel* Receive = new Atomic_Receive(3, stock_idx, 0, pk);
+	WAtomModel* Receive = new Atomic_Receive(3, stock_idx, pk);
 	WAtomModel* State = new Atomic_State(3, stock_idx, pk);
 	WAtomModel* Send = new Atomic_Send(3, stock_idx, pk);
 
