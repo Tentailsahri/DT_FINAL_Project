@@ -33,21 +33,26 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		std::vector<WCoupModel*> proc_cpd_vec;
 		std::vector<WCoupModel*> stock_cpd_vec;
 
+		int genCount = 3;
+		int trackCount = 6;
+		int procCount = 2;
+		int stocCount = 2;
+
 		// 생성한 모델 연결
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < genCount; i++) {
 			gen_cpd_vec.push_back(new Cpd_GEN(i, i));
 			AddComponent(gen_cpd_vec.at(i));
 		}
-		for (int i = 0; i < 6; i++) {
-			track_cpd_vec.push_back(new Cpd_TRACK(i, i + 3));
+		for (int i = 0; i < trackCount; i++) {
+			track_cpd_vec.push_back(new Cpd_TRACK(i, i + genCount));
 			AddComponent(track_cpd_vec.at(i));
 		}
-		for (int i = 0; i < 2; i++) {
-		    proc_cpd_vec.push_back(new Cpd_PROC(i, 2, i + 9));
+		for (int i = 0; i < procCount; i++) {
+		    proc_cpd_vec.push_back(new Cpd_PROC(i, 2, i + genCount + trackCount));
 			AddComponent(proc_cpd_vec.at(i));
 		}
-		for (int i = 0; i < 2; i++) {
-			stock_cpd_vec.push_back(new Cpd_STOCK(i, i + 11));
+		for (int i = 0; i < stocCount; i++) {
+			stock_cpd_vec.push_back(new Cpd_STOCK(i, i + genCount + trackCount + stocCount));
 			AddComponent(stock_cpd_vec.at(i));
 		}
 		
