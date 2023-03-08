@@ -68,8 +68,11 @@ CProduct* CGlobalVar::mBufferFront(int idx, int key, std::map<int, std::map<int,
 	if (map_find_result != mbuffer->end()) {
 		std::map<int, std::queue<CProduct*>>::iterator map_find_result1 = mbuffer->at(idx).find(key);
 		if (map_find_result1 != mbuffer->at(idx).end()) {
-			product = mbuffer->at(idx).at(key).front();
-			return product;
+			if (!mbuffer->at(idx).at(key).empty()) {
+				product = mbuffer->at(idx).at(key).front();
+				return product;
+			}
+			else return nullptr;
 		}
 		else return nullptr;
 	}
