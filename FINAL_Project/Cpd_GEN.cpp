@@ -12,7 +12,7 @@ Cpd_GEN::Cpd_GEN(int gen_idx, int pk) {
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	WAtomModel* State = new Atomic_State(0, gen_idx, pk);
 	WAtomModel* Send = new Atomic_Send(0, gen_idx, pk);
-	WAtomModel* receive = new Atomic_Receive(0, gen_idx, 0, pk);
+	WAtomModel* receive = new Atomic_Receive(0, gen_idx, pk);
 
 	// 생성한 모델 연결
 	AddComponent(State);
