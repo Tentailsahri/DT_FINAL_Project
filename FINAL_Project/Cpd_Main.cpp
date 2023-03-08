@@ -26,58 +26,6 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		coupTrackStock(track1, stock);
 
 	} else if (scenario_num == 2) {
-		//// ¸ðµ¨ »ý¼º
-		//std::vector<WCoupModel*> gen_cpd_vec;
-		//std::vector<WCoupModel*> track_cpd_vec;
-		//std::vector<WCoupModel*> proc_cpd_vec;
-		//std::vector<WCoupModel*> stock_cpd_vec;
-
-		//int genCount = 3;
-		//int trackCount = 6;
-		//int procCount = 2;
-		//int stocCount = 2;
-
-		//// »ý¼ºÇÑ ¸ðµ¨ ¿¬°á
-		//for (int i = 0; i < genCount; i++) {
-		//	gen_cpd_vec.push_back(new Cpd_GEN(i, i));
-		//	AddComponent(gen_cpd_vec.at(i));
-		//}
-		//for (int i = 0; i < trackCount; i++) {
-		//	track_cpd_vec.push_back(new Cpd_TRACK(i, i + genCount));
-		//	AddComponent(track_cpd_vec.at(i));
-		//}
-		//for (int i = 0; i < procCount; i++) {
-		//    proc_cpd_vec.push_back(new Cpd_PROC(i, 2, i + genCount + trackCount));
-		//	AddComponent(proc_cpd_vec.at(i));
-		//}
-		//for (int i = 0; i < stocCount; i++) {
-		//	stock_cpd_vec.push_back(new Cpd_STOCK(i, i + genCount + trackCount + stocCount));
-		//	AddComponent(stock_cpd_vec.at(i));
-		//}
-
-		// ¸ðµ¨ Æ÷Æ® ¿¬°á
-		//coupGenTrack(gen_cpd_vec.at(0), track_cpd_vec.at(0));
-		//coupGenTrack(gen_cpd_vec.at(1), track_cpd_vec.at(1));
-		//for (int i = 0; i < 2; i++) {
-		//	coupTrackProc(i, track_cpd_vec.at(i), proc_cpd_vec.at(0));
-		//}
-		//for (int i = 0; i < 2; i++) {
-		//	coupTrackProc(i, track_cpd_vec.at(2 + i), proc_cpd_vec.at(1));
-		//}
-		//coupProcTrack(proc_cpd_vec.at(0), track_cpd_vec.at(2));
-		//coupGenTrack(gen_cpd_vec.at(2), track_cpd_vec.at(3));
-		//coupProcTrack(proc_cpd_vec.at(1), track_cpd_vec.at(4));
-		//coupProcTrack(proc_cpd_vec.at(1), track_cpd_vec.at(5));
-		//coupTrackStock(track_cpd_vec.at(4), stock_cpd_vec.at(0));
-		//coupTrackStock(track_cpd_vec.at(5), stock_cpd_vec.at(1));
-		//}
-
-		// ¸ðµ¨ »ý¼º
-		//std::map<int, WCoupModel*> gen_cpd_map;
-		//std::map<int, WCoupModel*> track_cpd_map;
-		//std::map<int, WCoupModel*> proc_cpd_map;
-		//std::map<int, WCoupModel*> stock_cpd_map;
-
 		int genCount = 3;
 		int trackCount = 6;
 		int procCount = 2;
