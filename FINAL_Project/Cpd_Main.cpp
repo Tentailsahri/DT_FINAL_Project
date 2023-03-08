@@ -109,14 +109,10 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		coup(0, "GEN", 3, "TRACK");
 		coup(1, "GEN", 4, "TRACK");
 		coups(0, 3, "TRACK", 9, "PROC");
-		coups(1, 3, "TRACK", 9, "PROC");
-		coups(0, 4, "TRACK", 9, "PROC");
-		coups(2, 4, "TRACK", 9, "PROC");
+		coups(1, 4, "TRACK", 9, "PROC");
 		coup(9, "PROC", 5, "TRACK");
 		coups(0, 5, "TRACK", 10, "PROC");
-		coups(1, 5, "TRACK", 10, "PROC");
 		coup(2, "GEN", 6, "TRACK");
-		coups(0, 6, "TRACK", 10, "PROC");
 		coups(1, 6, "TRACK", 10, "PROC");
 		coup(10, "PROC", 7, "TRACK");
 		coup(10, "PROC", 8, "TRACK");
