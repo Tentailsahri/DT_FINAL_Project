@@ -95,9 +95,9 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 	if (m_modelState == STATE::INIT) {
 		m_modelState = STATE::ACTIVE;
 		CLOG->info("PK: {}, idx : {} {} ACTIVE, at t = {}", m_pk, m_idx, getModel2Str(m_type), WAISER->CurentSimulationTime().GetValue());
-		CProduct* next = new CProduct(1, 1);
-		next->m_curPk = m_pk;
 		if (m_type != 0) {
+			CProduct* next = new CProduct(1, 1);
+			next->m_curPk = m_pk;
 			msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
 		}
 	} else if (m_modelState == STATE::ACTIVE) {
