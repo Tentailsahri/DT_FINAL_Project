@@ -20,6 +20,7 @@ Atomic_State::Atomic_State(int type, int idx, int pk) {
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
 		AddInPort((unsigned int)IN_PORT::PAUSE, "PAUSE");
 		AddInPort((unsigned int)IN_PORT::SEND, "SEND");
+		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
 		break;
 	case 2:
 		AddInPort((unsigned int)IN_PORT::READY, "READY");
@@ -27,11 +28,12 @@ Atomic_State::Atomic_State(int type, int idx, int pk) {
 		AddInPort((unsigned int)IN_PORT::SEND, "SEND");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
+		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
 		break;
 	case 3:
-		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_ON, "ERROR_ON");
 		AddOutPort((unsigned int)OUT_PORT::ERROR_OFF, "ERROR_OFF");
+		AddOutPort((unsigned int)OUT_PORT::READY, "READY");
 		break;
 	}
 	// 초기 모델 상태 설정
@@ -82,10 +84,6 @@ bool Atomic_State::ExtTransFn(const WMessage& msg) {
 bool Atomic_State::IntTransFn() {
 	m_dataUpdate();
 
-	if (m_modelState == STATE::INIT) {
-		m_modelState = STATE::ACTIVE;
-	}
-
 	return true;
 }
 
@@ -94,7 +92,15 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 	// 타입 : GEN = 0, TRACK = 1, PROC = 2, STOCK = 3
 	m_dataUpdate();
 
-	if (m_modelState == STATE::ACTIVE) {
+	if (m_modelState == STATE::INIT) {
+		m_modelState = STATE::ACTIVE;
+		CLOG->info("PK: {}, idx : {} {} ACTIVE, at t = {}", m_pk, m_idx, getModel2Str(m_type), WAISER->CurentSimulationTime().GetValue());
+		CProduct* next = new CProduct(1, 1);
+		next->m_curPk = m_pk;
+		if (m_type != 0) {
+			msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
+		}
+	} else if (m_modelState == STATE::ACTIVE) {
 		if (m_type != 1) {
 			m_count++;
 			if (m_count >= GLOBAL_VAR->error_all) {

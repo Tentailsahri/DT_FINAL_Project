@@ -116,6 +116,8 @@ bool Atomic_Receive::IntTransFn() {
 		else if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
 			m_modelState = STATE::FULL;
 		}
+	}else if (m_modelState == STATE::INIT) {
+		m_modelState = STATE::RECEIVE;
 	}
 	
 	return true;
@@ -123,13 +125,7 @@ bool Atomic_Receive::IntTransFn() {
 
 // 출력 함수
 bool Atomic_Receive::OutputFn(WMessage& msg) {
-	if (m_modelState == STATE::INIT) {
-		m_modelState = STATE::RECEIVE;
-		CLOG->info("PK: {}, idx : {} {} ACTIVE, at t = {}", m_pk, m_idx, getModel2Str(m_type), WAISER->CurentSimulationTime().GetValue());
-		CProduct* next = new CProduct(1, 1);
-		next->m_curPk = m_pk;
-		msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
-	} else if (m_modelState == STATE::DECISION) {
+	if (m_modelState == STATE::DECISION) {
 		CProduct* next = new CProduct(1, 0.0);
 		next->m_curPk = m_pk;
 		CLOG->info("PK: {}, idx : {} {} Buffer size {}, at t = {}", m_pk, m_idx, getModel2Str(m_type), GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer), WAISER->CurentSimulationTime().GetValue());
