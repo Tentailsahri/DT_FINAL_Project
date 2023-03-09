@@ -47,7 +47,7 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 
 // 외부 상태 천이 함수
 bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
-	
+
 	if (msg.GetPort() == (unsigned int)IN_PORT::PRODUCT) {
 		if (m_modelState == STATE::RECEIVE) {
 			if (m_type != 0) {
@@ -77,17 +77,14 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 			}
 			m_modelState = STATE::DECISION;
 		}
-	}
-	else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
+	} else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
 		if (m_modelState == STATE::FULL) {
 			m_modelState = STATE::DECISION;
 		}
-	}
-	else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::READY) {
+	} else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::READY) {
 		GLOBAL_VAR->readymap[m_pk].at(m_subIdx) = true;
 		m_modelState = STATE::READYMAP;
-	}
-	else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
+	} else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 		if (GLOBAL_VAR->scenario_num == 1) GLOBAL_VAR->readymap[m_pk].at(0) = false;
 		else if (GLOBAL_VAR->scenario_num == 2 && m_pk != 10) GLOBAL_VAR->readymap[m_pk].at(0) = false;
 		else if (GLOBAL_VAR->scenario_num == 2 && m_pk == 10) {
@@ -96,15 +93,14 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 				CProduct* next = new CProduct(*cnext);
 				if (next->m_curPk == 7) {
 					GLOBAL_VAR->readymap[m_pk].at(m_subIdx) = false;
-				}
-				else if (next->m_curPk == 8) {
+				} else if (next->m_curPk == 8) {
 					GLOBAL_VAR->readymap[m_pk].at(m_subIdx) = false;
 				}
 			}
 		}
 		m_modelState = STATE::READYMAP;
-	}
-	else Continue();
+	} else Continue();
+
 	return true;
 }
 
@@ -159,12 +155,10 @@ WTime Atomic_Receive::TimeAdvanceFn() {
 		break;
 	default:
 		return 0;
-
 	}
 }
 
-const char* Atomic_Receive::getModel2Str(int m_type)
-{
+const char* Atomic_Receive::getModel2Str(int m_type) {
 	switch (m_type) {
 	case 0:
 		return "GEN";

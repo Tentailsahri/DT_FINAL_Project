@@ -172,8 +172,7 @@ const char* Atomic_State::getState2Str(Atomic_State::STATE type) {
 	}
 }
 
-const char* Atomic_State::getModel2Str(int m_type)
-{
+const char* Atomic_State::getModel2Str(int m_type) {
 	switch (m_type) {
 	case 0:
 		return "GEN";
@@ -189,18 +188,17 @@ const char* Atomic_State::getModel2Str(int m_type)
 void Atomic_State::m_dataUpdate() {
 	if (WAISER->CurentSimulationTime().GetValue() < m_current_time) {
 		m_endTime = GLOBAL_VAR->time;
-	}
-	else {
+	} else {
 		m_endTime = WAISER->CurentSimulationTime().GetValue();
 	}
 	if (GLOBAL_VAR->SQLConnect == true) {
 		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"object_state_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, object_state, state_start_time, state_end_time) VALUES(1, " + std::to_string(m_pk) + ", '" + getState2Str(m_modelState) + "', " + std::to_string(m_current_time) + ", " + std::to_string(m_endTime) + ")");
 		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"state_time_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, \"current_time\", init_time, active_time, error_time, wait_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(m_endTime) + ", " + std::to_string(timeStore[0]) + ", " + std::to_string(timeStore[1]) + ", " + std::to_string(timeStore[2]) + ", " + std::to_string(timeStore[3]) + ")");
-		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"state_rate_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, \"current_time\", init_rate, active_rate, error_rate, wait_rate) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(m_endTime) + ", " + std::to_string(100*timeStore[0]/m_endTime) + ", " + std::to_string(100*timeStore[1]/m_endTime) + ", " + std::to_string(100*timeStore[2]/m_endTime) + ", " + std::to_string(100*timeStore[3]/m_endTime) + ")");
-		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"buf_count_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, object_type, \"current_time\", buffer_count, stock_count) VALUES(1, " + std::to_string(m_pk) + ", '" + getModel2Str(m_type) + "', " + std::to_string(m_endTime) + ", " + std::to_string(GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer)) + ", " + std::to_string(GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock))+")");
+		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"state_rate_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, \"current_time\", init_rate, active_rate, error_rate, wait_rate) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(m_endTime) + ", " + std::to_string(100 * timeStore[0] / m_endTime) + ", " + std::to_string(100 * timeStore[1] / m_endTime) + ", " + std::to_string(100 * timeStore[2] / m_endTime) + ", " + std::to_string(100 * timeStore[3] / m_endTime) + ")");
+		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"buf_count_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, object_type, \"current_time\", buffer_count, stock_count) VALUES(1, " + std::to_string(m_pk) + ", '" + getModel2Str(m_type) + "', " + std::to_string(m_endTime) + ", " + std::to_string(GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer)) + ", " + std::to_string(GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock)) + ")");
 	}
-	timeStore[(int)m_modelState] = timeStore[(int)m_modelState]+ (m_endTime - m_current_time);
-    GLOBAL_VAR->CsvStateInsert(m_pk, getState2Str(m_modelState), m_current_time, m_endTime);
+	timeStore[(int)m_modelState] = timeStore[(int)m_modelState] + (m_endTime - m_current_time);
+	GLOBAL_VAR->CsvStateInsert(m_pk, getState2Str(m_modelState), m_current_time, m_endTime);
 	GLOBAL_VAR->CsvStateTimeInsert(m_pk, m_endTime, timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
 	GLOBAL_VAR->CsvStateRateInsert(m_pk, m_endTime, timeStore[0], timeStore[1], timeStore[2], timeStore[3]);
 	GLOBAL_VAR->CsvBufferSize(m_pk, getModel2Str(m_type), m_endTime, GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer), GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock));
