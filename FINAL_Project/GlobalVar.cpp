@@ -147,6 +147,17 @@ CProduct* CGlobalVar::StockBack(int key, std::map<int, std::queue<CProduct*>>* _
 
 }
 
+void CGlobalVar::m_subIdxMapUpdate(int pk) {
+	std::map<int, int>::iterator map_find_result = m_subIdxMap.find(pk);
+	if (map_find_result != m_subIdxMap.end()) {
+		int a = m_subIdxMap.at(pk);
+		m_subIdxMap.at(pk) = ++a;
+	} else {
+		std::pair<int, int> tmp_pair = std::make_pair(pk, 0);
+		m_subIdxMap.insert(tmp_pair);
+	}
+}
+
 int CGlobalVar::BufferSize(int key, std::map<int, std::queue<CProduct*>>* _buffer)
 {
 	std::map<int, std::queue<CProduct*>>::iterator map_find_result = _buffer->find(key);

@@ -11,12 +11,10 @@ protected:
 public:
 	~CGlobalVar(void);
 	static CGlobalVar* GetInstance();
-
 	
 	std::map<int, std::queue<CProduct*>> buffer;
 	std::map<int, std::queue<CProduct*>> procbuffer;
 	std::map<int, std::queue<CProduct*>> stock;
-	
 
 	std::map<int, std::map<int, std::queue<CProduct*>>> p_buffer;
 
@@ -33,6 +31,8 @@ public:
 
 	CProduct* StockBack(int key, std::map<int, std::queue<CProduct*>> *_stock);
 
+	std::map<int, int> m_subIdxMap;
+	void m_subIdxMapUpdate(int pk);
 
 	PostgreSQLConnector* pgconn;
 

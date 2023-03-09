@@ -24,7 +24,7 @@ Cpd_PROC::Cpd_PROC(int proc_idx, int proc_subidx, int pk) {
 
 	// 모델 포트 연결
 	for (int i = 0; i < proc_subidx; i++) {
-		WAtomModel* Receive = new Atomic_Receive(2, proc_idx, i, pk);
+		WAtomModel* Receive = new Atomic_Receive(2, proc_idx, pk);
 		Receive_vec.push_back(Receive);
 		AddComponent(Receive_vec.at(i));
 	    AddCoupling(this, (unsigned int)IN_PORT::PRODUCT+i, Receive_vec.at(i), (unsigned int)Atomic_Receive::IN_PORT::PRODUCT);
