@@ -60,6 +60,7 @@ public:
 	int newgencount;
 	int newgencount1;
 
+	static const char* getModel2Str(int model_type);
 	void m_sendGenQuery(CProduct* product);
 	void m_sendPassQuery(CProduct* product);
 };
