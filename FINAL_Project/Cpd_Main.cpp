@@ -68,7 +68,68 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		coup(8, "TRACK", 12, "STOCK");
 	}
 	else if (scenario_num == 3) {
+		int genCount = 7;
+		int trackCount = 19;
+		int procCount = 5;
+		int stocCount = 2;
 
+		// 생성한 모델 연결
+		for (int i = 0; i < genCount; i++) {
+			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i, new Cpd_GEN(i, i));
+			gen_cpd_map.insert(tmp_pair);
+			AddComponent(gen_cpd_map.at(i));
+		}
+		for (int i = 0; i < trackCount; i++) {
+			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount, new Cpd_TRACK(i, i + genCount));
+			track_cpd_map.insert(tmp_pair);
+			AddComponent(track_cpd_map.at(i + genCount));
+		}
+		for (int i = 0; i < procCount; i++) {
+			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount, new Cpd_PROC(i, 2, i + genCount + trackCount));
+			proc_cpd_map.insert(tmp_pair);
+			AddComponent(proc_cpd_map.at(i + genCount + trackCount));
+		}
+		for (int i = 0; i < stocCount; i++) {
+			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount + stocCount, new Cpd_STOCK(i, i + genCount + trackCount + stocCount));
+			stock_cpd_map.insert(tmp_pair);
+			AddComponent(stock_cpd_map.at(i + genCount + trackCount + stocCount));
+		}
+
+		// 모델 포트 연결
+		coup(0, "GEN", 7, "TRACK");
+		coup(1, "GEN", 9, "TRACK");
+		coup(2, "GEN", 10, "TRACK");
+		coup(3, "GEN", 11, "TRACK");
+		coup(4, "GEN", 13, "TRACK");
+		coup(5, "GEN", 22, "TRACK");
+		coup(6, "GEN", 23, "TRACK");
+		coup(7, "TRACK", 8, "TRACK");
+		coup(11, "TRACK", 12, "TRACK");
+		coup(18, "TRACK", 19, "TRACK");
+		coup(14, "TRACK", 15, "TRACK");
+		coup(15, "TRACK", 16, "TRACK");
+		coups(0, 8, "TRACK", 26, "PROC");
+		coups(1, 9, "TRACK", 26, "PROC");
+		coups(2, 10, "TRACK", 26, "PROC");
+		coups(3, 12, "TRACK", 26, "PROC");
+		coups(0, 17, "TRACK", 28, "PROC");
+		coups(1, 19, "TRACK", 28, "PROC");
+		coups(0, 16, "TRACK", 29, "PROC");
+		coups(1, 20, "TRACK", 29, "PROC");
+		coups(2, 21, "TRACK", 29, "PROC");
+		coups(0, 22, "TRACK", 30, "PROC");
+		coups(1, 23, "TRACK", 30, "PROC");
+		coup(13, "TRACK", 27, "PROC");
+		coup(26, "PROC", 14, "TRACK");
+		coup(26, "PROC", 17, "TRACK");
+		coup(27, "PROC", 18, "TRACK");
+		coup(28, "PROC", 20, "TRACK");
+		coup(29, "PROC", 24, "TRACK");
+		coup(29, "PROC", 25, "TRACK");
+		coup(30, "PROC", 21, "TRACK");
+		coup(24, "TRACK", 31, "STOCK");
+		coup(25, "TRACK", 32, "STOCK");
+		
 	}
 
 }
