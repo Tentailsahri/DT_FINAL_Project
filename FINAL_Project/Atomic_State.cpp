@@ -108,35 +108,29 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 				CLOG->info("PK: {}, idx : {} {} ERROR, at t = {}", m_pk, m_idx, getModel2Str(m_type), WAISER->CurentSimulationTime().GetValue());
 				msg.SetPortValue((unsigned int)OUT_PORT::ERROR_ON, nullptr);
 			}
+			if (m_type == 0) {
+				m_genCount++;
+				auto genID = m_idx * 1000 + m_genCount;
+				CProduct* product = new CProduct(genID, WAISER->CurentSimulationTime().GetValue());
+				product->m_curPk = m_pk;
+				product->m_curType = getModel2Str(m_type);
+				CLOG->info("PK: {}, idx : {} {} {}锅 力前 积魂, at t = {}", m_pk, m_idx, getModel2Str(m_type), genID, WAISER->CurentSimulationTime().GetValue());
+				CLOG->info("curPk={} curtype={}", product->m_curPk, product->m_curType);
+				GLOBAL_VAR->mBufferPush(0, m_pk, product, &GLOBAL_VAR->p_buffer);
+				CLOG->info("PK: {}, idx : {} GEN MAKE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+				CLOG->info("GEN BUFFER SIZE : {}, at {}", GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer), WAISER->CurentSimulationTime().GetValue());
+				msg.SetPortValue((unsigned int)OUT_PORT::MAKE, nullptr);
+				if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
+					m_modelState = STATE::WAIT;
+					CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
+				}
+			}
 		}
 	} else if (m_modelState == STATE::SERROR) {
 		m_modelState = STATE::ACTIVE;
 		CLOG->info("PK: {}, idx : {} {} ACTIVE, at t = {}", m_pk, m_idx, getModel2Str(m_type), WAISER->CurentSimulationTime().GetValue());
 		msg.SetPortValue((unsigned int)(unsigned int)OUT_PORT::ERROR_OFF, nullptr);
 		m_count = 0;
-	}
-
-	switch (m_type) {
-	case 0:
-		if (m_modelState == STATE::ACTIVE) {
-			m_genCount++;
-			auto genID = m_idx * 1000 + m_genCount;
-			CProduct* cproduct = new CProduct(genID, WAISER->CurentSimulationTime().GetValue());
-			CProduct* product = new CProduct(*cproduct);
-			product->m_curPk = m_pk;
-			product->m_curType = getModel2Str(m_type);
-			CLOG->info("PK: {}, idx : {} {} {}锅 力前 积魂, at t = {}", m_pk, m_idx, getModel2Str(m_type), genID, WAISER->CurentSimulationTime().GetValue());
-			CLOG->info("curPk={} curtype={}", product->m_curPk, product->m_curType);
-			GLOBAL_VAR->mBufferPush(0, m_pk, product, &GLOBAL_VAR->p_buffer);
-			CLOG->info("PK: {}, idx : {} GEN MAKE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-			CLOG->info("GEN BUFFER SIZE : {}, at {}", GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer), WAISER->CurentSimulationTime().GetValue());
-			msg.SetPortValue((unsigned int)OUT_PORT::MAKE, nullptr);
-			if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
-				m_modelState = STATE::WAIT;
-				CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
-			}
-		}
-		break;
 	}
 
 	return true;
