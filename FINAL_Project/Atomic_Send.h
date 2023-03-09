@@ -59,9 +59,10 @@ public:
 	int m_pk;
 	int newgencount;
 	int newgencount1;
-
+	int getValue[2]={0};
 	static const char* getModel2Str(int model_type);
 	void m_sendGenQuery(CProduct* product);
 	void m_sendPassQuery(CProduct* product);
+	int m_whereTargetPk(int pk);
 };
 

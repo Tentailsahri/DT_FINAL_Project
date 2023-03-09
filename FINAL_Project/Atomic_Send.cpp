@@ -237,7 +237,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 					CProduct* product1 = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
 					CProduct* newproduct = new CProduct(product->m_genID, WAISER->CurentSimulationTime().GetValue());
-					if (m_idx == 1) {
+					if (m_idx == 1 && GLOBAL_VAR->SQLConnect==false) {
 						if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 							std::uniform_int_distribution<int> u_dis(7, 8);
 							newproduct->m_targetPk = u_dis(WAISER->random_gen_);
@@ -247,6 +247,9 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 							newproduct->m_targetPk = 7;
 						}
 					}
+					else if (m_idx == 1 && GLOBAL_VAR->SQLConnect == true) {
+						newproduct->m_targetPk=m_whereTargetPk(m_pk);
+						}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
 					GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 					CLOG->info("PK: {}, idx : {} {} {}번 제품 송신 완료, at t = {}", m_pk, m_idx, getModel2Str(m_type), product->m_genID, WAISER->CurentSimulationTime().GetValue());
@@ -319,6 +322,25 @@ void Atomic_Send::m_sendPassQuery(CProduct* product) {
 	if (GLOBAL_VAR->SQLConnect == true) {
 		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
 	}
+}
+
+int Atomic_Send::m_whereTargetPk(int pk)
+{
+	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list2\" WHERE send_object_id="+std::to_string(pk));
+	for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
+	      getValue[i] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
+	}
+	if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
+		std::uniform_int_distribution<int> u_dis(getValue[0], getValue[1]);
+		return u_dis(WAISER->random_gen_);
+	}
+	else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
+		return getValue[1];
+	}
+	else if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
+		return getValue[0];
+	}
+	else return 0;
 }
 
 void Atomic_Send::m_sendGenQuery(CProduct* product) {

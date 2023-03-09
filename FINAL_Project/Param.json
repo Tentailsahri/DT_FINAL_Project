@@ -1,10 +1,10 @@
 {
-  "SQLConnect": false,
+  "SQLConnect": true,
   "TA_STATE_INIT[0]": 5,
   "TA_STATE_INIT[1]": 5,
   "TA_STATE_INIT[2]": 5,
   "TA_STATE_INIT[3]": 5,
-  "scenario_num": 1,
+  "scenario_num": 2,
   "time": 1000
 }
 
