@@ -68,7 +68,7 @@ public:
 	int error_proc = 5;
 	int error_stock = 5;
 	int error_all = 5;
-	int time = 300;
+	int time = 100;
 
 	bool SQLConnect = false;
 

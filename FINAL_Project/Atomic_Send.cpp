@@ -49,12 +49,28 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 	if (m_type != 3) {
 		if (msg.GetPort() == (unsigned int)IN_PORT::READY) {
-			if (m_modelState == STATE::PAUSE) {
-				if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
-					m_modelState = STATE::SEND;
+			CProduct* product = (CProduct*)msg.GetValue();
+			CProduct* cproduct = new CProduct(*product);
+			if (m_type != 0) {
+				if (m_modelState == STATE::PAUSE) {
+					if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
+						m_modelState = STATE::SEND;
+					}
+					else if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+						m_modelState = STATE::WAIT;
+					}
+					else Continue();
 				}
-				else if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
-					m_modelState = STATE::WAIT;
+			}
+			else if (m_type == 0) {
+				if (cproduct->m_genID == 2) {
+					if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
+						m_modelState = STATE::SEND;
+					}
+					else if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+						m_modelState = STATE::WAIT;
+					}
+					else Continue();
 				}
 				else Continue();
 			}
