@@ -82,16 +82,28 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 				m_modelState = STATE::SERROR;
 			} else Continue();
 		} else if (msg.GetPort() == (unsigned int)IN_PORT::ERROR_OFF) {
-			if (m_type != 2 && m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
-				m_modelState = STATE::SEND;
-			} else if (m_type != 2 && m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
-				m_modelState = STATE::WAIT;
-			} else if (m_type == 2 && m_modelState == STATE::SERROR && (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0 || GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) == 0)) {
-				m_modelState = STATE::WAIT;
-			} else if (m_type == 2 && m_modelState == STATE::SERROR && (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) != 0)) {
+			if (m_type != 2) {
+				if (m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
+					m_modelState = STATE::SEND;
+				}
+				else if (m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+					m_modelState = STATE::WAIT;
+				}
+			}
+			else if (m_type == 2) {
+			if (GLOBAL_VAR->scenario_num == 1 && m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
 				m_modelState = STATE::SEND;
 			}
-
+			else if (GLOBAL_VAR->scenario_num == 1 && m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+				m_modelState = STATE::WAIT;
+			}
+			else if (GLOBAL_VAR->scenario_num == 2 && m_modelState == STATE::SERROR && (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0 || GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) == 0)) {
+				m_modelState = STATE::WAIT;
+			}
+			else if (GLOBAL_VAR->scenario_num == 2 && m_modelState == STATE::SERROR && (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) != 0)) {
+				m_modelState = STATE::SEND;
+			}
+			}
 			else Continue();
 		}
 	}
