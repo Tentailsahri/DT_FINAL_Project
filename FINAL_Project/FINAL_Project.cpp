@@ -7,34 +7,20 @@
 
 int main()
 {
-	//try {
-	//	Json::Value json_data;
-	//	std::ifstream ifs("Param.json");
-	//	ifs >> json_data;
-	//	GLOBAL_VAR->plan = json_data["PLAN"].asInt();
-	//	GLOBAL_VAR->GEN_TIME = json_data["GEN_TIME"].asDouble();
-	//	GLOBAL_VAR->seq_1 = json_data["SEQ_1"].asDouble();
-	//	GLOBAL_VAR->seq_2 = json_data["SEQ_2"].asDouble();
-	//	GLOBAL_VAR->seq_3 = json_data["SEQ_3"].asDouble();
-	//	GLOBAL_VAR->yellow = json_data["YELLOW"].asDouble();
-	//	GLOBAL_VAR->seq_type = json_data["SEQ_TYPE"].asInt();
-	//	GLOBAL_VAR->random = json_data["RANDOM"].asInt();
-	//	GLOBAL_VAR->max_gen_car = json_data["MAX_GEN_CAR"].asInt();
-	//	GLOBAL_VAR->total = GLOBAL_VAR->seq_1 + GLOBAL_VAR->seq_2 + GLOBAL_VAR->seq_3 + 3 * GLOBAL_VAR->yellow;
-	//	if (GLOBAL_VAR->seq_type == 1) {
-	//		GLOBAL_VAR->INIT_T = 0;
-	//	} else if(GLOBAL_VAR->seq_type == 2) {
-	//		GLOBAL_VAR->INIT_T = GLOBAL_VAR->seq_1 + GLOBAL_VAR->yellow;
-	//	} else if (GLOBAL_VAR->seq_type == 3) {
-	//		if (GLOBAL_VAR->plan == 1) {
-	//			GLOBAL_VAR->INIT_T = GLOBAL_VAR->seq_1 + GLOBAL_VAR->seq_2 + 2 * GLOBAL_VAR->yellow;
-	//		}else if (GLOBAL_VAR->plan == 1) {
-	//			GLOBAL_VAR->INIT_T = GLOBAL_VAR->seq_1 + GLOBAL_VAR->seq_3 + 2 * GLOBAL_VAR->yellow;
-	//		}
-	//	}
-	//} catch (...) {
-	//	printf("runtime error");
-	//}
+	try {
+		Json::Value json_data;
+		std::ifstream ifs("Param.json");
+		ifs >> json_data;
+		GLOBAL_VAR->SQLConnect = json_data["SQLConnect"].asBool();
+		GLOBAL_VAR->scenario_num = json_data["scenario_num"].asInt();
+		GLOBAL_VAR->time = json_data["time"].asInt();
+		GLOBAL_VAR->TA_STATE_INIT[0] = json_data["TA_STATE_INIT[0]"].asDouble();
+		GLOBAL_VAR->TA_STATE_INIT[1] = json_data["TA_STATE_INIT[1]"].asDouble();
+		GLOBAL_VAR->TA_STATE_INIT[2] = json_data["TA_STATE_INIT[2]"].asDouble();
+		GLOBAL_VAR->TA_STATE_INIT[3] = json_data["TA_STATE_INIT[3]"].asDouble();
+	} catch (...) {
+		printf("runtime error");
+	}
 	try {
 		// 시뮬레이션 기능 활성화
 		START_CONSOLELOG;

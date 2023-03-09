@@ -61,7 +61,7 @@ public:
 	int m_maxbuffer_Receive = 10;
 	int m_maxbuffer_Process = 10;
 	int m_maxbuffer_Stock = 10;
-	int	scenario_num = 2;
+	int	scenario_num = 1;
 	int track_speed = 1;
 
 	// 공정 오류율(x회마다 고장)
@@ -69,7 +69,7 @@ public:
 	int error_proc = 5;
 	int error_stock = 5;
 	int error_all = 5;
-	int time = 100;
+	int time = 500;
 
 	bool SQLConnect = false;
 
