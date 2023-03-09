@@ -76,12 +76,19 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::ERROR_OFF) {
-			if (m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
+			if (m_type!=2 && m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
 				m_modelState = STATE::SEND;
 			}
-			else if (m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+			else if (m_type != 2 && m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
 				m_modelState = STATE::WAIT;
 			}
+			else if (m_type == 2 && m_modelState == STATE::SERROR && (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0 || GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) == 0)) {
+				m_modelState = STATE::WAIT;
+			}
+			else if (m_type == 2 && m_modelState == STATE::SERROR && (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) != 0)) {
+				m_modelState = STATE::SEND;
+			}
+			
 			else Continue();
 		}
 	}
@@ -96,16 +103,13 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			else Continue();
 		}
 	}
-	switch (m_type) {
-	case 0:
-		if (msg.GetPort() == (unsigned int)IN_PORT::MAKE) {
+	else if (m_type==0 && msg.GetPort() == (unsigned int)IN_PORT::MAKE) {
 			if (m_modelState == STATE::WAIT && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) >= 1) {
 				m_modelState = STATE::SEND;
 			}
 			else Continue();
 		}
-		break;
-	}
+		
 	return true;
 
 }
