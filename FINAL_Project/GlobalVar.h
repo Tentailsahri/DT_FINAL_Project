@@ -31,6 +31,7 @@ public:
 
 	CProduct* StockBack(int key, std::map<int, std::queue<CProduct*>> *_stock);
 
+	// subIdx 자동할당 관련
 	std::map<int, int> m_subIdxMap;
 	void m_subIdxMapUpdate(int pk);
 
