@@ -76,12 +76,19 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			else Continue();
 		}
 		else if (msg.GetPort() == (unsigned int)IN_PORT::ERROR_OFF) {
-			if (m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
+			if (m_type!=2 && m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
 				m_modelState = STATE::SEND;
 			}
-			else if (m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+			else if (m_type != 2 && m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
 				m_modelState = STATE::WAIT;
 			}
+			else if (m_type == 2 && m_modelState == STATE::SERROR && (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0 || GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) == 0)) {
+				m_modelState = STATE::WAIT;
+			}
+			else if (m_type == 2 && m_modelState == STATE::SERROR && (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) != 0)) {
+				m_modelState = STATE::SEND;
+			}
+			
 			else Continue();
 		}
 	}
@@ -96,16 +103,13 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			else Continue();
 		}
 	}
-	switch (m_type) {
-	case 0:
-		if (msg.GetPort() == (unsigned int)IN_PORT::MAKE) {
+	else if (m_type==0 && msg.GetPort() == (unsigned int)IN_PORT::MAKE) {
 			if (m_modelState == STATE::WAIT && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) >= 1) {
 				m_modelState = STATE::SEND;
 			}
 			else Continue();
 		}
-		break;
-	}
+		
 	return true;
 
 }
@@ -139,6 +143,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				}
 				else if (GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
+					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					if (m_type == 0) {
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 						m_sendGenQuery(product);
@@ -148,7 +153,6 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 						m_sendPassQuery(product);
 					}
-					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					switch (m_type) {
 					case 0:
 						CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
@@ -231,6 +235,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				}
 				else if (m_type != 2 && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
+					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					if (m_type == 0) {
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
 						m_sendGenQuery(product);
@@ -240,7 +245,6 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 						m_sendPassQuery(product);
 					}
-					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					switch (m_type) {
 					case 0:
 						CLOG->info("PK: {}, idx : {} GEN {}번 제품 송신 완료, at t = {}", m_pk, m_idx, product->m_genID, WAISER->CurentSimulationTime().GetValue());
@@ -258,17 +262,8 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				}
 				else if (m_type == 2 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) >= 1 && (GLOBAL_VAR->readymap[m_pk].at(0) == true || GLOBAL_VAR->readymap[m_pk].at(1) == true)) {
 					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-					product = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
-					int genid = 0;
-					if (m_idx == 0) {
-						newgencount++;
-						genid = m_pk * 1000 + newgencount;
-					}
-					else if (m_idx == 1) {
-						newgencount1++;
-						genid = m_pk * 1000 + newgencount1;
-					}
-					CProduct* newproduct = new CProduct(genid, WAISER->CurentSimulationTime().GetValue());
+					CProduct* product1 = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
+					CProduct* newproduct = new CProduct(product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					if (m_idx == 1) {
 						if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 							std::uniform_int_distribution<int> u_dis(7, 8);
@@ -282,7 +277,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						}
 					}
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, newproduct);
-					GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
+					GLOBAL_VAR->CsvProductFlowList(m_pk, newproduct->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 					CLOG->info("PK: {}, idx : {} PROC {}번 제품 송신 완료, at t = {}", m_pk, m_idx, newproduct->m_genID, WAISER->CurentSimulationTime().GetValue());
 					if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 1 || GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) == 1) {
 						m_modelState = STATE::WAIT;
