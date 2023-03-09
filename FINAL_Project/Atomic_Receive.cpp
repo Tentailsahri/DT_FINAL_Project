@@ -30,9 +30,9 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 	}
 
 	// 초기 모델 상태 설정
-
 	m_modelState = STATE::INIT;
 	m_product = nullptr;
+
 	// 모델 변수 초기화
 	m_type = type;
 	m_idx = idx;
