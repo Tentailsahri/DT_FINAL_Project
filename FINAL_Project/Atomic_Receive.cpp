@@ -127,7 +127,7 @@ bool Atomic_Receive::IntTransFn() {
 // 출력 함수
 bool Atomic_Receive::OutputFn(WMessage& msg) {
 	if (m_modelState == STATE::DECISION) {
-		CProduct* next = new CProduct(1, 0.0);
+		CProduct* next = new CProduct(2, 0.0);
 		next->m_curPk = m_pk;
 		CLOG->info("PK: {}, idx : {} {} Buffer size {}, at t = {}", m_pk, m_idx, getModel2Str(m_type), GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer), WAISER->CurentSimulationTime().GetValue());
 		if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
