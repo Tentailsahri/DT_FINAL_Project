@@ -93,9 +93,9 @@ Cpd_Main::Cpd_Main(int scenario_num)
 			AddComponent(proc_cpd_map.at(i + genCount + trackCount));
 		}
 		for (int i = 0; i < stocCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount + stocCount, new Cpd_STOCK(i, i + genCount + trackCount + stocCount));
+			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount + procCount, new Cpd_STOCK(i, i + genCount + trackCount + procCount));
 			stock_cpd_map.insert(tmp_pair);
-			AddComponent(stock_cpd_map.at(i + genCount + trackCount + stocCount));
+			AddComponent(stock_cpd_map.at(i + genCount + trackCount + procCount));
 		}
 
 		// 모델 포트 연결
