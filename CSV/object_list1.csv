@@ -1,0 +1,6 @@
+object_id,x_position,y_position,object_type,x_length,y_length
+0,0.0,2.0,GEN,1.0,1.0
+1,1.0,2.0,TRACK,2.0,1.0
+2,3.0,1.0,PROC,2.0,2.0
+3,5.0,2.0,TRACK,2.0,1.0
+4,7.0,2.0,STOCK,2.0,1.0
