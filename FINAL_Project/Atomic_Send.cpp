@@ -209,7 +209,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 							}
 						}
 						if (readyMapCount >= 1) {
-							if (m_idx == 1 && GLOBAL_VAR->SQLConnect == false) {
+							if (GLOBAL_VAR->SQLConnect == false) {
 								/*if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 									std::uniform_int_distribution<int> u_dis(7, 8);
 									newproduct->m_targetPk = u_dis(WAISER->random_gen_);
@@ -219,13 +219,10 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 									newproduct->m_targetPk = 7;
 								}*/
 							}
-							else if (m_idx == 1 && GLOBAL_VAR->SQLConnect == true) {
+							else if (GLOBAL_VAR->SQLConnect == true) {
 								product->m_targetPk = m_whereTargetPk(m_pk);
 							}
-							else {
-								GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
-								product->m_targetPk = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), 0, 0));
-							}
+							
 							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 							GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 							CLOG->info("PK: {}, idx : {} {} {}번 제품 송신 완료, at t = {}", m_pk, m_idx, getModel2Str(m_type), product->m_genID, WAISER->CurentSimulationTime().GetValue());
