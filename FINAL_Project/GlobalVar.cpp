@@ -221,11 +221,11 @@ void CGlobalVar::CsvMake() {
 	m_file4 << "project_id" << "," << "object_id" << "," << "product_id" << "," << "in_time" << "," << "out_time" << "\n";
 	m_file5 << "project_id" << "," << "project_name" << "," << "x" << "," << "y" << "," << "sim_start_time" << "," << "sim_end_time" << "\n";
 	if (GLOBAL_VAR->scenario_num == 1) {
-		m_file5 << "project_id" << "," << "project_name" << "," << "x" << "," << "y" << "," << "sim_start_time" << "," << "sim_end_time" << "\n";
+		m_file5 << "1" << "," << "no.1" << "," << "9" << "," << "4" << "," << "0" << "," << time << "\n";
 	} else if (GLOBAL_VAR->scenario_num == 2) {
-		m_file5 << "project_id" << "," << "project_name" << "," << "x" << "," << "y" << "," << "sim_start_time" << "," << "sim_end_time" << "\n";
+		m_file5 << "2" << "," << "no.2" << "," << "13" << "," << "8" << "," << "0" << "," << time << "\n";
 	} else if (GLOBAL_VAR->scenario_num == 3) {
-		m_file5 << "project_id" << "," << "project_name" << "," << "x" << "," << "y" << "," << "sim_start_time" << "," << "sim_end_time" << "\n";
+		m_file5 << "3" << "," << "no.3" << "," << "18" << "," << "13" << "," << "0" << "," << time << "\n";
 	}
 }
 
