@@ -175,11 +175,13 @@ void CGlobalVar::CsvMake() {
 	std::ofstream file2;
 	std::ofstream file3;
 	std::ofstream file4;
+	std::ofstream file5;
 	std::string file_name;
 	std::string file_name1;
 	std::string file_name2;
 	std::string file_name3;
 	std::string file_name4;
+	std::string file_name5;
 
 	if (GLOBAL_VAR->scenario_num == 1) {
 		file_name = "../CSV/Unity/scene 1/object_state_list1.csv";
@@ -187,6 +189,7 @@ void CGlobalVar::CsvMake() {
 		file_name2 = "../CSV/state_rate_list1.csv";
 		file_name3 = "../CSV/buf_count_list1.csv";
 		file_name4 = "../CSV/product_flow_list1.csv";
+		file_name5 = "../CSV/Unity/scene 1/project_list1.csv";
 	}
 	else if (GLOBAL_VAR->scenario_num == 2) {
 		file_name = "../CSV/Unity/scene 2/object_state_list2.csv";
@@ -194,6 +197,7 @@ void CGlobalVar::CsvMake() {
 		file_name2 = "../CSV/state_rate_list2.csv";
 		file_name3 = "../CSV/buf_count_list2.csv";
 		file_name4 = "../CSV/product_flow_list2.csv";
+		file_name5 = "../CSV/Unity/scene 2/project_list2.csv";
 	}
 	else if (GLOBAL_VAR->scenario_num == 3) {
 		file_name = "../CSV/Unity/scene 3/object_state_list3.csv";
@@ -201,18 +205,28 @@ void CGlobalVar::CsvMake() {
 		file_name2 = "../CSV/state_rate_list3.csv";
 		file_name3 = "../CSV/buf_count_list3.csv";
 		file_name4 = "../CSV/product_flow_list3.csv";
+		file_name5 = "../CSV/Unity/scene 3/project_list3.csv";
 	}
 	m_file.open(file_name);
 	m_file1.open(file_name1);
 	m_file2.open(file_name2);
 	m_file3.open(file_name3);
 	m_file4.open(file_name4);
+	m_file5.open(file_name5);
 
 	m_file << "project_id" << "," << "object_id" << "," << "object_state" << "," << "state_start_time" << "," << "state_end_time" << "\n";
 	m_file1 << "project_id" << "," << "object_id" << "," << "current_time" << "," << "init_time" << "," << "active_time" << "," << "error_time" << "," << "pause_time" << "\n";
 	m_file2 << "project_id" << "," << "object_id" << "," << "current_time" << "," << "init_rate" << "," << "active_rate" << "," << "error_rate" << "," << "pause_rate" << "\n";
 	m_file3 << "project_id" << "," << "object_id" << "," << "object_type" << "," << "current_time" << "," << "buffer_count" << "," << "stock_count" << "\n";
 	m_file4 << "project_id" << "," << "object_id" << "," << "product_id" << "," << "in_time" << "," << "out_time" << "\n";
+	m_file5 << "project_id" << "," << "project_name" << "," << "x" << "," << "y" << "," << "sim_start_time" << "," << "sim_end_time" << "\n";
+	if (GLOBAL_VAR->scenario_num == 1) {
+		m_file5 << "1" << "," << "no.1" << "," << "9" << "," << "4" << "," << "0" << "," << time << "\n";
+	} else if (GLOBAL_VAR->scenario_num == 2) {
+		m_file5 << "2" << "," << "no.2" << "," << "13" << "," << "8" << "," << "0" << "," << time << "\n";
+	} else if (GLOBAL_VAR->scenario_num == 3) {
+		m_file5 << "3" << "," << "no.3" << "," << "18" << "," << "13" << "," << "0" << "," << time << "\n";
+	}
 }
 
 void CGlobalVar::CsvStateInsert(int pk, std::string state, double state_start_time, double state_end_time) {

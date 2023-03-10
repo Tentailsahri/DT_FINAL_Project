@@ -107,10 +107,10 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 // 내부 상태 천이 함수
 bool Atomic_Receive::IntTransFn() {
 	if (m_modelState == STATE::READYMAP) {
-		if (GLOBAL_VAR->m_maxbuffer_Generator > GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
+		if (GLOBAL_VAR->m_maxbuffer[m_type] > GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
 			m_modelState = STATE::RECEIVE;
 		}
-		else if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
+		else if (GLOBAL_VAR->m_maxbuffer[m_type] <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
 			m_modelState = STATE::FULL;
 		}
 	}else if (m_modelState == STATE::INIT) {
@@ -126,10 +126,10 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 		CProduct* next = new CProduct(2, 0.0);
 		next->m_curPk = m_pk;
 		CLOG->info("PK: {}, idx : {} {} Buffer size {}, at t = {}", m_pk, m_idx, getModel2Str(m_type), GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer), WAISER->CurentSimulationTime().GetValue());
-		if (GLOBAL_VAR->m_maxbuffer_Generator <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
+		if (GLOBAL_VAR->m_maxbuffer[m_type] <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
 			msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, next);
 			m_modelState = STATE::FULL;
-		} else if (GLOBAL_VAR->m_maxbuffer_Generator > GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
+		} else if (GLOBAL_VAR->m_maxbuffer[m_type] > GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
 			msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
 			m_modelState = STATE::RECEIVE;
 		}
