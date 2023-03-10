@@ -61,7 +61,6 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 						m_product->m_curPk = m_pk;
 						m_product->m_curType = getModel2Str(m_type);
 						CLOG->info("PK: {}, idx : {} {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, m_subIdx, m_product->m_curType, m_product->m_genID, WAISER->CurentSimulationTime().GetValue());
-						CLOG->info("pastPk={} pastType={} curPk={} curtype={}", m_product->m_pastPk, m_product->m_pastType, m_product->m_curPk, m_product->m_curType);
 						GLOBAL_VAR->mBufferPush(m_subIdx, m_pk, m_product, &GLOBAL_VAR->p_buffer);
 					}
 				} else {
@@ -71,7 +70,6 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 					m_product->m_curPk = m_pk;
 					m_product->m_curType = getModel2Str(m_type);
 					CLOG->info("PK: {}, idx : {} {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, m_subIdx, m_product->m_curType, m_product->m_genID, WAISER->CurentSimulationTime().GetValue());
-					CLOG->info("pastPk={} pastType={} curPk={} curtype={}", m_product->m_pastPk, m_product->m_pastType, m_product->m_curPk, m_product->m_curType);
 					GLOBAL_VAR->mBufferPush(m_subIdx, m_pk, m_product, &GLOBAL_VAR->p_buffer);
 				}
 			}

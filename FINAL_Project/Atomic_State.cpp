@@ -115,7 +115,6 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 				product->m_curPk = m_pk;
 				product->m_curType = getModel2Str(m_type);
 				CLOG->info("PK: {}, idx : {} {} {}번 제품 생산, at t = {}", m_pk, m_idx, getModel2Str(m_type), genID, WAISER->CurentSimulationTime().GetValue());
-				CLOG->info("curPk={} curtype={}", product->m_curPk, product->m_curType);
 				GLOBAL_VAR->mBufferPush(0, m_pk, product, &GLOBAL_VAR->p_buffer);
 				CLOG->info("PK: {}, idx : {} GEN MAKE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 				CLOG->info("GEN BUFFER SIZE : {}, at {}", GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer), WAISER->CurentSimulationTime().GetValue());
