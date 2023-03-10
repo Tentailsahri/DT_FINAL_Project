@@ -72,6 +72,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		int trackCount = 19;
 		int procCount = 5;
 		int stocCount = 2;
+		
 
 		// 생성한 모델 연결
 		for (int i = 0; i < genCount; i++) {
@@ -85,7 +86,9 @@ Cpd_Main::Cpd_Main(int scenario_num)
 			AddComponent(track_cpd_map.at(i + genCount));
 		}
 		for (int i = 0; i < procCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount, new Cpd_PROC(i, 2, i + genCount + trackCount));
+			GLOBAL_VAR->pgconn->SendQuery("SELECT send_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE receive_object_id=" + std::to_string(26+i));
+			bufferPopNum = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount, new Cpd_PROC(i, bufferPopNum, i + genCount + trackCount));
 			proc_cpd_map.insert(tmp_pair);
 			AddComponent(proc_cpd_map.at(i + genCount + trackCount));
 		}

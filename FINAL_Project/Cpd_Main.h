@@ -25,5 +25,6 @@ private:
 	std::map<int, WCoupModel*> stock_cpd_map;
 public:
 	Cpd_Main(int road_num);
+	int bufferPopNum;
 };
 
