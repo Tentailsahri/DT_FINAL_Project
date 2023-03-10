@@ -65,5 +65,7 @@ public:
 	void m_sendGenQuery(CProduct* product);
 	void m_sendPassQuery(CProduct* product);
 	int m_whereTargetPk(int pk);
+	int cp[100] = { 0 };
+	int ap[100] = { 0 };
 };
 

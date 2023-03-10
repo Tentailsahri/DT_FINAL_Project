@@ -45,6 +45,7 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	newgencount1 = 0;
 	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(pk));
 	getValue = new int[PQntuples(GLOBAL_VAR->pgconn->GetSQLResult())]();
+	
 }
 Atomic_Send::~Atomic_Send()
 {
@@ -331,19 +332,48 @@ void Atomic_Send::m_sendPassQuery(CProduct* product) {
 
 int Atomic_Send::m_whereTargetPk(int pk)
 {
+	int count = 0;
+	int cpcount = 0;
+	
 	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list"+std::to_string(GLOBAL_VAR->scenario_num)+"\" WHERE send_object_id=" + std::to_string(pk));
 	for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
 	      getValue[i] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
 	}
-	if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
-		std::uniform_int_distribution<int> u_dis(getValue[0], getValue[1]);
-		return u_dis(WAISER->random_gen_);
+	for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
+		if (GLOBAL_VAR->readymap[m_pk].at(i) == true) {
+			count++;
+		}
 	}
-	else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
-		return getValue[1];
+	
+	if (count == 1) {
+		for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
+			if (GLOBAL_VAR->readymap[m_pk].at(i) == true) {
+				return getValue[i];
+			}
+		}
 	}
-	else if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
-		return getValue[0];
+	else if (count > 1) {
+		for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
+			if (GLOBAL_VAR->readymap[m_pk].at(i) == true) {
+				cp[cpcount++] = getValue[i];
+				GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(getValue[i]));
+				ap[cpcount++] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), 0, 0));
+				CLOG->info("{}", cp[cpcount - 1]);
+			}
+		}
+		int min = GLOBAL_VAR->BufferSize(ap[0], &GLOBAL_VAR->stock);
+		int minpk = cp[0];
+		for (int i = 0; i < count; i++) {
+			if (min > GLOBAL_VAR->BufferSize(ap[i], &GLOBAL_VAR->stock)) {
+				min = GLOBAL_VAR->BufferSize(ap[i], &GLOBAL_VAR->stock);
+				minpk = cp[i];
+				
+			}
+			CLOG->info("{} {} {}", ap[i], cp[i], GLOBAL_VAR->BufferSize(ap[i], &GLOBAL_VAR->stock));
+		}
+
+		return minpk;
+
 	}
 	else return 0;
 }
