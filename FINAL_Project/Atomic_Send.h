@@ -11,6 +11,7 @@ class Atomic_Send : public WAtomModel	// DEVS 원자모델
 {
 public:
 	Atomic_Send(int type, int idx, int pk);
+	~Atomic_Send();
 	// 입력포트 정의
 	enum class IN_PORT : unsigned int {
 		PAUSE = 300,
@@ -59,10 +60,12 @@ public:
 	int m_pk;
 	int newgencount;
 	int newgencount1;
-	int getValue[2]={0};
+	int *getValue;
 	static const char* getModel2Str(int model_type);
 	void m_sendGenQuery(CProduct* product);
 	void m_sendPassQuery(CProduct* product);
 	int m_whereTargetPk(int pk);
+	int cp[100] = { 0 };
+	int ap[100] = { 0 };
 };
 
