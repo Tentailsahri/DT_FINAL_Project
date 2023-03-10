@@ -56,6 +56,7 @@ public:
 	std::ofstream m_file2;
 	std::ofstream m_file3;
 	std::ofstream m_file4;
+	std::ofstream m_file5;
 
 	int m_maxbuffer_Generator = 10;
 	int m_maxbuffer_Receive = 10;
