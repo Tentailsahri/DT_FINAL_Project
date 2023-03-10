@@ -229,12 +229,6 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 							msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 							GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 							CLOG->info("PK: {}, idx : {} {} {}번 제품 송신 완료, at t = {}", m_pk, m_idx, getModel2Str(m_type), product->m_genID, WAISER->CurentSimulationTime().GetValue());
-							if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 1 || GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) == 1) {
-								m_modelState = STATE::WAIT;
-							}
-							else if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) > 1 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) > 1) {
-								m_modelState = STATE::PENDING;
-							}
 							for (int i = 0; i < bufferPopNum; i++) {
 								if (GLOBAL_VAR->mBufferSize(i, m_pk, &GLOBAL_VAR->p_buffer) == 1) {
 									bufOneCount++;
