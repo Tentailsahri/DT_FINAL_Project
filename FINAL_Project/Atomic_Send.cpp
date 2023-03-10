@@ -45,7 +45,10 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	newgencount1 = 0;
 	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(pk));
 	getValue = new int[PQntuples(GLOBAL_VAR->pgconn->GetSQLResult())]();
-	
+	trueCount = 0;
+	trueValueCount = 0;
+	trueStockBufferCount = 0;
+	tuplesNum = 0;
 }
 Atomic_Send::~Atomic_Send()
 {
@@ -332,46 +335,48 @@ void Atomic_Send::m_sendPassQuery(CProduct* product) {
 
 int Atomic_Send::m_whereTargetPk(int pk)
 {
-	int count = 0;
-	int cpcount = 0;
-	
 	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list"+std::to_string(GLOBAL_VAR->scenario_num)+"\" WHERE send_object_id=" + std::to_string(pk));
-	for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
+	tuplesNum = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+	for (int i = 0; i < tuplesNum; i++) {
 	      getValue[i] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
-	}
-	for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
-		if (GLOBAL_VAR->readymap[m_pk].at(i) == true) {
-			count++;
-		}
+		  if (GLOBAL_VAR->readymap[pk].at(i) == true) {
+			  trueCount++;
+		  }
 	}
 	
-	if (count == 1) {
-		for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
-			if (GLOBAL_VAR->readymap[m_pk].at(i) == true) {
+	if (trueCount == 1) {
+		for (int i = 0; i < tuplesNum ; i++) {
+			if (GLOBAL_VAR->readymap[pk].at(i) == true) {
+				trueCount = 0;
+				trueValueCount = 0;
+				trueStockBufferCount = 0;
 				return getValue[i];
 			}
 		}
 	}
-	else if (count > 1) {
-		for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
-			if (GLOBAL_VAR->readymap[m_pk].at(i) == true) {
-				cp[cpcount++] = getValue[i];
+	else if (trueCount > 1) {
+
+		for (int i = 0; i < tuplesNum ; i++) {
+			if (GLOBAL_VAR->readymap[pk].at(i) == true) {
+				trueValue[trueValueCount] = getValue[i];
 				GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(getValue[i]));
-				ap[cpcount++] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), 0, 0));
-				CLOG->info("{}", cp[cpcount - 1]);
+				trueStockBuffer[trueStockBufferCount] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), 0, 0));
+				trueValueCount++;
+				trueStockBufferCount++;
 			}
 		}
-		int min = GLOBAL_VAR->BufferSize(ap[0], &GLOBAL_VAR->stock);
-		int minpk = cp[0];
-		for (int i = 0; i < count; i++) {
-			if (min > GLOBAL_VAR->BufferSize(ap[i], &GLOBAL_VAR->stock)) {
-				min = GLOBAL_VAR->BufferSize(ap[i], &GLOBAL_VAR->stock);
-				minpk = cp[i];
+		int min = GLOBAL_VAR->BufferSize(trueStockBuffer[0], &GLOBAL_VAR->stock);
+		int minpk = trueValue[0];
+		for (int i = 0; i < trueCount; i++) {
+			if (min > GLOBAL_VAR->BufferSize(trueStockBuffer[i], &GLOBAL_VAR->stock)) {
+				min = GLOBAL_VAR->BufferSize(trueStockBuffer[i], &GLOBAL_VAR->stock);
+				minpk = trueValue[i];
 				
 			}
-			CLOG->info("{} {} {}", ap[i], cp[i], GLOBAL_VAR->BufferSize(ap[i], &GLOBAL_VAR->stock));
 		}
-
+		trueCount = 0;
+		trueValueCount = 0;
+		trueStockBufferCount = 0;
 		return minpk;
 
 	}
