@@ -71,5 +71,8 @@ public:
 	int trueValueCount;
 	int trueStockBufferCount;
 	int tuplesNum;
+	int bufferNum;
+	int bufOneCount;
+	int readyMapCount;
 };
 

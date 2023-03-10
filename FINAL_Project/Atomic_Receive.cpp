@@ -53,17 +53,7 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 			if (m_type != 0) {
 				CProduct* cproduct = (CProduct*)msg.GetValue();
 				m_product = new CProduct(*cproduct);
-				if (GLOBAL_VAR->scenario_num == 2 && (m_pk == 7 || m_pk == 8)) {
-					if (m_product->m_targetPk == m_pk) {
-						m_product->m_passTime = WAISER->CurentSimulationTime().GetValue();
-						m_product->m_pastPk = m_product->m_curPk;
-						m_product->m_pastType = m_product->m_curType;
-						m_product->m_curPk = m_pk;
-						m_product->m_curType = getModel2Str(m_type);
-						CLOG->info("PK: {}, idx : {} {} {} {}번 제품 수신 완료, at t = {}", m_pk, m_idx, m_subIdx, m_product->m_curType, m_product->m_genID, WAISER->CurentSimulationTime().GetValue());
-						GLOBAL_VAR->mBufferPush(m_subIdx, m_pk, m_product, &GLOBAL_VAR->p_buffer);
-					}
-				} else {
+				if (m_product->m_targetPk == m_pk) {
 					m_product->m_passTime = WAISER->CurentSimulationTime().GetValue();
 					m_product->m_pastPk = m_product->m_curPk;
 					m_product->m_pastType = m_product->m_curType;
@@ -73,9 +63,11 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 					GLOBAL_VAR->mBufferPush(m_subIdx, m_pk, m_product, &GLOBAL_VAR->p_buffer);
 				}
 			}
-			m_modelState = STATE::DECISION;
+				m_modelState = STATE::DECISION;
+			
 		}
-	} else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
+	}
+	else if (msg.GetPort() == (unsigned int)IN_PORT::SEND) {
 		if (m_modelState == STATE::FULL) {
 			m_modelState = STATE::DECISION;
 		}
