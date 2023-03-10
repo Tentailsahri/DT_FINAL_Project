@@ -120,7 +120,7 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 				CLOG->info("PK: {}, idx : {} GEN MAKE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 				CLOG->info("GEN BUFFER SIZE : {}, at {}", GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer), WAISER->CurentSimulationTime().GetValue());
 				msg.SetPortValue((unsigned int)OUT_PORT::MAKE, nullptr);
-				if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) >= GLOBAL_VAR->m_maxbuffer_Generator) {
+				if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) >= GLOBAL_VAR->m_maxbuffer[m_type]) {
 					m_modelState = STATE::WAIT;
 					CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 				}

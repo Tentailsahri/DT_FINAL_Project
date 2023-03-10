@@ -58,10 +58,8 @@ public:
 	std::ofstream m_file4;
 	std::ofstream m_file5;
 
-	int m_maxbuffer_Generator = 10;
-	int m_maxbuffer_Receive = 10;
-	int m_maxbuffer_Process = 10;
-	int m_maxbuffer_Stock = 10;
+	// 임시버퍼 최대 크기
+	int m_maxbuffer[4] = { 10,10,10,10 };
 	int	scenario_num = 1;
 	int track_speed = 1;
 

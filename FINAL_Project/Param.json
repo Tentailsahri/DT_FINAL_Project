@@ -5,7 +5,11 @@
   "TA_STATE_INIT[2]": 5,
   "TA_STATE_INIT[3]": 5,
   "scenario_num": 1,
-  "time": 1000
+  "time": 100,
+  "m_maxbuffer_Generator": 5,
+  "m_maxbuffer_Track": 1,
+  "m_maxbuffer_Process": 5,
+  "m_maxbuffer_Stock": 5
 }
 
 
