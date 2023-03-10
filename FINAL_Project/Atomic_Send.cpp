@@ -326,12 +326,11 @@ void Atomic_Send::m_sendPassQuery(CProduct* product) {
 
 int Atomic_Send::m_whereTargetPk(int pk)
 {
-	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list2\" WHERE send_object_id="+std::to_string(pk));
+	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list"+std::to_string(GLOBAL_VAR->scenario_num)+"\" WHERE send_object_id=" + std::to_string(pk));
 	
 	for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
-	      getValue[i] = std::atoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
+	      getValue[i] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
 	}
-	CLOG->info("{} {}", getValue[0], getValue[1]);
 	if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 		std::uniform_int_distribution<int> u_dis(getValue[0], getValue[1]);
 		return u_dis(WAISER->random_gen_);
