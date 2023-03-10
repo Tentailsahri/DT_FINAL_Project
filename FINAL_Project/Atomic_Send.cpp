@@ -43,8 +43,13 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	m_pk = pk;
 	newgencount = 0;
 	newgencount1 = 0;
+	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(pk));
+	getValue = new int[PQntuples(GLOBAL_VAR->pgconn->GetSQLResult())]();
 }
-
+Atomic_Send::~Atomic_Send()
+{
+	delete[] getValue;
+}
 // 외부 상태 천이 함수
 bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 	if (m_type != 3) {
@@ -238,14 +243,14 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					CProduct* product1 = GLOBAL_VAR->mBufferPop(1, m_pk, &GLOBAL_VAR->p_buffer);
 					CProduct* newproduct = new CProduct(product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					if (m_idx == 1 && GLOBAL_VAR->SQLConnect==false) {
-						if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
+						/*if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 							std::uniform_int_distribution<int> u_dis(7, 8);
 							newproduct->m_targetPk = u_dis(WAISER->random_gen_);
 						} else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
 							newproduct->m_targetPk = 8;
 						} else if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
 							newproduct->m_targetPk = 7;
-						}
+						}*/
 					}
 					else if (m_idx == 1 && GLOBAL_VAR->SQLConnect == true) {
 						newproduct->m_targetPk=m_whereTargetPk(m_pk);
@@ -327,7 +332,6 @@ void Atomic_Send::m_sendPassQuery(CProduct* product) {
 int Atomic_Send::m_whereTargetPk(int pk)
 {
 	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list"+std::to_string(GLOBAL_VAR->scenario_num)+"\" WHERE send_object_id=" + std::to_string(pk));
-	
 	for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
 	      getValue[i] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
 	}
