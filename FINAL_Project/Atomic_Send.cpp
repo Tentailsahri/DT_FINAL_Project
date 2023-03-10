@@ -320,16 +320,18 @@ const char* Atomic_Send::getModel2Str(int m_type) {
 
 void Atomic_Send::m_sendPassQuery(CProduct* product) {
 	if (GLOBAL_VAR->SQLConnect == true) {
-		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(" + std::to_string(GLOBAL_VAR->scenario_num) + ", " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_passTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
 	}
 }
 
 int Atomic_Send::m_whereTargetPk(int pk)
 {
 	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list2\" WHERE send_object_id="+std::to_string(pk));
+	
 	for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
-	      getValue[i] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
+	      getValue[i] = std::atoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
 	}
+	CLOG->info("{} {}", getValue[0], getValue[1]);
 	if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 		std::uniform_int_distribution<int> u_dis(getValue[0], getValue[1]);
 		return u_dis(WAISER->random_gen_);
@@ -345,6 +347,6 @@ int Atomic_Send::m_whereTargetPk(int pk)
 
 void Atomic_Send::m_sendGenQuery(CProduct* product) {
 	if (GLOBAL_VAR->SQLConnect == true) {
-		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(1, " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_genTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
+		GLOBAL_VAR->pgconn->SendQuery("INSERT INTO \"product_flow_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" (project_id, object_id, product_id, in_time, out_time) VALUES(" + std::to_string(GLOBAL_VAR->scenario_num) + ", " + std::to_string(m_pk) + ", " + std::to_string(product->m_genID) + ", " + std::to_string(product->m_genTime) + ", " + std::to_string(WAISER->CurentSimulationTime().GetValue()) + ")");
 	}
 }
