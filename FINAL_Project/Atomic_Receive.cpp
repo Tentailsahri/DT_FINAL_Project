@@ -32,13 +32,14 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 	// 초기 모델 상태 설정
 	m_modelState = STATE::INIT;
 	m_product = nullptr;
-
+	
 	// 모델 변수 초기화
 	m_type = type;
 	m_idx = idx;
 	m_pk = pk;
-	GLOBAL_VAR->readymap[m_pk].push_back(false);
-	if (GLOBAL_VAR->scenario_num != 1) {
+	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
+	bufferPopNum = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+	for(int i = 0; i < bufferPopNum; i++) {
 		GLOBAL_VAR->readymap[m_pk].push_back(false);
 	}
 	GLOBAL_VAR->m_subIdxMapUpdate(m_pk);
@@ -75,19 +76,24 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 		GLOBAL_VAR->readymap[m_pk].at(m_subIdx) = true;
 		m_modelState = STATE::READYMAP;
 	} else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
-		if (GLOBAL_VAR->scenario_num == 1) GLOBAL_VAR->readymap[m_pk].at(0) = false;
-		else if (GLOBAL_VAR->scenario_num == 2 && m_pk != 10) GLOBAL_VAR->readymap[m_pk].at(0) = false;
-		else if (GLOBAL_VAR->scenario_num == 2 && m_pk == 10) {
+		for (int i = 0; i < bufferPopNum; i++) {
+			bufferPop[i] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
+		}
+		if (bufferPopNum == 1) {
+			GLOBAL_VAR->readymap[m_pk].at(0) = false;
+		}
+		else {
 			CProduct* cnext = (CProduct*)msg.GetValue();
 			if (cnext != nullptr) {
 				CProduct* next = new CProduct(*cnext);
-				if (next->m_curPk == 7) {
-					GLOBAL_VAR->readymap[m_pk].at(m_subIdx) = false;
-				} else if (next->m_curPk == 8) {
-					GLOBAL_VAR->readymap[m_pk].at(m_subIdx) = false;
+				for (int i = 0; i < bufferPopNum; i++) {
+					if (next->m_curPk == bufferPop[i]) {
+						GLOBAL_VAR->readymap[m_pk].at(i) = false;
+					}
 				}
 			}
 		}
+		
 		m_modelState = STATE::READYMAP;
 	} else Continue();
 
