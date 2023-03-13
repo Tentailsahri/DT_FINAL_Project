@@ -76,6 +76,7 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 		GLOBAL_VAR->readymap[m_pk].at(m_subIdx) = true;
 		m_modelState = STATE::READYMAP;
 	} else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
+		GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
 		for (int i = 0; i < bufferPopNum; i++) {
 			bufferPop[i] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
 		}

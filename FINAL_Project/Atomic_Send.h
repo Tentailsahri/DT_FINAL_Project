@@ -75,5 +75,7 @@ public:
 	int readyMapCount;
 	int bufferPopNum;
 	int bufferSameCount;
+	int bufferSERRORNum;
+	int bufferSERRORCount;
 };
 

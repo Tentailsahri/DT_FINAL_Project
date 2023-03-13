@@ -51,9 +51,9 @@ CProduct* CGlobalVar::mBufferPop(int idx, int key, std::map<int, std::map<int, s
 	if (map_find_result != mbuffer->end()) {
 		std::map<int, std::queue<CProduct*>>::iterator map_find_result1 = mbuffer->at(idx).find(key);
 		if (map_find_result1 != mbuffer->at(idx).end()) {
-			product = mbuffer->at(idx).at(key).front();
-			mbuffer->at(idx).at(key).pop();
-			return product;
+				product = mbuffer->at(idx).at(key).front();
+				mbuffer->at(idx).at(key).pop();
+				return product;
 		}
 		else return nullptr;
 	}
