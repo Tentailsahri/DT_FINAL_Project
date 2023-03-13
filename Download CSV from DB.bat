@@ -1,3 +1,10 @@
 @echo off
-psql -d "postgresql://192.168.0.18/final_DB?user=postgres&password=1234" -c "\copy project_list1 to 'C:/project_list1.csv' with csv header;"
-psql -d "postgresql://192.168.0.18/final_DB?user=postgres&password=1234" -c "\copy project_list2 to 'C:/project_list2.csv' with csv header;"
+psql -d "postgresql://192.168.0.18/final_DB?user=postgres&password=1234" -c "\copy object_list1 to 'C:\Users\KOSA\My project (5)\Assets\Resources\DB\scene 1\object_list1.csv' with csv header;"
+psql -d "postgresql://192.168.0.18/final_DB?user=postgres&password=1234" -c "\copy object_state_list1 to 'C:\Users\KOSA\My project (5)\Assets\Resources\DB\scene 1\object_state_list1.csv' with csv header;"
+psql -d "postgresql://192.168.0.18/final_DB?user=postgres&password=1234" -c "\copy project_list1 to 'C:\Users\KOSA\My project (5)\Assets\Resources\DB\scene 1\project_list1.csv' with csv header;"
+psql -d "postgresql://192.168.0.18/final_DB?user=postgres&password=1234" -c "\copy object_list2 to 'C:\Users\KOSA\My project (5)\Assets\Resources\DB\scene 2\object_list2.csv' with csv header;"
+psql -d "postgresql://192.168.0.18/final_DB?user=postgres&password=1234" -c "\copy object_state_list2 to 'C:\Users\KOSA\My project (5)\Assets\Resources\DB\scene 2\object_state_list2.csv' with csv header;"
+psql -d "postgresql://192.168.0.18/final_DB?user=postgres&password=1234" -c "\copy project_list2 to 'C:\Users\KOSA\My project (5)\Assets\Resources\DB\scene 2\project_list2.csv' with csv header;"
+psql -d "postgresql://192.168.0.18/final_DB?user=postgres&password=1234" -c "\copy object_list3 to 'C:\Users\KOSA\My project (5)\Assets\Resources\DB\scene 3\object_list3.csv' with csv header;"
+psql -d "postgresql://192.168.0.18/final_DB?user=postgres&password=1234" -c "\copy object_state_list3 to 'C:\Users\KOSA\My project (5)\Assets\Resources\DB\scene 3\object_state_list3.csv' with csv header;"
+psql -d "postgresql://192.168.0.18/final_DB?user=postgres&password=1234" -c "\copy project_list3 to 'C:\Users\KOSA\My project (5)\Assets\Resources\DB\scene 3\project_list3.csv' with csv header;"
