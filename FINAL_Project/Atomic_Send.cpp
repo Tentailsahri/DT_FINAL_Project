@@ -216,7 +216,6 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 				GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
 				product->m_targetPk = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), 0, 0));
-				CLOG->info("track {}->{}", m_pk, product->m_targetPk);
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 				if (m_type == 0) {
 					GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
@@ -267,7 +266,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 								else if (GLOBAL_VAR->SQLConnect == true) {
 									product->m_targetPk = m_whereTargetPk(m_pk);
 								}
-								CLOG->info("{} proc->track {}", m_pk, product->m_targetPk);
+								
 								msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 								GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 								CLOG->info("PK: {}, idx : {} {} {}번 제품 송신 완료, at t = {}", m_pk, m_idx, getModel2Str(m_type), product->m_genID, WAISER->CurentSimulationTime().GetValue());
@@ -377,7 +376,6 @@ int Atomic_Send::m_whereTargetPk(int pk)
 		for (int i = 0; i < tuplesNum ; i++) {
 			if (GLOBAL_VAR->readymap[pk].at(i) == true) {
 				trueValue[trueValueCount] = getValue[i];
-				CLOG->info("trueValue {}", trueValue[trueValueCount]);
 				trueValueCount++;
 			}
 		}
