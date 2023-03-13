@@ -77,5 +77,8 @@ public:
 	int bufferSameCount;
 	int bufferSERRORNum;
 	int bufferSERRORCount;
+	int bufferPauseReadyMapCount;
+	int bufferSendCount;
+	int bufferSend;
 };
 
