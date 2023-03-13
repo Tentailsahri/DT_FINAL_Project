@@ -81,5 +81,7 @@ public:
 	int bufferSendCount;
 	int bufferSend;
 	int min;
+	int minnum;
+	int minPk;
 };
 

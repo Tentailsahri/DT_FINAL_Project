@@ -59,6 +59,8 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	bufferSendCount = 0;
 	bufferSend = 0;
 	min = 10000;
+	minnum = 0;
+	minPk = -1;
 }
 Atomic_Send::~Atomic_Send()
 {
@@ -378,22 +380,18 @@ int Atomic_Send::m_whereTargetPk(int pk)
 				trueValueCount++;
 			}
 		}
-		int minpk = trueValue[0];
+		
 		for (int i = 0; i < trueCount; i++) {
 			if (min>trueStockBuffer[i]) {
 				min=trueStockBuffer[i];
-				minpk = trueValue[i];
+				minPk = trueValue[i];
+				minnum = i;
 			}
 			
 		}
-		for (int i = 0; i < trueCount; i++) {
-			if (min == trueStockBuffer[i]) {
-				trueStockBuffer[i]++;
-				min++;
-				break;
-			}
-		}
-		return minpk;
+		trueStockBuffer[minnum]++;
+		min = trueStockBuffer[minnum];
+		return minPk;
 
 	}
 	else return 0;
