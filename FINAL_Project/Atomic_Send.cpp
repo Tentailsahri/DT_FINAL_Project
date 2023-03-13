@@ -362,7 +362,6 @@ int Atomic_Send::m_whereTargetPk(int pk)
 			  trueCount++;
 		  }
 	}
-	CLOG->info("truecount : {}", trueCount);
 	if (trueCount == 1) {
 		for (int i = 0; i < tuplesNum ; i++) {
 			if (GLOBAL_VAR->readymap[pk].at(i) == true) {
@@ -372,7 +371,7 @@ int Atomic_Send::m_whereTargetPk(int pk)
 		return trueValue[0];
 	}
 	else if (trueCount > 1) {
-		CLOG->info("truecount : {}", trueCount);
+		
 		for (int i = 0; i < tuplesNum ; i++) {
 			if (GLOBAL_VAR->readymap[pk].at(i) == true) {
 				trueValue[trueValueCount] = getValue[i];
