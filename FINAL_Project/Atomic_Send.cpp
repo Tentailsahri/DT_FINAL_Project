@@ -58,6 +58,7 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	bufferPauseReadyMapCount = 0;
 	bufferSendCount = 0;
 	bufferSend = 0;
+	min = 10000;
 }
 Atomic_Send::~Atomic_Send()
 {
@@ -88,6 +89,7 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 						m_modelState = STATE::WAIT;
 					} else Continue();
 				}
+				else Continue();
 				bufferPauseReadyMapCount = 0;
 				bufferSendCount = 0;
 			} else if (m_type == 0) {
@@ -214,6 +216,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 				GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
 				product->m_targetPk = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), 0, 0));
+				CLOG->info("track {}->{}", m_pk, product->m_targetPk);
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 				if (m_type == 0) {
 					GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_genTime, WAISER->CurentSimulationTime().GetValue());
@@ -244,7 +247,8 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						for (int i = 1; i < bufferPopNum; i++) {
 								CProduct* product1 = GLOBAL_VAR->mBufferPop(i, m_pk, &GLOBAL_VAR->p_buffer);
 							}
-							for (int i = 0; i < bufferPopNum; i++) {
+						GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
+							for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
 								if (GLOBAL_VAR->readymap[m_pk].at(i) == true) {
 									readyMapCount++;
 								}
@@ -276,7 +280,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 									m_modelState = STATE::PENDING;
 								}
 								else if (bufOneCount >= 1) {
-									m_modelState == STATE::WAIT;
+									m_modelState = STATE::WAIT;
 								};
 								bufOneCount = 0;
 								readyMapCount = 0;
@@ -348,6 +352,9 @@ void Atomic_Send::m_sendPassQuery(CProduct* product) {
 
 int Atomic_Send::m_whereTargetPk(int pk)
 {
+	trueValueCount = 0;
+	trueStockBufferCount = 0;
+	trueCount = 0;
 	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list"+std::to_string(GLOBAL_VAR->scenario_num)+"\" WHERE send_object_id=" + std::to_string(pk));
 	tuplesNum = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
 	for (int i = 0; i < tuplesNum; i++) {
@@ -356,40 +363,39 @@ int Atomic_Send::m_whereTargetPk(int pk)
 			  trueCount++;
 		  }
 	}
-	
+	CLOG->info("truecount : {}", trueCount);
 	if (trueCount == 1) {
 		for (int i = 0; i < tuplesNum ; i++) {
 			if (GLOBAL_VAR->readymap[pk].at(i) == true) {
-				trueCount = 0;
-				trueValueCount = 0;
-				trueStockBufferCount = 0;
-				return getValue[i];
+				trueValue[0]=getValue[i];
 			}
 		}
+		return trueValue[0];
 	}
 	else if (trueCount > 1) {
-
+		CLOG->info("truecount : {}", trueCount);
 		for (int i = 0; i < tuplesNum ; i++) {
 			if (GLOBAL_VAR->readymap[pk].at(i) == true) {
 				trueValue[trueValueCount] = getValue[i];
-				GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(getValue[i]));
-				trueStockBuffer[trueStockBufferCount] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), 0, 0));
+				CLOG->info("trueValue {}", trueValue[trueValueCount]);
 				trueValueCount++;
-				trueStockBufferCount++;
 			}
 		}
-		int min = GLOBAL_VAR->BufferSize(trueStockBuffer[0], &GLOBAL_VAR->stock);
 		int minpk = trueValue[0];
 		for (int i = 0; i < trueCount; i++) {
-			if (min > GLOBAL_VAR->BufferSize(trueStockBuffer[i], &GLOBAL_VAR->stock)) {
-				min = GLOBAL_VAR->BufferSize(trueStockBuffer[i], &GLOBAL_VAR->stock);
+			if (min>trueStockBuffer[i]) {
+				min=trueStockBuffer[i];
 				minpk = trueValue[i];
-				
+			}
+			
+		}
+		for (int i = 0; i < trueCount; i++) {
+			if (min == trueStockBuffer[i]) {
+				trueStockBuffer[i]++;
+				min++;
+				break;
 			}
 		}
-		trueCount = 0;
-		trueValueCount = 0;
-		trueStockBufferCount = 0;
 		return minpk;
 
 	}

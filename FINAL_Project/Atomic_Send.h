@@ -80,5 +80,6 @@ public:
 	int bufferPauseReadyMapCount;
 	int bufferSendCount;
 	int bufferSend;
+	int min;
 };
 
