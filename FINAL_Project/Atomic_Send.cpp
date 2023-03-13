@@ -53,6 +53,8 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	readyMapCount = 0;
 	bufferPopNum = 0;
 	bufferSameCount = 0;
+	bufferSERRORCount = 0;
+	bufferSERRORNum = 0;
 }
 Atomic_Send::~Atomic_Send()
 {
@@ -110,12 +112,21 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 			else if (GLOBAL_VAR->scenario_num == 1 && m_modelState == STATE::SERROR && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
 				m_modelState = STATE::WAIT;
 			}
-			else if (GLOBAL_VAR->scenario_num == 2 && m_modelState == STATE::SERROR && (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0 || GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) == 0)) {
-				m_modelState = STATE::WAIT;
+			else if (GLOBAL_VAR->scenario_num != 1 && m_modelState == STATE::SERROR) {
+				GLOBAL_VAR->pgconn->SendQuery("SELECT send_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE receive_object_id=" + std::to_string(m_pk));
+				bufferSERRORNum = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+				for (int i = 0; i < bufferSERRORNum; i++) {
+					if (GLOBAL_VAR->mBufferSize(i, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+						bufferSERRORCount++;
+					}
+				}
+				if (bufferSERRORCount != 0) {
+					m_modelState = STATE::WAIT;
+				}
+				else m_modelState = STATE::SEND;
+				
 			}
-			else if (GLOBAL_VAR->scenario_num == 2 && m_modelState == STATE::SERROR && (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0 && GLOBAL_VAR->mBufferSize(1, m_pk, &GLOBAL_VAR->p_buffer) != 0)) {
-				m_modelState = STATE::SEND;
-			}
+			bufferSERRORCount = 0;
 			}
 			else Continue();
 		}
