@@ -1,4 +1,4 @@
-"object_id","x_position","y_position","object_type","x_length","y_length"
+object_id,x_position,y_position,object_type,x_length,y_length
 0,0,1,"GEN",1,1
 1,0,3,"GEN",1,1
 2,0,5,"GEN",1,1
