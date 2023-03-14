@@ -10,3 +10,8 @@ FROM public.product_flow_list3 AS p
 LEFT JOIN public.object_list3 AS o
 ON p.object_id = o.object_id
 ORDER BY p.product_id ASC, p.in_time ASC;
+
+
+buf_count_list 를 정렬해서 보는법
+
+SELECT * FROM public.buf_count_list3 order by object_id asc, "current_time" asc;
