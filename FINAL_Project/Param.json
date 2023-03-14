@@ -10,12 +10,12 @@
   "TA_STATE_ERROR[0]": 5,
   "TA_STATE_ERROR[2]": 5,
   "TA_STATE_ERROR[3]": 5,
-  "scenario_num": 2,
-  "time": 100,
-  "m_maxbuffer_Generator": 100,
-  "m_maxbuffer_Track": 100,
-  "m_maxbuffer_Process": 100,
-  "m_maxbuffer_Stock": 100
+  "scenario_num": 3,
+  "time": 200,
+  "m_maxbuffer_Generator": 3,
+  "m_maxbuffer_Track": 3,
+  "m_maxbuffer_Process": 3,
+  "m_maxbuffer_Stock": 3
 }
 
 /*

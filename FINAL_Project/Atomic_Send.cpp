@@ -55,7 +55,7 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	bufferSameCount = 0;
 	bufferSERRORCount = 0;
 	bufferSERRORNum = 0;
-	bufferPauseReadyMapCount = 0;
+	PauseReadyMapCount = 0;
 	bufferSendCount = 0;
 	bufferSend = 0;
 	min = 10000;
@@ -77,7 +77,7 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 					GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
 					for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
 						if(GLOBAL_VAR->readymap[m_pk].at(i) == true)
-						         bufferPauseReadyMapCount++;
+						         PauseReadyMapCount++;
 					}
 					GLOBAL_VAR->pgconn->SendQuery("SELECT send_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE receive_object_id=" + std::to_string(m_pk));
 					bufferSend = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
@@ -85,23 +85,23 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 						if(GLOBAL_VAR->mBufferSize(i, m_pk, &GLOBAL_VAR->p_buffer) >=1)
 						bufferSendCount++;
 					}
-					if (bufferPauseReadyMapCount>=1 && bufferSendCount==bufferSend) {
+					if (PauseReadyMapCount>=1 && bufferSendCount==bufferSend) {
 						m_modelState = STATE::SEND;
-					} else if (bufferPauseReadyMapCount >= 1 && bufferSendCount != bufferSend) {
+					} else if (PauseReadyMapCount >= 1 && bufferSendCount != bufferSend) {
 						m_modelState = STATE::WAIT;
 					} else Continue();
 				}
 				else Continue();
-				bufferPauseReadyMapCount = 0;
+				PauseReadyMapCount = 0;
 				bufferSendCount = 0;
 			} else if (m_type == 0) {
-				if (cproduct->m_genID == 2) {
+			
 					if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) != 0) {
 						m_modelState = STATE::SEND;
 					} else if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
 						m_modelState = STATE::WAIT;
 					} else Continue();
-				} else Continue();
+				
 			}
 		} else if (msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 			if ((m_modelState == STATE::SEND || m_modelState == STATE::WAIT)) {
@@ -109,13 +109,13 @@ bool Atomic_Send::ExtTransFn(const WMessage& msg) {
 				bufferSend = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
 				for (int i = 0; i <bufferSend ; i++) {
 					if (GLOBAL_VAR->readymap[m_pk].at(i) == false)
-						bufferPauseReadyMapCount++;
+						PauseReadyMapCount++;
 				}
-				if (bufferSend==bufferPauseReadyMapCount) {
+				if (bufferSend==PauseReadyMapCount) {
 					m_modelState = STATE::PAUSE;
 				} else Continue();
 			}
-			bufferPauseReadyMapCount = 0;
+			PauseReadyMapCount = 0;
 		}
 	}
 	if (m_type != 1) {
@@ -265,6 +265,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
+					m_sendPassQuery(product);
 					CLOG->info("PK: {}, idx : {} {} {}번 제품 송신 완료, at t = {}", m_pk, m_idx, getModel2Str(m_type), product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					for (int i = 0; i < bufferPopNum; i++) {
 						if (GLOBAL_VAR->mBufferSize(i, m_pk, &GLOBAL_VAR->p_buffer) == 1) {

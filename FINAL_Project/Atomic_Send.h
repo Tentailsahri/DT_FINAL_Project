@@ -65,6 +65,7 @@ public:
 	void m_sendGenQuery(CProduct* product);
 	void m_sendPassQuery(CProduct* product);
 	int m_whereTargetPk(int pk);
+	//getValue 정리
 	int trueValue[100] = { 0 };
 	int trueStockBuffer[100] = { 0 };
 	int trueCount;
@@ -77,11 +78,16 @@ public:
 	int bufferSameCount;
 	int bufferSERRORNum;
 	int bufferSERRORCount;
-	int bufferPauseReadyMapCount;
+	//PAUSE상태일 경우에서 READYMAP이 true인 개수
+	int PauseReadyMapCount;
+	//버퍼가 1 이상인 경우의 개수
 	int bufferSendCount;
+	//버퍼 수
 	int bufferSend;
+	//
 	int min;
 	int minnum;
+	//객체를 보낼 다음 설비
 	int minPk;
 };
 
