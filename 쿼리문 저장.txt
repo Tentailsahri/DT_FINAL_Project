@@ -1,0 +1,12 @@
+flow_list를 type과 같이보는 쿼리문
+
+SELECT p.project_id, 
+       p.object_id,
+       p.product_id, 
+       o.object_type,
+       p.in_time, 
+       p.out_time
+FROM public.product_flow_list3 AS p
+LEFT JOIN public.object_list3 AS o
+ON p.object_id = o.object_id
+ORDER BY p.product_id ASC, p.in_time ASC;
