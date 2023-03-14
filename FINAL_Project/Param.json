@@ -17,17 +17,3 @@
   "m_maxbuffer_Process": 3,
   "m_maxbuffer_Stock": 3
 }
-
-/*
-{
-  "GEN_TIME": 7,
-  "SEQ_1": 15,
-  "SEQ_2": 31,
-  "SEQ_3": 25,
-  "YELLOW": 3,
-  "PLAN": 2,
-  "SEQ_TYPE": 1,
-  "RANDOM": 0,
-  "MAX_GEN_CAR": 1000
-}
-  */
