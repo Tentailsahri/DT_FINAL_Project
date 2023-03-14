@@ -63,7 +63,6 @@ public:
 	// 임시버퍼 최대 크기
 	int m_maxbuffer[4] = { 10,10,10,10 };
 	int	scenario_num = 1;
-	int track_speed = 1;
 
 	// 공정 오류율(x회마다 고장)
 	int error_gen = 5;

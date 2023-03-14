@@ -18,6 +18,12 @@ int main()
 		GLOBAL_VAR->TA_STATE_INIT[1] = json_data["TA_STATE_INIT[1]"].asDouble();
 		GLOBAL_VAR->TA_STATE_INIT[2] = json_data["TA_STATE_INIT[2]"].asDouble();
 		GLOBAL_VAR->TA_STATE_INIT[3] = json_data["TA_STATE_INIT[3]"].asDouble();
+		GLOBAL_VAR->TA_STATE_ACTIVE[0] = json_data["TA_STATE_ACTIVE[0]"].asDouble();
+		GLOBAL_VAR->TA_STATE_ACTIVE[2] = json_data["TA_STATE_ACTIVE[2]"].asDouble();
+		GLOBAL_VAR->TA_STATE_ACTIVE[3] = json_data["TA_STATE_ACTIVE[3]"].asDouble();
+		GLOBAL_VAR->TA_STATE_ERROR[0] = json_data["TA_STATE_ERROR[0]"].asDouble();
+		GLOBAL_VAR->TA_STATE_ERROR[2] = json_data["TA_STATE_ERROR[2]"].asDouble();
+		GLOBAL_VAR->TA_STATE_ERROR[3] = json_data["TA_STATE_ERROR[3]"].asDouble();
 		GLOBAL_VAR->m_maxbuffer[0] = json_data["m_maxbuffer_Generator"].asInt();
 		GLOBAL_VAR->m_maxbuffer[1] = json_data["m_maxbuffer_Track"].asInt();
 		GLOBAL_VAR->m_maxbuffer[2] = json_data["m_maxbuffer_Process"].asInt();

@@ -4,12 +4,18 @@
   "TA_STATE_INIT[1]": 5,
   "TA_STATE_INIT[2]": 5,
   "TA_STATE_INIT[3]": 5,
+  "TA_STATE_ACTIVE[0]": 5,
+  "TA_STATE_ACTIVE[2]": 5,
+  "TA_STATE_ACTIVE[3]": 5,
+  "TA_STATE_ERROR[0]": 5,
+  "TA_STATE_ERROR[2]": 5,
+  "TA_STATE_ERROR[3]": 5,
   "scenario_num": 1,
   "time": 100,
-  "m_maxbuffer_Generator": 100,
-  "m_maxbuffer_Track": 100,
-  "m_maxbuffer_Process": 100,
-  "m_maxbuffer_Stock": 100
+  "m_maxbuffer_Generator": 3,
+  "m_maxbuffer_Track": 3,
+  "m_maxbuffer_Process": 3,
+  "m_maxbuffer_Stock": 3
 }
 
 /*
