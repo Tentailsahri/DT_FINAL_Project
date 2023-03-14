@@ -73,7 +73,22 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 			m_modelState = STATE::DECISION;
 		}
 	} else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::READY) {
-		GLOBAL_VAR->readymap[m_pk].at(m_subIdx) = true;
+		CProduct* cnext = (CProduct*)msg.GetValue();
+		if (cnext != nullptr) {
+			CProduct* next = new CProduct(*cnext);
+
+			GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
+			for (int i = 0; i < bufferPopNum; i++) {
+				bufferPop[i] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
+
+			}
+			for (int i = 0; i < bufferPopNum; i++) {
+				if (bufferPop[i] == next->m_curPk) {
+					sendreadymapNum = i;
+				}
+			}
+			GLOBAL_VAR->readymap[m_pk].at(sendreadymapNum) = true;
+		}
 		m_modelState = STATE::READYMAP;
 	} else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 		GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
