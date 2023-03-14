@@ -51,6 +51,7 @@ public:
 	void Deletepgconn();
 	void ResetTable();
 
+	// CSV 파일 오픈 관련
 	std::ofstream m_file;
 	std::ofstream m_file1;
 	std::ofstream m_file2;
@@ -62,6 +63,8 @@ public:
 
 	// 임시버퍼 최대 크기
 	int m_maxbuffer[4] = { 10,10,10,10 };
+	
+	// 시나리오 넘버
 	int	scenario_num = 1;
 
 	// 공정 오류율(x회마다 고장)
@@ -71,8 +74,10 @@ public:
 	int error_all = 5;
 	int time = 100;
 
+	// SQL 연결(기본값 true)
 	bool SQLConnect = true;
 
+	// TA값 글로벌로 조정.
 	double TA_STATE_INIT[4] = { 5,5,5,5 };
 	double TA_STATE_ACTIVE[4] = { 5,WTime::infinity_,5,5 };
 	double TA_STATE_ERROR[4] = { 5,0,5,5 };
