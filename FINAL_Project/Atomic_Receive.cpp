@@ -96,14 +96,20 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 			bufferPop[i] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
 		}
 		if (bufferPopNum == 1) {
-			GLOBAL_VAR->readymap[m_pk].at(0) = false;
+			CProduct* cnext = (CProduct*)msg.GetValue();
+			if (cnext != nullptr) {
+				CProduct* next = new CProduct(*cnext);
+				if(m_pk == next->m_pastPk)
+				GLOBAL_VAR->readymap[m_pk].at(0) = false;
+			}
+			
 		}
 		else {
 			CProduct* cnext = (CProduct*)msg.GetValue();
 			if (cnext != nullptr) {
 				CProduct* next = new CProduct(*cnext);
 				for (int i = 0; i < bufferPopNum; i++) {
-					if (next->m_curPk == bufferPop[i]) {
+					if (next->m_curPk == bufferPop[i] && m_pk==next->m_pastPk) {
 						GLOBAL_VAR->readymap[m_pk].at(i) = false;
 					}
 				}
@@ -132,12 +138,34 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 	if (m_modelState == STATE::DECISION) {
 		CProduct* next = new CProduct(2, 0.0);
 		next->m_curPk = m_pk;
+		int sendPop[100] = { 0 };
+		int fullNum1 = 0;
+		int sendSize = 0;
+		GLOBAL_VAR->pgconn->SendQuery("SELECT send_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE receive_object_id=" + std::to_string(m_pk));
+		for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
+			sendPop[i] = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
+
+		}
 		CLOG->info("PK: {}, idx : {} {} Buffer size {}, at t = {}", m_pk, m_idx, getModel2Str(m_type), GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer), WAISER->CurentSimulationTime().GetValue());
+		next->m_pastPk = sendPop[m_subIdx];
 		if (GLOBAL_VAR->m_maxbuffer[m_type] <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
 			msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, next);
-			m_modelState = STATE::FULL;
+			
 		} else {
 			msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
+			
+		}
+		GLOBAL_VAR->pgconn->SendQuery("SELECT send_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE receive_object_id=" + std::to_string(m_pk));
+		for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
+			if (GLOBAL_VAR->m_maxbuffer[m_type] <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
+				fullNum1++;
+			}
+			sendSize++;
+		}
+		if (fullNum1 == sendSize) {
+			m_modelState = STATE::FULL;
+		}
+		else {
 			m_modelState = STATE::RECEIVE;
 		}
 	}
