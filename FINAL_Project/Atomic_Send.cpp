@@ -61,6 +61,7 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	min = 10000;
 	minnum = 0;
 	minPk = -1;
+	
 }
 Atomic_Send::~Atomic_Send()
 {
@@ -247,20 +248,10 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						readyMapCount++;
 					}
 				}
+				
 				if (readyMapCount >= 1) {
-					if (GLOBAL_VAR->SQLConnect == false) {
-						/*if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == true) {
-							std::uniform_int_distribution<int> u_dis(7, 8);
-							newproduct->m_targetPk = u_dis(WAISER->random_gen_);
-						} else if (GLOBAL_VAR->readymap[m_pk].at(1) == true && GLOBAL_VAR->readymap[m_pk].at(0) == false) {
-							newproduct->m_targetPk = 8;
-						} else if (GLOBAL_VAR->readymap[m_pk].at(0) == true && GLOBAL_VAR->readymap[m_pk].at(1) == false) {
-							newproduct->m_targetPk = 7;
-						}*/
-					} else if (GLOBAL_VAR->SQLConnect == true) {
-						product->m_targetPk = m_whereTargetPk(m_pk);
-					}
-
+				
+					product->m_targetPk = m_whereTargetPk(m_pk);
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 					m_sendPassQuery(product);

@@ -89,5 +89,6 @@ public:
 	int minnum;
 	//객체를 보낼 다음 설비
 	int minPk;
+	
 };
 
