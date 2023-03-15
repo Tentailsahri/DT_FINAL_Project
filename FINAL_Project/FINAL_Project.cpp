@@ -7,30 +7,36 @@
 
 int main()
 {
-	try {
-		Json::Value json_data;
-		std::ifstream ifs("Param.json");
-		ifs >> json_data;
-		GLOBAL_VAR->SQLConnect = json_data["SQLConnect"].asBool();
-		GLOBAL_VAR->scenario_num = json_data["scenario_num"].asInt();
-		GLOBAL_VAR->time = json_data["time"].asInt();
-		GLOBAL_VAR->TA_STATE_INIT[0] = json_data["TA_STATE_INIT[0]"].asDouble();
-		GLOBAL_VAR->TA_STATE_INIT[1] = json_data["TA_STATE_INIT[1]"].asDouble();
-		GLOBAL_VAR->TA_STATE_INIT[2] = json_data["TA_STATE_INIT[2]"].asDouble();
-		GLOBAL_VAR->TA_STATE_INIT[3] = json_data["TA_STATE_INIT[3]"].asDouble();
-		GLOBAL_VAR->TA_STATE_ACTIVE[0] = json_data["TA_STATE_ACTIVE[0]"].asDouble();
-		GLOBAL_VAR->TA_STATE_ACTIVE[2] = json_data["TA_STATE_ACTIVE[2]"].asDouble();
-		GLOBAL_VAR->TA_STATE_ACTIVE[3] = json_data["TA_STATE_ACTIVE[3]"].asDouble();
-		GLOBAL_VAR->TA_STATE_ERROR[0] = json_data["TA_STATE_ERROR[0]"].asDouble();
-		GLOBAL_VAR->TA_STATE_ERROR[2] = json_data["TA_STATE_ERROR[2]"].asDouble();
-		GLOBAL_VAR->TA_STATE_ERROR[3] = json_data["TA_STATE_ERROR[3]"].asDouble();
-		GLOBAL_VAR->m_maxbuffer[0] = json_data["m_maxbuffer_Generator"].asInt();
-		GLOBAL_VAR->m_maxbuffer[1] = json_data["m_maxbuffer_Track"].asInt();
-		GLOBAL_VAR->m_maxbuffer[2] = json_data["m_maxbuffer_Process"].asInt();
-		GLOBAL_VAR->m_maxbuffer[3] = json_data["m_maxbuffer_Stock"].asInt();
-	} catch (...) {
-		printf("runtime error");
+	if (GLOBAL_VAR->useJson == true) {
+		try {
+			Json::Value json_data;
+			std::ifstream ifs("Param.json");
+			ifs >> json_data;
+			GLOBAL_VAR->SQLConnect = json_data["SQLConnect"].asBool();
+			GLOBAL_VAR->scenario_num = json_data["scenario_num"].asInt();
+			GLOBAL_VAR->time = json_data["time"].asInt();
+			GLOBAL_VAR->TA_STATE_INIT[0] = json_data["TA_STATE_INIT[0]"].asDouble();
+			GLOBAL_VAR->TA_STATE_INIT[1] = json_data["TA_STATE_INIT[1]"].asDouble();
+			GLOBAL_VAR->TA_STATE_INIT[2] = json_data["TA_STATE_INIT[2]"].asDouble();
+			GLOBAL_VAR->TA_STATE_INIT[3] = json_data["TA_STATE_INIT[3]"].asDouble();
+			GLOBAL_VAR->TA_STATE_ACTIVE[0] = json_data["TA_STATE_ACTIVE[0]"].asDouble();
+			GLOBAL_VAR->TA_STATE_ACTIVE[2] = json_data["TA_STATE_ACTIVE[2]"].asDouble();
+			GLOBAL_VAR->TA_STATE_ACTIVE[3] = json_data["TA_STATE_ACTIVE[3]"].asDouble();
+			GLOBAL_VAR->TA_STATE_ERROR[0] = json_data["TA_STATE_ERROR[0]"].asDouble();
+			GLOBAL_VAR->TA_STATE_ERROR[2] = json_data["TA_STATE_ERROR[2]"].asDouble();
+			GLOBAL_VAR->TA_STATE_ERROR[3] = json_data["TA_STATE_ERROR[3]"].asDouble();
+			GLOBAL_VAR->m_maxbuffer[0] = json_data["m_maxbuffer_Generator"].asInt();
+			GLOBAL_VAR->m_maxbuffer[1] = json_data["m_maxbuffer_Track"].asInt();
+			GLOBAL_VAR->m_maxbuffer[2] = json_data["m_maxbuffer_Process"].asInt();
+			GLOBAL_VAR->m_maxbuffer[3] = json_data["m_maxbuffer_Stock"].asInt();
+			GLOBAL_VAR->TA_SEND_SEND_TIME[0] = GLOBAL_VAR->TA_STATE_ACTIVE[0] / 5;
+			GLOBAL_VAR->TA_SEND_SEND_TIME[2] = GLOBAL_VAR->TA_STATE_ACTIVE[2];
+			GLOBAL_VAR->TA_SEND_SEND_TIME[3] = GLOBAL_VAR->TA_STATE_ACTIVE[3];
+		} catch (...) {
+			printf("runtime error");
+		}
 	}
+
 	try {
 		// 시뮬레이션 기능 활성화
 		START_CONSOLELOG;

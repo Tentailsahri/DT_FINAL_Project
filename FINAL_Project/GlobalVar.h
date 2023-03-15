@@ -77,6 +77,9 @@ public:
 	// SQL 연결(기본값 true)
 	bool SQLConnect = true;
 
+	// param 사용
+	bool useJson = true;
+
 	// TA값 글로벌로 조정.
 	double TA_STATE_INIT[4] = { 5,5,5,5 };
 	double TA_STATE_ACTIVE[4] = { 5,WTime::infinity_,5,5 };
