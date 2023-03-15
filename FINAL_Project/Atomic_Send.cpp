@@ -207,11 +207,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 
 				}
 				msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, nullptr);
-				if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 1) {
-					m_modelState = STATE::WAIT;
-				} else if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) > 1) {
-					m_modelState = STATE::PENDING;
-				}
+			
 			} else if (GLOBAL_VAR->readymap[m_pk].at(0) == true) {
 				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
 				GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
@@ -225,11 +221,13 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					m_sendPassQuery(product);
 				}
 				CLOG->info("PK: {}, idx : {} {} {}번 제품 송신 완료, at t = {}", m_pk, m_idx, getModel2Str(m_type), product->m_genID, WAISER->CurentSimulationTime().GetValue());
-				if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 1) {
-					m_modelState = STATE::WAIT;
-				} else if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) > 1) {
-					m_modelState = STATE::PENDING;
-				}
+				
+			}
+			if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
+				m_modelState = STATE::WAIT;
+			}
+			else if (GLOBAL_VAR->mBufferSize(0, m_pk, &GLOBAL_VAR->p_buffer) >= 1) {
+				m_modelState = STATE::PENDING;
 			}
 		} else if (m_type == 2) {
 
@@ -268,7 +266,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					m_sendPassQuery(product);
 					CLOG->info("PK: {}, idx : {} {} {}번 제품 송신 완료, at t = {}", m_pk, m_idx, getModel2Str(m_type), product->m_genID, WAISER->CurentSimulationTime().GetValue());
 					for (int i = 0; i < bufferPopNum; i++) {
-						if (GLOBAL_VAR->mBufferSize(i, m_pk, &GLOBAL_VAR->p_buffer) == 1) {
+						if (GLOBAL_VAR->mBufferSize(i, m_pk, &GLOBAL_VAR->p_buffer) == 0) {
 							bufOneCount++;
 						}
 					}

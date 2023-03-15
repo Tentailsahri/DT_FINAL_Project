@@ -11,7 +11,7 @@
   "TA_STATE_ERROR[2]": 5,
   "TA_STATE_ERROR[3]": 5,
   "scenario_num": 1,
-  "time": 200,
+  "time": 100,
   "m_maxbuffer_Generator": 3,
   "m_maxbuffer_Track": 3,
   "m_maxbuffer_Process": 3,
