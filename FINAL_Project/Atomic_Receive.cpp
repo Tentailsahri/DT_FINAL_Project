@@ -119,12 +119,7 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 // 내부 상태 천이 함수
 bool Atomic_Receive::IntTransFn() {
 	if (m_modelState == STATE::READYMAP) {
-		if (GLOBAL_VAR->m_maxbuffer[m_type] > GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
-			m_modelState = STATE::RECEIVE;
-		}
-		else if (GLOBAL_VAR->m_maxbuffer[m_type] <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
-			m_modelState = STATE::FULL;
-		}
+		m_modelState = STATE::DECISION;
 	}else if (m_modelState == STATE::INIT) {
 		m_modelState = STATE::RECEIVE;
 	}
@@ -141,7 +136,7 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 		if (GLOBAL_VAR->m_maxbuffer[m_type] <= GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
 			msg.SetPortValue((unsigned int)OUT_PORT::PAUSE, next);
 			m_modelState = STATE::FULL;
-		} else if (GLOBAL_VAR->m_maxbuffer[m_type] > GLOBAL_VAR->mBufferSize(m_subIdx, m_pk, &GLOBAL_VAR->p_buffer)) {
+		} else {
 			msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
 			m_modelState = STATE::RECEIVE;
 		}
