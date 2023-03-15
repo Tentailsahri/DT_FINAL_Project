@@ -15,3 +15,16 @@ ORDER BY p.product_id ASC, p.in_time ASC;
 buf_count_list 를 정렬해서 보는법
 
 SELECT * FROM public.buf_count_list3 order by object_id asc, "current_time" asc;
+
+object_state_list를 정렬해서 보는법
+
+SELECT p.project_id, 
+       p.object_id,
+       o.object_type,
+	   p.object_state,
+       p.state_start_time, 
+       p.state_end_time
+FROM public.object_state_list2 AS p
+LEFT JOIN public.object_list2 AS o
+ON p.object_id = o.object_id
+ORDER BY p.object_id ASC, p.state_start_time ASC;
