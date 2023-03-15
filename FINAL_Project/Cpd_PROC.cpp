@@ -31,6 +31,7 @@ Cpd_PROC::Cpd_PROC(int proc_idx, int proc_subidx, int pk) {
 		AddCoupling(this, (unsigned int)IN_PORT::READY, Receive_vec.at(i), (unsigned int)Atomic_Receive::IN_PORT::READY);
 		AddCoupling(this, (unsigned int)IN_PORT::PAUSE, Receive_vec.at(i), (unsigned int)Atomic_Receive::IN_PORT::PAUSE);
 		AddCoupling(Receive_vec.at(i), (unsigned int)Atomic_Receive::OUT_PORT::READY, Send, (unsigned int)Atomic_Send::IN_PORT::RECEIVE);
+		AddCoupling(Receive_vec.at(i), (unsigned int)Atomic_Receive::OUT_PORT::PAUSE, Send, (unsigned int)Atomic_Send::IN_PORT::RECEIVE);
 		AddCoupling(Receive_vec.at(i), (unsigned int)Atomic_Receive::OUT_PORT::PAUSE, this, (unsigned int)OUT_PORT::PAUSE+i);
 		AddCoupling(Receive_vec.at(i), (unsigned int)Atomic_Receive::OUT_PORT::READY, this, (unsigned int)OUT_PORT::READY+i);
 		AddCoupling(Receive_vec.at(i), (unsigned int)Atomic_Receive::OUT_PORT::PAUSE, State, (unsigned int)Atomic_State::IN_PORT::PAUSE);
