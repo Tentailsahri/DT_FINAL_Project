@@ -44,6 +44,7 @@ Atomic_Receive::Atomic_Receive(int type, int idx, int pk) {
 	}
 	GLOBAL_VAR->m_subIdxMapUpdate(m_pk);
 	m_subIdx = GLOBAL_VAR->m_subIdxMap.at(m_pk);
+	init_time = GLOBAL_VAR->TA_STATE_INIT[m_type];
 }
 
 // 외부 상태 천이 함수
@@ -87,8 +88,17 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 					sendreadymapNum = i;
 				}
 			}
-			GLOBAL_VAR->readymap[m_pk].at(sendreadymapNum) = true;
+			CLOG->info("pk : {} sendreadymapnum {}", m_pk, sendreadymapNum);
+			if (GLOBAL_VAR->TA_STATE_INIT[m_type] <= WAISER->CurentSimulationTime().GetValue()) {
+				GLOBAL_VAR->readymap[m_pk].at(sendreadymapNum) = true;
+				
+			}
+			else {
+				GLOBAL_VAR->readymap[m_pk].at(sendreadymapNum) = false;
+			}
+			
 		}
+		
 		m_modelState = STATE::READYMAP;
 	} else if (m_type != 3 && msg.GetPort() == (unsigned int)IN_PORT::PAUSE) {
 		GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
@@ -125,7 +135,13 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 // 내부 상태 천이 함수
 bool Atomic_Receive::IntTransFn() {
 	if (m_modelState == STATE::READYMAP) {
-		m_modelState = STATE::DECISION;
+		if(GLOBAL_VAR->TA_STATE_INIT[m_type] <= WAISER->CurentSimulationTime().GetValue())
+			m_modelState = STATE::DECISION;
+		else {
+			init_time = GLOBAL_VAR->TA_STATE_INIT[m_type] - WAISER->CurentSimulationTime().GetValue();
+			m_modelState = STATE::INIT;
+			CLOG->info("{}", init_time);
+		}
 	}else if (m_modelState == STATE::INIT) {
 		m_modelState = STATE::RECEIVE;
 	}
@@ -175,22 +191,25 @@ bool Atomic_Receive::OutputFn(WMessage& msg) {
 
 // TA함수
 WTime Atomic_Receive::TimeAdvanceFn() {
-	switch (m_type) {
-	case 0:
-		return TA_STATE_GEN[(int)m_modelState];
-		break;
-	case 1:
-		return TA_STATE_TRACK[(int)m_modelState];
-		break;
-	case 2:
-		return TA_STATE_PROC[(int)m_modelState];
-		break;
-	case 3:
-		return TA_STATE_STOCK[(int)m_modelState];
-		break;
-	default:
-		return 0;
+	if (m_modelState != STATE::INIT) {
+		switch (m_type) {
+		case 0:
+			return TA_STATE_GEN[(int)m_modelState];
+			break;
+		case 1:
+			return TA_STATE_TRACK[(int)m_modelState];
+			break;
+		case 2:
+			return TA_STATE_PROC[(int)m_modelState];
+			break;
+		case 3:
+			return TA_STATE_STOCK[(int)m_modelState];
+			break;
+		default:
+			return 0;
+		}
 	}
+	else return init_time;
 }
 
 const char* Atomic_Receive::getModel2Str(int m_type) {
