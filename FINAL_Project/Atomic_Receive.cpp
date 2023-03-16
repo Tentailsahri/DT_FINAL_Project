@@ -88,7 +88,7 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 					sendreadymapNum = i;
 				}
 			}
-			CLOG->info("pk : {} sendreadymapnum {}", m_pk, sendreadymapNum);
+			
 			if (GLOBAL_VAR->TA_STATE_INIT[m_type] <= WAISER->CurentSimulationTime().GetValue()) {
 				GLOBAL_VAR->readymap[m_pk].at(sendreadymapNum) = true;
 				
