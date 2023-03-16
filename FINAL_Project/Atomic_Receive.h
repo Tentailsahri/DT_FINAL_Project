@@ -64,6 +64,6 @@ public:
 	// 현재 상태를 문자열로 변환
 	static const char* getModel2Str(int model_type);
 	int init_time;
-	
+	int ReadyMapBuffer=0;
 };
 
