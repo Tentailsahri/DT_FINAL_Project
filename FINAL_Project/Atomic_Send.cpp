@@ -231,24 +231,22 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				m_modelState = STATE::PENDING;
 			}
 		} else if (m_type == 2) {
-
 			GLOBAL_VAR->pgconn->SendQuery("SELECT send_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE receive_object_id=" + std::to_string(m_pk));
 			bufferPopNum = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
 			for (int i = 0; i < bufferPopNum; i++) {
 				if (GLOBAL_VAR->mBufferSize(i, m_pk, &GLOBAL_VAR->p_buffer) >= 1) bufferSameCount++;
 			}
-			if (bufferPopNum == bufferSameCount) {
-				CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
-				for (int i = 1; i < bufferPopNum; i++) {
-					CProduct* product1 = GLOBAL_VAR->mBufferPop(i, m_pk, &GLOBAL_VAR->p_buffer);
-				}
-				GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
+			GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(m_pk));
 				for (int i = 0; i < PQntuples(GLOBAL_VAR->pgconn->GetSQLResult()); i++) {
 					if (GLOBAL_VAR->readymap[m_pk].at(i) == true) {
 						readyMapCount++;
 					}
 				}
-				
+				if (bufferPopNum == bufferSameCount && readyMapCount>=1) {
+					CProduct* product = GLOBAL_VAR->mBufferPop(0, m_pk, &GLOBAL_VAR->p_buffer);
+					for (int i = 1; i < bufferPopNum; i++) {
+						CProduct* product1 = GLOBAL_VAR->mBufferPop(i, m_pk, &GLOBAL_VAR->p_buffer);
+					}
 				if (readyMapCount >= 1) {
 				
 					product->m_targetPk = m_whereTargetPk(m_pk);
