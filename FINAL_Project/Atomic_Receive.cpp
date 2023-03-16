@@ -65,7 +65,11 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 					GLOBAL_VAR->mBufferPush(m_subIdx, m_pk, m_product, &GLOBAL_VAR->p_buffer);
 				}
 			}
-				m_modelState = STATE::DECISION;
+			if (GLOBAL_VAR->TA_STATE_INIT[m_type] <= WAISER->CurentSimulationTime().GetValue() && ReadyMapBuffer>=1) {
+				GLOBAL_VAR->readymap[m_pk].at(sendreadymapNum) = true;
+				ReadyMapBuffer = 0;
+			}
+			m_modelState = STATE::READYMAP;
 			
 		}
 	}
@@ -95,8 +99,9 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 			}
 			else {
 				GLOBAL_VAR->readymap[m_pk].at(sendreadymapNum) = false;
+				ReadyMapBuffer++;
 			}
-			
+			CLOG->info("{} pk readymap {}", m_pk, GLOBAL_VAR->readymap[m_pk].at(sendreadymapNum));
 		}
 		
 		m_modelState = STATE::READYMAP;

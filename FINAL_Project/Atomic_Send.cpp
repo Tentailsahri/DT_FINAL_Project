@@ -247,9 +247,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 					for (int i = 1; i < bufferPopNum; i++) {
 						CProduct* product1 = GLOBAL_VAR->mBufferPop(i, m_pk, &GLOBAL_VAR->p_buffer);
 					}
-				if (readyMapCount >= 1) {
-				
-					product->m_targetPk = m_whereTargetPk(m_pk);
+				    product->m_targetPk = m_whereTargetPk(m_pk);
 					msg.SetPortValue((unsigned int)OUT_PORT::PRODUCT, product);
 					GLOBAL_VAR->CsvProductFlowList(m_pk, product->m_genID, product->m_passTime, WAISER->CurentSimulationTime().GetValue());
 					m_sendPassQuery(product);
@@ -265,10 +263,9 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 						m_modelState = STATE::WAIT;
 					};
 					bufOneCount = 0;
-					readyMapCount = 0;
+					
 				}
-
-			}
+			readyMapCount = 0;
 			bufferSameCount = 0;
 
 		}

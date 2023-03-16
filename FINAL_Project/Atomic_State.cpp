@@ -127,7 +127,13 @@ bool Atomic_State::OutputFn(WMessage& msg) {
 					CLOG->info("PK: {}, idx : {} GEN PAUSE, at t = {}", m_pk, m_idx, WAISER->CurentSimulationTime().GetValue());
 				}
 			}
+			if (m_type == 3) {
+				CProduct* next = new CProduct(1, 1);
+				next->m_curPk = m_pk;
+				msg.SetPortValue((unsigned int)OUT_PORT::READY, next);
+			}
 		}
+		
 	} else if (m_modelState == STATE::SERROR) {
 		m_modelState = STATE::ACTIVE;
 		CLOG->info("PK: {}, idx : {} {} ACTIVE, at t = {}", m_pk, m_idx, getModel2Str(m_type), WAISER->CurentSimulationTime().GetValue());
