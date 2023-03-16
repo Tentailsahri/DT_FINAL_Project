@@ -65,7 +65,7 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 					GLOBAL_VAR->mBufferPush(m_subIdx, m_pk, m_product, &GLOBAL_VAR->p_buffer);
 				}
 			}
-			if (GLOBAL_VAR->TA_STATE_INIT[m_type] <= WAISER->CurentSimulationTime().GetValue() && ReadyMapBuffer==1) {
+			if (GLOBAL_VAR->TA_STATE_INIT[m_type] <= WAISER->CurentSimulationTime().GetValue() && ReadyMapBuffer>=1) {
 				GLOBAL_VAR->readymap[m_pk].at(sendreadymapNum) = true;
 				ReadyMapBuffer = 0;
 			}
