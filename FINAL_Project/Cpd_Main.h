@@ -10,7 +10,6 @@ class Cpd_Main : public WCoupModel	//커플모델
 {
 private:
 	// 설비 연결 함수
-	void coup(int outPk, std::string outType, int inPk, std::string inType);
 	void coups(int num, int outPk, std::string outType, int inPk, std::string inType);
 	void coupGenTrack(WCoupModel* GEN, WCoupModel* TRACK);
 	void coupTrackProc(WCoupModel* TRACK, WCoupModel* PROC);

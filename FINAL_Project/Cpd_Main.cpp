@@ -43,7 +43,6 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		AddComponent(stock_cpd_map.at(i + genCount + trackCount + procCount));
 	}
 
-
 	GLOBAL_VAR->pgconn->SendQuery("SELECT p.send_object_id, send_obj.object_type, p.receive_object_id, receive_obj.object_type FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS p LEFT JOIN \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS send_obj ON p.send_object_id = send_obj.object_id LEFT JOIN \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS receive_obj ON p.receive_object_id = receive_obj.object_id");
 		tuplesCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
 		for (int i = 0; i < tuplesCount; i++) {
@@ -71,19 +70,6 @@ void Cpd_Main::pushMap(int receive, int send)
 		receiveNumMap.insert(tmp_pair);
 		receiveNumMap.at(receive).push(send);
 	}
-}
-
-void Cpd_Main::coup(int outPk, std::string outType, int inPk, std::string inType) {
-	if (outType == "GEN" && inType == "TRACK")
-		coupGenTrack(gen_cpd_map.at(outPk), track_cpd_map.at(inPk));
-	else if (outType == "TRACK" && inType == "PROC")
-		coupTrackProc(track_cpd_map.at(outPk), proc_cpd_map.at(inPk));
-	else if (outType == "PROC" && inType == "TRACK")
-		coupProcTrack(proc_cpd_map.at(outPk), track_cpd_map.at(inPk));
-	else if (outType == "TRACK" && inType == "STOCK")
-		coupTrackStock(track_cpd_map.at(outPk), stock_cpd_map.at(inPk));
-	else if (outType == "TRACK" && inType == "TRACK")
-		coupTrackTrack(track_cpd_map.at(outPk), track_cpd_map.at(inPk));
 }
 
 void Cpd_Main::coups(int num, int outPk, std::string outType, int inPk, std::string inType) {
