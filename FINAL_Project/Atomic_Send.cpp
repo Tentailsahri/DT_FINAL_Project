@@ -41,26 +41,10 @@ Atomic_Send::Atomic_Send(int type, int idx, int pk) {
 	m_type = type;
 	m_idx = idx;
 	m_pk = pk;
-	newgencount = 0;
-	newgencount1 = 0;
+
 	GLOBAL_VAR->pgconn->SendQuery("SELECT receive_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE send_object_id=" + std::to_string(pk));
 	getValue = new int[PQntuples(GLOBAL_VAR->pgconn->GetSQLResult())]();
-	trueCount = 0;
-	trueValueCount = 0;
-	trueStockBufferCount = 0;
-	tuplesNum = 0;
-	bufOneCount = 0;
-	readyMapCount = 0;
-	bufferPopNum = 0;
-	bufferSameCount = 0;
-	bufferSERRORCount = 0;
-	bufferSERRORNum = 0;
-	PauseReadyMapCount = 0;
-	bufferSendCount = 0;
-	bufferSend = 0;
-	min = 10000;
-	minnum = 0;
-	minPk = -1;
+
 	
 }
 Atomic_Send::~Atomic_Send()
@@ -363,12 +347,12 @@ int Atomic_Send::m_whereTargetPk(int pk)
 			if (min>trueStockBuffer[i]) {
 				min=trueStockBuffer[i];
 				minPk = trueValue[i];
-				minnum = i;
+				minNum = i;
 			}
 			
 		}
-		trueStockBuffer[minnum]++;
-		min = trueStockBuffer[minnum];
+		trueStockBuffer[minNum]++;
+		min = trueStockBuffer[minNum];
 		return minPk;
 
 	}
