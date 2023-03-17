@@ -52,6 +52,7 @@ Atomic_State::~Atomic_State()
    m_dataUpdate();
 	if (m_type == 3) {
 		CLOG->info("識 瞳營偃熱 : {} ゎ敕 瞳營 衛除 : {}", GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock), (double)GLOBAL_VAR->time / GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock));
+		GLOBAL_VAR->m_sumPass = GLOBAL_VAR->m_sumPass + GLOBAL_VAR->BufferSize(m_pk, &GLOBAL_VAR->stock);
 		if (m_idx == 0) {
 			GLOBAL_VAR->pgconn->SendQuery("UPDATE public.project_list" + std::to_string(GLOBAL_VAR->scenario_num) + \
 				" SET sim_end_time = " + std::to_string(GLOBAL_VAR->time) + " WHERE project_id = " + std::to_string(GLOBAL_VAR->scenario_num) + "; ");

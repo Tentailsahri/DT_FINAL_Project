@@ -204,6 +204,7 @@ bool Atomic_Send::OutputFn(WMessage& msg) {
 				if (a != nullptr) {
 					CLOG->info("PK: {}, idx : {} {} {}번 제품 적재 완료, at t = {}", m_pk, m_idx, getModel2Str(m_type), a->m_genID, WAISER->CurentSimulationTime().GetValue());
 					GLOBAL_VAR->CsvProductFlowList(m_pk, a->m_genID, a->m_passTime, WAISER->CurentSimulationTime().GetValue());
+					GLOBAL_VAR->m_sumPassTime = GLOBAL_VAR->m_sumPassTime + (WAISER->CurentSimulationTime().GetValue()-a->m_genTime);
 					m_sendPassQuery(a);
 
 				}

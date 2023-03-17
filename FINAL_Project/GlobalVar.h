@@ -85,6 +85,10 @@ public:
 	double TA_STATE_ACTIVE[4] = { 5,WTime::infinity_,5,5 };
 	double TA_STATE_ERROR[4] = { 5,0,5,5 };
 	double TA_SEND_SEND_TIME[4] = { TA_STATE_ACTIVE[0] / 5, 2, TA_STATE_ACTIVE[2], TA_STATE_ACTIVE[3] };
+	
+	//ÃÑ Åë°ú½Ã°£
+	double m_sumPassTime = 0;
+	int m_sumPass = 0;
 };
 
 #define GLOBAL_VAR	(CGlobalVar::GetInstance())

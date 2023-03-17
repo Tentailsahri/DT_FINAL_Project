@@ -9,6 +9,7 @@ CGlobalVar::CGlobalVar() {
 }
 
 CGlobalVar::~CGlobalVar(void) {
+	
 }
 
 CGlobalVar* CGlobalVar::GetInstance() {

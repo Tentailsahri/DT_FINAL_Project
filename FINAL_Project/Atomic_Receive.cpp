@@ -101,7 +101,6 @@ bool Atomic_Receive::ExtTransFn(const WMessage& msg) {
 				GLOBAL_VAR->readymap[m_pk].at(sendreadymapNum) = false;
 				ReadyMapBuffer++;
 			}
-			CLOG->info("{} pk readymap {}", m_pk, GLOBAL_VAR->readymap[m_pk].at(sendreadymapNum));
 		}
 		
 		m_modelState = STATE::READYMAP;
