@@ -6,13 +6,18 @@ Cpd_Main::Cpd_Main(int scenario_num)
 
 	GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='GEN'");
 	int genCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+	GLOBAL_VAR->m_genCount = genCount;
 	GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='TRACK'");
 	int trackCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+	GLOBAL_VAR->m_trackCount = trackCount;
 	GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='PROC'");
 	int procCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+	GLOBAL_VAR->m_procCount = procCount;
 	GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='STOCK'");
-	int stocCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+	int stockCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+	GLOBAL_VAR->m_stockCount = stockCount;
 
+	GLOBAL_VAR->allCount = genCount + trackCount + procCount + stockCount;
 
 	// 생성한 모델 연결
 	for (int i = 0; i < genCount; i++) {
@@ -32,7 +37,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		proc_cpd_map.insert(tmp_pair);
 		AddComponent(proc_cpd_map.at(i + genCount + trackCount));
 	}
-	for (int i = 0; i < stocCount; i++) {
+	for (int i = 0; i < stockCount; i++) {
 		std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount + procCount, new Cpd_STOCK(i, i + genCount + trackCount + procCount));
 		stock_cpd_map.insert(tmp_pair);
 		AddComponent(stock_cpd_map.at(i + genCount + trackCount + procCount));

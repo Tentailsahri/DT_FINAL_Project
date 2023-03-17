@@ -4,6 +4,7 @@
 #include "Cpd_TRACK.h"
 #include "Cpd_PROC.h"
 #include "Cpd_STOCK.h"
+#include "GlobalVar.h"
 
 class Cpd_Main : public WCoupModel	//Ä¿ÇÃ¸ðµ¨
 {

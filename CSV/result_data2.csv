@@ -1,0 +1,10 @@
+시나리오 번호,시뮬레이션 시간,GEN Count,TRACK Count,PROC Count,STOCK CountALL Count
+2,100,3,6,2,2,13
+
+State Avg Time
+init_time,active_time,error_time,pause_time
+29.6154,56,3.46154,10.9231
+
+State Avg Rate
+init_time,active_time,error_time,pause_time
+29.6154,56,3.46154,10.9231

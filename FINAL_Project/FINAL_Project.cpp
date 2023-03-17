@@ -61,6 +61,7 @@ int main()
 			GLOBAL_VAR->Deletepgconn();
 		}
 		CLOG->info("총 통과 개수 : {} 총 통과시간 : {} 평균통과시간 : {}", GLOBAL_VAR->m_sumPass, GLOBAL_VAR->m_sumPassTime, GLOBAL_VAR->m_sumPassTime / GLOBAL_VAR->m_sumPass);
+		GLOBAL_VAR->CsvResultData();
 		GLOBAL_VAR->CsvFileClose();
 		WAISER->WaitSimulationEnd();
 	}
