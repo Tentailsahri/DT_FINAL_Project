@@ -4,38 +4,43 @@ Cpd_Main::Cpd_Main(int scenario_num)
 {
 	SetName("MainCouple");// 모델 이름 지정
 
+	GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='GEN'");
+	int genCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+	GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='TRACK'");
+	int trackCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+	GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='PROC'");
+	int procCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+	GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='STOCK'");
+	int stocCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+
+
+	// 생성한 모델 연결
+	for (int i = 0; i < genCount; i++) {
+		std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i, new Cpd_GEN(i, i));
+		gen_cpd_map.insert(tmp_pair);
+		AddComponent(gen_cpd_map.at(i));
+	}
+	for (int i = 0; i < trackCount; i++) {
+		std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount, new Cpd_TRACK(i, i + genCount));
+		track_cpd_map.insert(tmp_pair);
+		AddComponent(track_cpd_map.at(i + genCount));
+	}
+	for (int i = 0; i < procCount; i++) {
+		GLOBAL_VAR->pgconn->SendQuery("SELECT send_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE receive_object_id=" + std::to_string(genCount + trackCount + i));
+		bufferPopNum = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+		std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount, new Cpd_PROC(i, bufferPopNum, i + genCount + trackCount));
+		proc_cpd_map.insert(tmp_pair);
+		AddComponent(proc_cpd_map.at(i + genCount + trackCount));
+	}
+	for (int i = 0; i < stocCount; i++) {
+		std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount + procCount, new Cpd_STOCK(i, i + genCount + trackCount + procCount));
+		stock_cpd_map.insert(tmp_pair);
+		AddComponent(stock_cpd_map.at(i + genCount + trackCount + procCount));
+	}
+
+
 	if (scenario_num == 1) {
 		
-		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='GEN'");
-		int genCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
-		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='TRACK'");
-		int trackCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
-		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='PROC'");
-		int procCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
-		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='STOCK'");
-		int stocCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
-
-		// 생성한 모델 연결
-		for (int i = 0; i < genCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i, new Cpd_GEN(i, i));
-			gen_cpd_map.insert(tmp_pair);
-			AddComponent(gen_cpd_map.at(i));
-		}
-		for (int i = 0; i < trackCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount, new Cpd_TRACK(i, i + genCount));
-			track_cpd_map.insert(tmp_pair);
-			AddComponent(track_cpd_map.at(i + genCount));
-		}
-		for (int i = 0; i < procCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount, new Cpd_PROC(i, i + genCount + trackCount));
-			proc_cpd_map.insert(tmp_pair);
-			AddComponent(proc_cpd_map.at(i + genCount + trackCount));
-		}
-		for (int i = 0; i < stocCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount + stocCount, new Cpd_STOCK(i, i + genCount + trackCount + stocCount));
-			stock_cpd_map.insert(tmp_pair);
-			AddComponent(stock_cpd_map.at(i + genCount + trackCount + stocCount));
-		}
 
 		// 모델 포트 연결
 		coup(0, "GEN", 1, "TRACK");
@@ -44,37 +49,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		coup(2, "TRACK", 4, "STOCK");
 	}
 	else if (scenario_num == 2) {
-		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='GEN'");
-		int genCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
-		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='TRACK'");
-		int trackCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
-		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='PROC'");
-		int procCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
-		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='STOCK'");
-		int stocCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
-
-		// 생성한 모델 연결
-		for (int i = 0; i < genCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i, new Cpd_GEN(i, i));
-			gen_cpd_map.insert(tmp_pair);
-			AddComponent(gen_cpd_map.at(i));
-		}
-		for (int i = 0; i < trackCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount, new Cpd_TRACK(i, i + genCount));
-			track_cpd_map.insert(tmp_pair);
-			AddComponent(track_cpd_map.at(i + genCount));
-		}
-		for (int i = 0; i < procCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount, new Cpd_PROC(i, 2, i + genCount + trackCount));
-			proc_cpd_map.insert(tmp_pair);
-			AddComponent(proc_cpd_map.at(i + genCount + trackCount));
-		}
-		for (int i = 0; i < stocCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount + stocCount, new Cpd_STOCK(i, i + genCount + trackCount + stocCount));
-			stock_cpd_map.insert(tmp_pair);
-			AddComponent(stock_cpd_map.at(i + genCount + trackCount + stocCount));
-		}
-
+	
 		// 모델 포트 연결
 		coup(0, "GEN", 3, "TRACK");
 		coup(1, "GEN", 4, "TRACK");
@@ -90,40 +65,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		coup(8, "TRACK", 12, "STOCK");
 	}
 	else if (scenario_num == 3) {
-		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='GEN'");
-		int genCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
-		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='TRACK'");
-		int trackCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
-		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='PROC'");
-		int procCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
-		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='STOCK'");
-		int stocCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
 		
-
-		// 생성한 모델 연결
-		for (int i = 0; i < genCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i, new Cpd_GEN(i, i));
-			gen_cpd_map.insert(tmp_pair);
-			AddComponent(gen_cpd_map.at(i));
-		}
-		for (int i = 0; i < trackCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount, new Cpd_TRACK(i, i + genCount));
-			track_cpd_map.insert(tmp_pair);
-			AddComponent(track_cpd_map.at(i + genCount));
-		}
-		for (int i = 0; i < procCount; i++) {
-			GLOBAL_VAR->pgconn->SendQuery("SELECT send_object_id FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE receive_object_id=" + std::to_string(26+i));
-			bufferPopNum = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount, new Cpd_PROC(i, bufferPopNum, i + genCount + trackCount));
-			proc_cpd_map.insert(tmp_pair);
-			AddComponent(proc_cpd_map.at(i + genCount + trackCount));
-		}
-		for (int i = 0; i < stocCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount + procCount, new Cpd_STOCK(i, i + genCount + trackCount + procCount));
-			stock_cpd_map.insert(tmp_pair);
-			AddComponent(stock_cpd_map.at(i + genCount + trackCount + procCount));
-		}
-
 		// 모델 포트 연결
 		coup(0, "GEN", 7, "TRACK");
 		coup(1, "GEN", 9, "TRACK");
