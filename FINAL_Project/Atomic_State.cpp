@@ -41,11 +41,8 @@ Atomic_State::Atomic_State(int type, int idx, int pk) {
 	// 모델 변수 초기화
 	m_type = type;
 	m_idx = idx;
-	m_count = 0;
-	m_genCount = 0;
 	m_pk = pk;
-	m_current_time = 0;
-	m_endTime = 0;
+
 }
 Atomic_State::~Atomic_State()
 {

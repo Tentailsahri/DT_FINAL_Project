@@ -57,9 +57,9 @@ public:
 	// 설비 인덱스
 	int m_idx;
 	// 작동 횟수 카운트
-	int m_count;
+	int m_count = 0;
 	// 제품 투입설비 생산 카운트;
-	int m_genCount;
+	int m_genCount = 0;
 	// pk
 	int m_pk;
 
@@ -68,10 +68,9 @@ public:
 	static const char* getModel2Str(int model_type);
 
 	// STATE 시작 시간 저장용
-	double m_current_time;
-	double m_endTime;
+	double m_current_time = 0;
+	double m_endTime = 0;
 	double timeStore[4]={0, 0, 0, 0};
 	void m_dataUpdate();
-	
 };
 
