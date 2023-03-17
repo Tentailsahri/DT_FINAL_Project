@@ -58,37 +58,42 @@ public:
 	int m_idx;
 	// pk
 	int m_pk;
-	int newgencount;
-	int newgencount1;
-	int *getValue;
+
 	static const char* getModel2Str(int model_type);
 	void m_sendGenQuery(CProduct* product);
 	void m_sendPassQuery(CProduct* product);
 	int m_whereTargetPk(int pk);
-	//getValue 정리
+
+	// getValue 정리
 	int trueValue[100] = { 0 };
 	int trueStockBuffer[100] = { 0 };
-	int trueCount;
-	int trueValueCount;
-	int trueStockBufferCount;
-	int tuplesNum;
-	int bufOneCount;
-	int readyMapCount;
-	int bufferPopNum;
-	int bufferSameCount;
-	int bufferSERRORNum;
-	int bufferSERRORCount;
-	//PAUSE상태일 경우에서 READYMAP이 true인 개수
-	int PauseReadyMapCount;
-	//버퍼가 1 이상인 경우의 개수
-	int bufferSendCount;
-	//버퍼 수
-	int bufferSend;
-	//
-	int min;
-	int minnum;
-	//객체를 보낼 다음 설비
-	int minPk;
-	
+	int trueCount = 0;
+	int trueValueCount = 0;
+	int trueStockBufferCount = 0;
+	int tuplesNum = 0;
+	int bufOneCount = 0;
+	int readyMapCount = 0;
+	int bufferPopNum = 0;
+	int bufferSameCount = 0;
+	int bufferSERRORCount = 0;
+	int bufferSERRORNum = 0;
+
+	// PAUSE상태일 경우에서 READYMAP이 true인 개수
+	int PauseReadyMapCount = 0;
+
+	// 버퍼가 1 이상인 경우의 개수
+	int bufferSendCount = 0;
+
+	// 버퍼 수
+	int bufferSend = 0;
+
+	// 가장 작은 PK찾는용
+	int min = 10000;
+	int minNum = 0;
+
+	// 객체를 보낼 다음 설비
+	int minPk = -1;
+
+	int* getValue;
 };
 

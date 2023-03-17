@@ -179,6 +179,7 @@ void CGlobalVar::CsvMake() {
 	std::ofstream file5;
 	std::ofstream file6;
 	std::ofstream file7;
+	std::ofstream file8;
 	std::string file_name;
 	std::string file_name1;
 	std::string file_name2;
@@ -187,6 +188,7 @@ void CGlobalVar::CsvMake() {
 	std::string file_name5;
 	std::string file_name6;
 	std::string file_name7;
+	std::string file_name8;
 
 	if (GLOBAL_VAR->scenario_num == 1) {
 		file_name = "../CSV/Unity/scene 1/object_state_list1.csv";
@@ -197,6 +199,7 @@ void CGlobalVar::CsvMake() {
 		file_name5 = "../CSV/product_flow_list1.csv";
 		file_name6 = "../CSV/object_state_list1.csv";
 		file_name7 = "../CSV/project_list1.csv";
+		file_name8 = "../CSV/result_data1.csv";
 	}
 	else if (GLOBAL_VAR->scenario_num == 2) {
 		file_name = "../CSV/Unity/scene 2/object_state_list2.csv";
@@ -207,6 +210,7 @@ void CGlobalVar::CsvMake() {
 		file_name5 = "../CSV/product_flow_list2.csv";
 		file_name6 = "../CSV/object_state_list2.csv";
 		file_name7 = "../CSV/project_list2.csv";
+		file_name8 = "../CSV/result_data2.csv";
 	}
 	else if (GLOBAL_VAR->scenario_num == 3) {
 		file_name = "../CSV/Unity/scene 3/object_state_list3.csv";
@@ -217,6 +221,7 @@ void CGlobalVar::CsvMake() {
 		file_name5 = "../CSV/product_flow_list3.csv";
 		file_name6 = "../CSV/object_state_list3.csv";
 		file_name7 = "../CSV/project_list3.csv";
+		file_name8 = "../CSV/result_data3.csv";
 	}
 	m_file.open(file_name);
 	m_file1.open(file_name1);

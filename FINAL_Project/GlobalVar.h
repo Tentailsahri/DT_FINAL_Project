@@ -60,6 +60,7 @@ public:
 	std::ofstream m_file5;
 	std::ofstream m_file6;
 	std::ofstream m_file7;
+	std::ofstream m_file8;
 
 	// 임시버퍼 최대 크기
 	int m_maxbuffer[4] = { 10,10,10,10 };
