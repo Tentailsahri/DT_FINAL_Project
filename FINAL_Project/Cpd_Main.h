@@ -32,5 +32,8 @@ public:
 	std::string sendType="";
 	int receiveNum = 0;
 	std::string receiveType = "";
+	int subIdx = 0;
+	std::map<int, std::queue<int>> receiveNumMap;
+	void pushMap(int receive, int send);
 };
 

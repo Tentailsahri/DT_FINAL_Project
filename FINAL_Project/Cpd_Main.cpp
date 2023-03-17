@@ -44,71 +44,32 @@ Cpd_Main::Cpd_Main(int scenario_num)
 	}
 
 
-	if (scenario_num == 1) {
-		
-		GLOBAL_VAR->pgconn->SendQuery("SELECT p.send_object_id, send_obj.object_type, p.receive_object_id, receive_obj.object_type FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS p LEFT JOIN \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS send_obj ON p.send_object_id = send_obj.object_id LEFT JOIN \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS receive_obj ON p.receive_object_id = receive_obj.object_id");
+	GLOBAL_VAR->pgconn->SendQuery("SELECT p.send_object_id, send_obj.object_type, p.receive_object_id, receive_obj.object_type FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS p LEFT JOIN \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS send_obj ON p.send_object_id = send_obj.object_id LEFT JOIN \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS receive_obj ON p.receive_object_id = receive_obj.object_id");
 		tuplesCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
 		for (int i = 0; i < tuplesCount; i++) {
 			GLOBAL_VAR->pgconn->SendQuery("SELECT p.send_object_id, send_obj.object_type, p.receive_object_id, receive_obj.object_type FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS p LEFT JOIN \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS send_obj ON p.send_object_id = send_obj.object_id LEFT JOIN \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS receive_obj ON p.receive_object_id = receive_obj.object_id");
-			sendNum=std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
+			sendNum = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
 			sendType = PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 1);
-			receiveNum= std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 2));
-			receiveType= PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 3);
-			coup(sendNum, sendType, receiveNum, receiveType);
+			receiveNum = std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 2));
+			receiveType = PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 3);
+			pushMap(receiveNum, sendNum);
+			subIdx = receiveNumMap.at(receiveNum).size() - 1;
+			coups(subIdx, sendNum, sendType, receiveNum, receiveType);
 		}
-	}
-	else if (scenario_num == 2) {
 	
-		// 모델 포트 연결
-		coup(0, "GEN", 3, "TRACK");
-		coup(1, "GEN", 4, "TRACK");
-		coups(0, 3, "TRACK", 9, "PROC");
-		coups(1, 4, "TRACK", 9, "PROC");
-		coup(9, "PROC", 5, "TRACK");
-		coups(0, 5, "TRACK", 10, "PROC");
-		coup(2, "GEN", 6, "TRACK");
-		coups(1, 6, "TRACK", 10, "PROC");
-		coup(10, "PROC", 7, "TRACK");
-		coup(10, "PROC", 8, "TRACK");
-		coup(7, "TRACK", 11, "STOCK");
-		coup(8, "TRACK", 12, "STOCK");
+}
+
+void Cpd_Main::pushMap(int receive, int send)
+{
+	std::map<int, std::queue<int>>::iterator map_find_result = receiveNumMap.find(receive);
+	if (map_find_result != receiveNumMap.end()) {
+		receiveNumMap.at(receive).push(send);
 	}
-	else if (scenario_num == 3) {
-		
-		// 모델 포트 연결
-		coup(0, "GEN", 7, "TRACK");
-		coup(1, "GEN", 9, "TRACK");
-		coup(2, "GEN", 10, "TRACK");
-		coup(3, "GEN", 11, "TRACK");
-		coup(4, "GEN", 13, "TRACK");
-		coup(5, "GEN", 22, "TRACK");
-		coup(6, "GEN", 23, "TRACK");
-		coup(7, "TRACK", 8, "TRACK");
-		coup(11, "TRACK", 12, "TRACK");
-		coup(18, "TRACK", 19, "TRACK");
-		coup(14, "TRACK", 15, "TRACK");
-		coup(15, "TRACK", 16, "TRACK");
-		coups(0, 8, "TRACK", 26, "PROC");
-		coups(1, 9, "TRACK", 26, "PROC");
-		coups(2, 10, "TRACK", 26, "PROC");
-		coups(3, 12, "TRACK", 26, "PROC");
-		coups(0, 17, "TRACK", 28, "PROC");
-		coups(1, 19, "TRACK", 28, "PROC");
-		coups(0, 16, "TRACK", 29, "PROC");
-		coups(1, 20, "TRACK", 29, "PROC");
-		coups(2, 21, "TRACK", 29, "PROC");
-		coups(0, 22, "TRACK", 30, "PROC");
-		coups(1, 23, "TRACK", 30, "PROC");
-		coup(13, "TRACK", 27, "PROC");
-		coup(26, "PROC", 14, "TRACK");
-		coup(26, "PROC", 17, "TRACK");
-		coup(27, "PROC", 18, "TRACK");
-		coup(28, "PROC", 20, "TRACK");
-		coup(29, "PROC", 24, "TRACK");
-		coup(29, "PROC", 25, "TRACK");
-		coup(30, "PROC", 21, "TRACK");
-		coup(24, "TRACK", 31, "STOCK");
-		coup(25, "TRACK", 32, "STOCK");
+	else {
+		std::queue<int> receivequeue;
+		std::pair<int, std::queue<int>> tmp_pair = std::make_pair(receive, receivequeue);
+		receiveNumMap.insert(tmp_pair);
+		receiveNumMap.at(receive).push(send);
 	}
 }
 
@@ -126,8 +87,16 @@ void Cpd_Main::coup(int outPk, std::string outType, int inPk, std::string inType
 }
 
 void Cpd_Main::coups(int num, int outPk, std::string outType, int inPk, std::string inType) {
+	if (outType == "GEN" && inType == "TRACK")
+		coupGenTrack(gen_cpd_map.at(outPk), track_cpd_map.at(inPk));
 	if (outType == "TRACK" && inType == "PROC")
 		coupTrackProc(num, track_cpd_map.at(outPk), proc_cpd_map.at(inPk));
+	else if (outType == "PROC" && inType == "TRACK")
+		coupProcTrack(proc_cpd_map.at(outPk), track_cpd_map.at(inPk));
+	else if (outType == "TRACK" && inType == "STOCK")
+		coupTrackStock(track_cpd_map.at(outPk), stock_cpd_map.at(inPk));
+	else if (outType == "TRACK" && inType == "TRACK")
+		coupTrackTrack(track_cpd_map.at(outPk), track_cpd_map.at(inPk));
 }
 
 void Cpd_Main::coupGenTrack(WCoupModel* GEN, WCoupModel* TRACK) {
