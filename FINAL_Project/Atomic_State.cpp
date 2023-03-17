@@ -55,6 +55,10 @@ Atomic_State::~Atomic_State()
 				" SET sim_end_time = " + std::to_string(GLOBAL_VAR->time) + " WHERE project_id = " + std::to_string(GLOBAL_VAR->scenario_num) + "; ");
 		}
    }
+	GLOBAL_VAR->avgTimeStore[0] += timeStore[0];
+	GLOBAL_VAR->avgTimeStore[1] += timeStore[1];
+	GLOBAL_VAR->avgTimeStore[2] += timeStore[2];
+	GLOBAL_VAR->avgTimeStore[3] += timeStore[3];
 }
 // 외부 상태 천이 함수
 bool Atomic_State::ExtTransFn(const WMessage& msg) {

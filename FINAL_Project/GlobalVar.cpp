@@ -231,6 +231,7 @@ void CGlobalVar::CsvMake() {
 	m_file5.open(file_name5);
 	m_file6.open(file_name6);
 	m_file7.open(file_name7);
+	m_file8.open(file_name8);
 
 	m_file << "project_id" << "," << "object_id" << "," << "object_state" << "," << "state_start_time" << "," << "state_end_time" << "\n";
 	m_file1 << "project_id" << "," << "project_name" << "," << "x" << "," << "y" << "," << "sim_start_time" << "," << "sim_end_time" << "\n";
@@ -274,9 +275,34 @@ void CGlobalVar::CsvProductFlowList(int pk, int product_id, double in_time, doub
 	m_file5 << scenario_num << "," << pk << "," << product_id << "," << in_time << "," << out_time << "\n";
 }
 
+void CGlobalVar::CsvResultData() {
+
+	avgTimeStore[0] = avgTimeStore[0] / allCount;
+	avgTimeStore[1] = avgTimeStore[1] / allCount;
+	avgTimeStore[2] = avgTimeStore[2] / allCount;
+	avgTimeStore[3] = avgTimeStore[3] / allCount;
+	m_file8 << "시나리오 번호" << "," << "시뮬레이션 시간" << "," << "GEN Count" << "," << "TRACK Count"  "," << "PROC Count"  "," << "STOCK Count" << "ALL Count" << "\n";
+	m_file8 << scenario_num << "," << time << "," << m_genCount << "," << m_trackCount << "," << m_procCount <<  "," << m_stockCount << "," << allCount << "\n\n";
+	m_file8 << "State Avg Time" << "\n";
+	m_file8 << "init_time" << "," << "active_time" << "," << "error_time" << "," << "pause_time" << "\n";
+	m_file8 << avgTimeStore[0] << "," << avgTimeStore[1] << "," << avgTimeStore[2] << "," << avgTimeStore[3] << "\n\n";
+
+	m_file8 << "State Avg Rate" << "\n";
+	m_file8 << "init_time" << "," << "active_time" << "," << "error_time" << "," << "pause_time" << "\n";
+	m_file8 << avgTimeStore[0] * 100 / time << "," << avgTimeStore[1] * 100 / time << "," << avgTimeStore[2] * 100 / time << "," << avgTimeStore[3] * 100 / time << "\n";
+}
+
 
 void CGlobalVar::CsvFileClose() {
 	m_file.close();
+	m_file1.close();
+	m_file2.close();
+	m_file3.close();
+	m_file4.close();
+	m_file5.close();
+	m_file6.close();
+	m_file7.close();
+	m_file8.close();
 }
 
 void CGlobalVar::Deletepgconn()

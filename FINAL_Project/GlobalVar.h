@@ -45,6 +45,12 @@ public:
 	void CsvBufferSize(int pk, std::string state, double current_time, double buffersize, double srocksize);
 	void CsvProductFlowList(int pk, int product_id, double in_time, double out_time);
 	void CsvFileClose();
+
+	// 최종데이터 관련
+	double avgTimeStore[4] = { 0, 0, 0, 0 };
+	void CsvResultData();
+	int allCount = 0;
+	int m_genCount, m_trackCount, m_procCount, m_stockCount;
 	
 	// SQL 연결 관련
 	void Makepgconn();

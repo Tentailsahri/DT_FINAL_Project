@@ -70,7 +70,7 @@ public:
 	// STATE 시작 시간 저장용
 	double m_current_time = 0;
 	double m_endTime = 0;
-	double timeStore[4]={0, 0, 0, 0};
+	double timeStore[4] = { 0, 0, 0, 0 };
 	void m_dataUpdate();
 };
 
