@@ -41,12 +41,16 @@ Cpd_Main::Cpd_Main(int scenario_num)
 
 	if (scenario_num == 1) {
 		
-
-		// 모델 포트 연결
-		coup(0, "GEN", 1, "TRACK");
-		coup(1, "TRACK", 3, "PROC");
-		coup(3, "PROC", 2, "TRACK");
-		coup(2, "TRACK", 4, "STOCK");
+		GLOBAL_VAR->pgconn->SendQuery("SELECT p.send_object_id, send_obj.object_type, p.receive_object_id, receive_obj.object_type FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS p LEFT JOIN \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS send_obj ON p.send_object_id = send_obj.object_id LEFT JOIN \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS receive_obj ON p.receive_object_id = receive_obj.object_id");
+		tuplesCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+		for (int i = 0; i < tuplesCount; i++) {
+			GLOBAL_VAR->pgconn->SendQuery("SELECT p.send_object_id, send_obj.object_type, p.receive_object_id, receive_obj.object_type FROM \"obj_coup_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS p LEFT JOIN \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS send_obj ON p.send_object_id = send_obj.object_id LEFT JOIN \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" AS receive_obj ON p.receive_object_id = receive_obj.object_id");
+			sendNum=std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 0));
+			sendType = PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 1);
+			receiveNum= std::stoi(PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 2));
+			receiveType= PQgetvalue(GLOBAL_VAR->pgconn->GetSQLResult(), i, 3);
+			coup(sendNum, sendType, receiveNum, receiveType);
+		}
 	}
 	else if (scenario_num == 2) {
 	

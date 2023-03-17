@@ -26,5 +26,10 @@ private:
 public:
 	Cpd_Main(int road_num);
 	int bufferPopNum=0;
+	int tuplesCount = 0;
+	int sendNum = 0;
+	std::string sendType="";
+	int receiveNum = 0;
+	std::string receiveType = "";
 };
 
