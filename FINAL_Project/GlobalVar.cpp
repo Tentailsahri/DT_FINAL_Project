@@ -281,15 +281,20 @@ void CGlobalVar::CsvResultData() {
 	avgTimeStore[1] = avgTimeStore[1] / allCount;
 	avgTimeStore[2] = avgTimeStore[2] / allCount;
 	avgTimeStore[3] = avgTimeStore[3] / allCount;
-	m_file8 << "시나리오 번호" << "," << "시뮬레이션 시간" << "," << "GEN Count" << "," << "TRACK Count"  "," << "PROC Count"  "," << "STOCK Count" << "ALL Count" << "\n";
+	m_file8 << "Scenario Num" << "," << "Time" << "," << "GEN Count" << "," << "TRACK Count"  "," << "PROC Count"  "," << "STOCK Count" << "ALL Count" << "\n";
 	m_file8 << scenario_num << "," << time << "," << m_genCount << "," << m_trackCount << "," << m_procCount <<  "," << m_stockCount << "," << allCount << "\n\n";
 	m_file8 << "State Avg Time" << "\n";
-	m_file8 << "init_time" << "," << "active_time" << "," << "error_time" << "," << "pause_time" << "\n";
+	m_file8 << "INIT TIME" << "," << "ACTIVE TIME" << "," << "ERROR TIME" << "," << "PAUSE TIME" << "\n";
 	m_file8 << avgTimeStore[0] << "," << avgTimeStore[1] << "," << avgTimeStore[2] << "," << avgTimeStore[3] << "\n\n";
 
 	m_file8 << "State Avg Rate" << "\n";
-	m_file8 << "init_time" << "," << "active_time" << "," << "error_time" << "," << "pause_time" << "\n";
-	m_file8 << avgTimeStore[0] * 100 / time << "," << avgTimeStore[1] * 100 / time << "," << avgTimeStore[2] * 100 / time << "," << avgTimeStore[3] * 100 / time << "\n";
+	m_file8 << "INIT TIME" << "," << "ACTIVE TIME" << "," << "ERROR TIME" << "," << "PAUSE TIME" << "\n";
+	m_file8 << avgTimeStore[0] * 100 / time << "," << avgTimeStore[1] * 100 / time << "," << avgTimeStore[2] * 100 / time << "," << avgTimeStore[3] * 100 / time << "\n\n";
+
+	m_file8 << "Product" << "\n";
+	m_file8 << "All Product Count" << "," << "All Product Time Sum" << "," << "All Product Time Avg" << "\n";
+	m_file8 << GLOBAL_VAR->m_sumPass << "," << GLOBAL_VAR->m_sumPassTime << "," << GLOBAL_VAR->m_sumPassTime / GLOBAL_VAR->m_sumPass << "\n";
+	CLOG->info("총 통과 개수 : {} 총 통과시간 : {} 평균통과시간 : {}", GLOBAL_VAR->m_sumPass, GLOBAL_VAR->m_sumPassTime, GLOBAL_VAR->m_sumPassTime / GLOBAL_VAR->m_sumPass);
 }
 
 
