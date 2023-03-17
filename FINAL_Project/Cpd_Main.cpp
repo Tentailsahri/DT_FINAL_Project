@@ -5,10 +5,15 @@ Cpd_Main::Cpd_Main(int scenario_num)
 	SetName("MainCouple");// 모델 이름 지정
 
 	if (scenario_num == 1) {
-		int genCount = 1;
-		int trackCount = 2;
-		int procCount = 1;
-		int stocCount = 1;
+		
+		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='GEN'");
+		int genCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='TRACK'");
+		int trackCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='PROC'");
+		int procCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='STOCK'");
+		int stocCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
 
 		// 생성한 모델 연결
 		for (int i = 0; i < genCount; i++) {
@@ -22,7 +27,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 			AddComponent(track_cpd_map.at(i + genCount));
 		}
 		for (int i = 0; i < procCount; i++) {
-			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount, new Cpd_PROC(i, 2, i + genCount + trackCount));
+			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount, new Cpd_PROC(i, i + genCount + trackCount));
 			proc_cpd_map.insert(tmp_pair);
 			AddComponent(proc_cpd_map.at(i + genCount + trackCount));
 		}
@@ -39,10 +44,14 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		coup(2, "TRACK", 4, "STOCK");
 	}
 	else if (scenario_num == 2) {
-		int genCount = 3;
-		int trackCount = 6;
-		int procCount = 2;
-		int stocCount = 2;
+		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='GEN'");
+		int genCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='TRACK'");
+		int trackCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='PROC'");
+		int procCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='STOCK'");
+		int stocCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
 
 		// 생성한 모델 연결
 		for (int i = 0; i < genCount; i++) {
@@ -81,10 +90,14 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		coup(8, "TRACK", 12, "STOCK");
 	}
 	else if (scenario_num == 3) {
-		int genCount = 7;
-		int trackCount = 19;
-		int procCount = 5;
-		int stocCount = 2;
+		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='GEN'");
+		int genCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='TRACK'");
+		int trackCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='PROC'");
+		int procCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
+		GLOBAL_VAR->pgconn->SendQuery("SELECT * FROM \"object_list" + std::to_string(GLOBAL_VAR->scenario_num) + "\" WHERE object_type='STOCK'");
+		int stocCount = PQntuples(GLOBAL_VAR->pgconn->GetSQLResult());
 		
 
 		// 생성한 모델 연결
