@@ -5,27 +5,40 @@ Cpd_Main::Cpd_Main(int scenario_num)
 	SetName("MainCouple");// 모델 이름 지정
 
 	if (scenario_num == 1) {
-		// 모델 생성
-		WCoupModel* gen = new Cpd_GEN(0,0);
-		WCoupModel* track0 = new Cpd_TRACK(0,1);
-		WCoupModel* track1 = new Cpd_TRACK(1,2);
-		WCoupModel* proc = new Cpd_PROC(0, 3);
-		WCoupModel* stock = new Cpd_STOCK(0,4);
+		int genCount = 1;
+		int trackCount = 2;
+		int procCount = 1;
+		int stocCount = 1;
 
 		// 생성한 모델 연결
-		AddComponent(gen);
-		AddComponent(track0);
-		AddComponent(track1);
-		AddComponent(proc);
-		AddComponent(stock);
+		for (int i = 0; i < genCount; i++) {
+			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i, new Cpd_GEN(i, i));
+			gen_cpd_map.insert(tmp_pair);
+			AddComponent(gen_cpd_map.at(i));
+		}
+		for (int i = 0; i < trackCount; i++) {
+			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount, new Cpd_TRACK(i, i + genCount));
+			track_cpd_map.insert(tmp_pair);
+			AddComponent(track_cpd_map.at(i + genCount));
+		}
+		for (int i = 0; i < procCount; i++) {
+			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount, new Cpd_PROC(i, 2, i + genCount + trackCount));
+			proc_cpd_map.insert(tmp_pair);
+			AddComponent(proc_cpd_map.at(i + genCount + trackCount));
+		}
+		for (int i = 0; i < stocCount; i++) {
+			std::pair<int, WCoupModel*> tmp_pair = std::make_pair(i + genCount + trackCount + stocCount, new Cpd_STOCK(i, i + genCount + trackCount + stocCount));
+			stock_cpd_map.insert(tmp_pair);
+			AddComponent(stock_cpd_map.at(i + genCount + trackCount + stocCount));
+		}
 
 		// 모델 포트 연결
-		coupGenTrack(gen, track0);
-		coupTrackProc(track0, proc);
-		coupProcTrack(proc, track1);
-		coupTrackStock(track1, stock);
-
-	} else if (scenario_num == 2) {
+		coup(0, "GEN", 1, "TRACK");
+		coup(1, "TRACK", 3, "PROC");
+		coup(3, "PROC", 2, "TRACK");
+		coup(2, "TRACK", 4, "STOCK");
+	}
+	else if (scenario_num == 2) {
 		int genCount = 3;
 		int trackCount = 6;
 		int procCount = 2;
@@ -132,9 +145,7 @@ Cpd_Main::Cpd_Main(int scenario_num)
 		coup(30, "PROC", 21, "TRACK");
 		coup(24, "TRACK", 31, "STOCK");
 		coup(25, "TRACK", 32, "STOCK");
-		
 	}
-
 }
 
 void Cpd_Main::coup(int outPk, std::string outType, int inPk, std::string inType) {
