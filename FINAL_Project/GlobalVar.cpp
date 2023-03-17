@@ -293,8 +293,12 @@ void CGlobalVar::CsvResultData() {
 
 	m_file8 << "Product" << "\n";
 	m_file8 << "All Product Count" << "," << "All Product Time Sum" << "," << "All Product Time Avg" << "\n";
-	m_file8 << GLOBAL_VAR->m_sumPass << "," << GLOBAL_VAR->m_sumPassTime << "," << GLOBAL_VAR->m_sumPassTime / GLOBAL_VAR->m_sumPass << "\n";
+	m_file8 << GLOBAL_VAR->m_sumPass << "," << GLOBAL_VAR->m_sumPassTime << "," << GLOBAL_VAR->m_sumPassTime / GLOBAL_VAR->m_sumPass << "\n\n";
 	CLOG->info("ÃÑ Åë°ú °³¼ö : {} ÃÑ Åë°ú½Ã°£ : {} Æò±ÕÅë°ú½Ã°£ : {}", GLOBAL_VAR->m_sumPass, GLOBAL_VAR->m_sumPassTime, GLOBAL_VAR->m_sumPassTime / GLOBAL_VAR->m_sumPass);
+
+	m_file8 << "INIT TIME" << "\n";
+	m_file8 << "GEN INIT" << "," << "TRACK INIT" << "," << "PROC INIT" << "," << "STOCK INIT" << "\n";
+	m_file8 << GLOBAL_VAR->TA_STATE_INIT[0] << "," << GLOBAL_VAR->TA_STATE_INIT[1] << "," << GLOBAL_VAR->TA_STATE_INIT[2] << "," << GLOBAL_VAR->TA_STATE_INIT[3] << "\n\n";
 }
 
 
