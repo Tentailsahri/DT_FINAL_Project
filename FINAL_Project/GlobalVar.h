@@ -37,6 +37,19 @@ public:
 
 	PostgreSQLConnector* pgconn;
 
+	// SQL 연결 관련
+	void Makepgconn();
+	void Deletepgconn();
+	void ResetTable();
+
+	// CSV 파일 오픈 관련
+	std::ofstream m_file2;
+	std::ofstream m_file3;
+	std::ofstream m_file4;
+	std::ofstream m_file5;
+	std::ofstream m_file6;
+	std::ofstream m_file8;
+
 	// CSV 출력 관련
 	void CsvMake();
 	void CsvStateInsert(int pk, std::string state, double state_start_time, double state_end_time);
@@ -51,22 +64,6 @@ public:
 	void CsvResultData();
 	int allCount = 0;
 	int m_genCount, m_trackCount, m_procCount, m_stockCount;
-	
-	// SQL 연결 관련
-	void Makepgconn();
-	void Deletepgconn();
-	void ResetTable();
-
-	// CSV 파일 오픈 관련
-	std::ofstream m_file;
-	std::ofstream m_file1;
-	std::ofstream m_file2;
-	std::ofstream m_file3;
-	std::ofstream m_file4;
-	std::ofstream m_file5;
-	std::ofstream m_file6;
-	std::ofstream m_file7;
-	std::ofstream m_file8;
 
 	// 임시버퍼 최대 크기
 	int m_maxbuffer[4] = { 10,10,10,10 };
