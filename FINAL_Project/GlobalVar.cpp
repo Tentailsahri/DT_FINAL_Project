@@ -171,61 +171,42 @@ int CGlobalVar::BufferSize(int key, std::map<int, std::queue<CProduct*>>* _buffe
 
 
 void CGlobalVar::CsvMake() {
-	std::ofstream file;
-	std::ofstream file1;
 	std::ofstream file2;
 	std::ofstream file3;
 	std::ofstream file4;
 	std::ofstream file5;
 	std::ofstream file6;
-	std::ofstream file7;
 	std::ofstream file8;
-	std::string file_name;
-	std::string file_name1;
 	std::string file_name2;
 	std::string file_name3;
 	std::string file_name4;
 	std::string file_name5;
 	std::string file_name6;
-	std::string file_name7;
 	std::string file_name8;
 
-	file_name = "../CSV/Unity/scene " + std::to_string(scenario_num) + "/object_state_list" + std::to_string(scenario_num) + ".csv";
-	file_name1 = "../CSV/Unity/scene " + std::to_string(scenario_num) + "/project_list" + std::to_string(scenario_num) + ".csv";
 	file_name2 = "../CSV/state_time_list" + std::to_string(scenario_num) + ".csv";
 	file_name3 = "../CSV/state_rate_list" + std::to_string(scenario_num) + ".csv";
 	file_name4 = "../CSV/buf_count_list" + std::to_string(scenario_num) + ".csv";
 	file_name5 = "../CSV/product_flow_list" + std::to_string(scenario_num) + ".csv";
 	file_name6 = "../CSV/object_state_list" + std::to_string(scenario_num) + ".csv";
-	file_name7 = "../CSV/project_list" + std::to_string(scenario_num) + ".csv";
 	file_name8 = "../CSV/result_data" + std::to_string(scenario_num) + ".csv";
 
-	m_file.open(file_name);
-	m_file1.open(file_name1);
 	m_file2.open(file_name2);
 	m_file3.open(file_name3);
 	m_file4.open(file_name4);
 	m_file5.open(file_name5);
 	m_file6.open(file_name6);
-	m_file7.open(file_name7);
 	m_file8.open(file_name8);
 
-	m_file << "project_id" << "," << "object_id" << "," << "object_state" << "," << "state_start_time" << "," << "state_end_time" << "\n";
-	m_file1 << "project_id" << "," << "project_name" << "," << "x" << "," << "y" << "," << "sim_start_time" << "," << "sim_end_time" << "\n";
 	m_file2 << "project_id" << "," << "object_id" << "," << "current_time" << "," << "init_time" << "," << "active_time" << "," << "error_time" << "," << "pause_time" << "\n";
 	m_file3 << "project_id" << "," << "object_id" << "," << "current_time" << "," << "init_rate" << "," << "active_rate" << "," << "error_rate" << "," << "pause_rate" << "\n";
 	m_file4 << "project_id" << "," << "object_id" << "," << "object_type" << "," << "current_time" << "," << "buffer_count" << "," << "stock_count" << "\n";
 	m_file5 << "project_id" << "," << "object_id" << "," << "product_id" << "," << "in_time" << "," << "out_time" << "\n";
 	m_file6 << "project_id" << "," << "object_id" << "," << "object_state" << "," << "state_start_time" << "," << "state_end_time" << "\n";
-	m_file7 << "project_id" << "," << "project_name" << "," << "x" << "," << "y" << "," << "sim_start_time" << "," << "sim_end_time" << "\n";
 
-
-	m_file1 << GLOBAL_VAR->scenario_num << "," << "no." << GLOBAL_VAR->scenario_num << "," << "9" << "," << "4" << "," << "0" << "," << time << "\n";
-	m_file7 << GLOBAL_VAR->scenario_num << "," << "no." << GLOBAL_VAR->scenario_num << "," << "9" << "," << "4" << "," << "0" << "," << time << "\n";
 }
 
 void CGlobalVar::CsvStateInsert(int pk, std::string state, double state_start_time, double state_end_time) {
-	m_file << scenario_num << "," << pk << "," << state << "," << state_start_time << "," << state_end_time << "\n";
 	m_file6 << scenario_num << "," << pk << "," << state << "," << state_start_time << "," << state_end_time << "\n";
 }
 
@@ -274,14 +255,11 @@ void CGlobalVar::CsvResultData() {
 
 
 void CGlobalVar::CsvFileClose() {
-	m_file.close();
-	m_file1.close();
 	m_file2.close();
 	m_file3.close();
 	m_file4.close();
 	m_file5.close();
 	m_file6.close();
-	m_file7.close();
 	m_file8.close();
 }
 
